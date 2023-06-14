@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
+    application
 }
 
 group = "app.urbanflo"
@@ -38,6 +39,10 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
+}
+
+application {
+    mainClass.set("app.urbanflo.urbanflosumoserver.SumoKotlinDemoKt")
 }
 
 tasks.withType<Test> {
