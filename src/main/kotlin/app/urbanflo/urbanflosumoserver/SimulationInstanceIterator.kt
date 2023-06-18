@@ -1,24 +1,40 @@
 package app.urbanflo.urbanflosumoserver
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.eclipse.sumo.libtraci.Simulation
 import org.eclipse.sumo.libtraci.StringVector
 import org.eclipse.sumo.libtraci.Vehicle
 import kotlin.random.Random
 
+private val logger = KotlinLogging.logger {}
+
+// taken from traci python code
+private const val DEFAULT_NUM_RETRIES = 60
+
 class SimulationInstanceIterator
-    (simulationInstance: SimulationInstance) : Iterator<SimulationStep> {
+    (private val simulationInstance: SimulationInstance) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
+
 
     init {
         System.loadLibrary("libtracijni")
-        Simulation.start(StringVector(arrayOf("sumo", "-c", simulationInstance.cfgPath)))
+        logger.info {"Connecting to SUMO with port ${simulationInstance.port} and label ${simulationInstance.label}"}
+        Simulation.start(StringVector(arrayOf("sumo", "-c", simulationInstance.cfgPath)), simulationInstance.port, DEFAULT_NUM_RETRIES, simulationInstance.label)
     }
 
     override fun hasNext(): Boolean {
-        return Simulation.getMinExpectedNumber() > 0
+        Simulation.switchConnection(simulationInstance.label)
+        return if (Simulation.getMinExpectedNumber() > 0) {
+            true
+        } else {
+            logger.info {"Closing connection with label: ${Simulation.getLabel()}"}
+            Simulation.close()
+            false
+        }
     }
 
     override fun next(): SimulationStep {
+        Simulation.switchConnection(simulationInstance.label)
         Simulation.step()
         val pairs = Vehicle.getIDList().map { vehicleId ->
             val position = Vehicle.getPosition(vehicleId)
