@@ -10,8 +10,6 @@ private val logger = KotlinLogging.logger {}
 class UrbanfloSumoServerApplication
 
 fun main(args: Array<String>) {
-    logger.info { "Loading SUMO library" }
-    System.loadLibrary("libsumojni")
     logger.info { "Starting Spring Boot" }
     runApplication<UrbanfloSumoServerApplication>(*args)
 }
