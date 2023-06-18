@@ -4,9 +4,14 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
+private val logger = KotlinLogging.logger {}
+
 @SpringBootApplication
 class UrbanfloSumoServerApplication
 
 fun main(args: Array<String>) {
+    logger.info { "Loading SUMO library" }
+    System.loadLibrary("libsumojni")
+    logger.info { "Starting Spring Boot" }
     runApplication<UrbanfloSumoServerApplication>(*args)
 }

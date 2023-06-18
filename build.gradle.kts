@@ -23,14 +23,14 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-web:3.1.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     implementation("io.github.oshai:kotlin-logging-jvm:4.0.0-beta-29")
-    implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("org.eclipse.sumo:libsumo:1.18.0-SNAPSHOT")
     implementation("org.eclipse.sumo:libtraci:1.18.0-SNAPSHOT")
+    implementation("io.projectreactor:reactor-core:3.5.4")
 }
 
 tasks.withType<KotlinCompile> {
