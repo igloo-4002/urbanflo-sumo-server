@@ -18,8 +18,13 @@ class SimulationInstanceIterator
 
     init {
         System.loadLibrary("libtracijni")
-        logger.info {"Connecting to SUMO with port ${simulationInstance.port} and label ${simulationInstance.label}"}
-        Simulation.start(StringVector(arrayOf("sumo", "-c", simulationInstance.cfgPath)), simulationInstance.port, DEFAULT_NUM_RETRIES, simulationInstance.label)
+        logger.info { "Connecting to SUMO with port ${simulationInstance.port} and label ${simulationInstance.label}" }
+        Simulation.start(
+            StringVector(arrayOf("sumo", "-c", simulationInstance.cfgPath)),
+            simulationInstance.port,
+            DEFAULT_NUM_RETRIES,
+            simulationInstance.label
+        )
     }
 
     override fun hasNext(): Boolean {
@@ -27,7 +32,7 @@ class SimulationInstanceIterator
         return if (Simulation.getMinExpectedNumber() > 0) {
             true
         } else {
-            logger.info {"Closing connection with label: ${Simulation.getLabel()}"}
+            logger.info { "Closing connection with label: ${Simulation.getLabel()}" }
             Simulation.close()
             false
         }

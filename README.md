@@ -15,10 +15,8 @@ Interacts between [SUMO](https://www.eclipse.org/sumo/) and Urbanflo app.
 1. Clone the repository
 2. Run `./gradlew build` to build
 
-## Proof of concept/demo
+## Deploy
 
-Runs SUMO through one of the demo files. Available on the `kotlin-demo` branch.
-
-Run with `java -jar build/libs/urbanflo-sumo-server-0.0.1-SNAPSHOT.jar`
-
-**Do not merger the `kotlin-demo` branch!!!**
+```shell
+java -jar build/libs/urbanflo-sumo-server-0.0.1-SNAPSHOT.jar
+```

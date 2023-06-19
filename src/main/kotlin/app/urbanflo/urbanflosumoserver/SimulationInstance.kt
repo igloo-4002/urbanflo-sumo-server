@@ -1,18 +1,14 @@
 package app.urbanflo.urbanflosumoserver
 
 import java.net.ServerSocket
-import java.util.UUID
+import java.util.*
 
 
 typealias SimulationStep = Map<String, VehiclePosition>
 
 class SimulationInstance(val cfgPath: String = "demo.sumocfg") : Iterable<SimulationStep> {
-    val port: Int
-    val label: String
-    init {
-        port = getNextAvailablePort()
-        label = UUID.randomUUID().toString()
-    }
+    val port: Int = getNextAvailablePort()
+    val label: String = UUID.randomUUID().toString()
 
     override fun iterator(): Iterator<SimulationStep> {
         return SimulationInstanceIterator(this)
