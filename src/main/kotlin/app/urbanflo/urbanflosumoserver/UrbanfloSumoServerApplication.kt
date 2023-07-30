@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class UrbanfloSumoServerApplication
 
 fun main(args: Array<String>) {
+    System.loadLibrary("libtracijni")
     runApplication<UrbanfloSumoServerApplication>(*args)
 }

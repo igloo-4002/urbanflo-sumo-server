@@ -17,7 +17,6 @@ class SimulationInstanceIterator
 
 
     init {
-        System.loadLibrary("libtracijni")
         logger.info { "Connecting to SUMO with port ${simulationInstance.port} and label ${simulationInstance.label}" }
         Simulation.start(
             StringVector(arrayOf("sumo", "-c", simulationInstance.cfgPath)),
