@@ -25,7 +25,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     implementation("io.github.oshai:kotlin-logging-jvm:4.0.0-beta-29")
     implementation("org.eclipse.sumo:libsumo:1.18.0-SNAPSHOT")
