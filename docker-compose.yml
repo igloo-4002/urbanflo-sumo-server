@@ -2,7 +2,8 @@ services:
   sumo-server:
     build:
       context: .
-    command: java -jar -Djava.library.path=/usr/lib/x86_64-linux-gnu /urbanflo-sumo-server/urbanflo-sumo-server.jar
+    command: java -jar -Djava.library.path=/opt/sumo/bin /opt/urbanflo-sumo-server/urbanflo-sumo-server.jar
+#    command: bash -c "ldd /opt/sumo/bin/sumo | grep -i 'not found'"
     ports:
       - 8080:8080
     restart: unless-stopped
