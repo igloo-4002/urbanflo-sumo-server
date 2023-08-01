@@ -8,8 +8,8 @@ RUN gradle --scan build
 FROM ubuntu:jammy AS sumo-builder
 ARG SUMO_VERSION="1.18.0"
 ENV SUMO_HOME="/opt/sumo"
-RUN apt-get update && apt-get install -y git cmake python3 g++ libxerces-c-dev libfox-1.6-dev libgdal-dev libproj-dev libgl2ps-dev python3-dev swig default-jdk maven libeigen3-dev tree
-WORKDIR /o
+RUN apt-get update && apt-get install -y git cmake python3 g++ libxerces-c-dev libfox-1.6-dev libgdal-dev libproj-dev libgl2ps-dev python3-dev swig default-jdk maven libeigen3-dev curl
+WORKDIR /opt
 RUN curl -OJL "https://sumo.dlr.de/releases/$SUMO_VERSION/sumo-src-$SUMO_VERSION.tar.gz"
 RUN tar xvf sumo-src-$SUMO_VERSION.tar.gz
 RUN mv sumo-$SUMO_VERSION sumo
