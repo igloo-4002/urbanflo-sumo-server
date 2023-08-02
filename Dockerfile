@@ -1,7 +1,7 @@
 FROM gradle:8-jdk17-jammy AS gradle-builder
 WORKDIR /opt/urbanflo-sumo-server
 COPY . .
-RUN gradle --scan build
+RUN gradle build
 
 # install sumo
 # for whatever reason, the sumo ubuntu package for arm64 doesn't include libtracijni, hence why we need to compile it from scratch
@@ -27,8 +27,8 @@ RUN apt-get update && apt-get install -y libxerces-c3.2 libproj22 libfox-1.6-0 l
 # copy sumo
 WORKDIR $SUMO_HOME/bin
 COPY --from=sumo-builder /opt/sumo/bin .
+WORKDIR /opt/urbanflo-sumo-server
 # copy demo folder
 COPY demo demo
 # copy server jar
-WORKDIR /opt/urbanflo-sumo-server
 COPY --from=gradle-builder /opt/urbanflo-sumo-server/build/libs/urbanflo-sumo-server-$VERSION.jar urbanflo-sumo-server.jar
