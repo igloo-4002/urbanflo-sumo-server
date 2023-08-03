@@ -15,6 +15,12 @@ Interacts between [SUMO](https://www.eclipse.org/sumo/) and Urbanflo app.
 1. Clone the repository
 2. Run `./gradlew build` to build
 
+### Build docker container
+
+```shell
+docker compose up --force-recreate --build
+```
+
 ## Deploy
 
 ```shell
