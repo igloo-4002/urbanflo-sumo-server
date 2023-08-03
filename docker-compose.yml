@@ -1,9 +1,11 @@
 services:
   sumo-server:
-    build:
-      context: .
+    # Change `:develop` to `:pr-XX` to test a PR
+    image: ghcr.io/igloo-4002/urbanflo-sumo-server:develop
+    # Uncomment the two lines below to build locally
+#    build:
+#      context: .
     command: java -jar -Djava.library.path=/opt/sumo/bin /opt/urbanflo-sumo-server/urbanflo-sumo-server.jar
-#    command: bash -c "ldd /opt/sumo/bin/sumo | grep -i 'not found'"
     ports:
       - 8080:8080
     restart: unless-stopped
