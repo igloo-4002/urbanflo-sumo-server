@@ -46,15 +46,18 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 val filePath = simulationDir.resolve(Paths.get(filename).normalize())
                 // security check to prevent path traversal attack
                 if (filePath.parent != simulationDir) {
+                    cleanupFailedUpload(simulationDir)
                     throw StorageException("Cannot store file outside uploads directory")
                 }
                 val inputStream = file.inputStream
                 try {
                     Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING)
                 } catch (e: IOException) {
+                    cleanupFailedUpload(simulationDir)
                     throw StorageException("Cannot store simulation file", e)
                 }
             } else {
+                cleanupFailedUpload(simulationDir)
                 throw StorageException("file name is not present or null")
             }
         }
@@ -67,5 +70,11 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
     override fun deleteAll() {
         TODO("Not yet implemented")
+    }
+
+    private fun cleanupFailedUpload(simulationDir: Path): Boolean {
+        val dirFile = simulationDir.toFile()
+        dirFile.listFiles()?.forEach { file -> file.delete() }
+        return dirFile.delete()
     }
 }
