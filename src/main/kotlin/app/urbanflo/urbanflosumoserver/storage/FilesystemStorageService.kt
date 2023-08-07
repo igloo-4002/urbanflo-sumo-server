@@ -70,14 +70,22 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         TODO("Not yet implemented")
     }
 
-    override fun delete(id: String): Boolean {
+    override fun delete(id: String) {
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
-        return simulationDir.delete()
+        if (!simulationDir.delete()) {
+            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+        }
     }
 
     override fun info(id: String): SimulationInfo {
-        TODO("Not yet implemented")
+        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
+        if (simulationDir.exists()) {
+            // TODO: fetch simulation metadata
+            return SimulationInfo(id)
+        } else {
+            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+        }
     }
 
     override fun listAll(): List<Resource> {

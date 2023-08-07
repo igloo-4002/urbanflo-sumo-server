@@ -11,7 +11,7 @@ interface StorageService {
 
     fun load(id: String): SimulationInstance
 
-    fun delete(id: String): Boolean
+    fun delete(id: String)
 
     fun info(id: String): SimulationInfo
 
