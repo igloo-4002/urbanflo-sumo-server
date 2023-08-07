@@ -9,5 +9,9 @@ interface StorageService {
 
     fun load(id: String): Map<String, Resource>
 
+    fun delete(id: String)
+
+    fun listAll(): List<Resource>
+
     fun deleteAll()
 }

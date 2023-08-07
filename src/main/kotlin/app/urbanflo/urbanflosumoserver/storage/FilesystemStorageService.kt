@@ -46,19 +46,19 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 val filePath = simulationDir.resolve(Paths.get(filename).normalize())
                 // security check to prevent path traversal attack
                 if (filePath.parent != simulationDir) {
-                    cleanupFailedUpload(simulationDir)
-                    throw StorageException("Cannot store file outside uploads directory")
+                    delete(id.toString())
+                    throw StorageBadRequestException("Invalid file name: $filename")
                 }
                 val inputStream = file.inputStream
                 try {
                     Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING)
                 } catch (e: IOException) {
-                    cleanupFailedUpload(simulationDir)
+                    delete(id.toString())
                     throw StorageException("Cannot store simulation file", e)
                 }
             } else {
-                cleanupFailedUpload(simulationDir)
-                throw StorageException("file name is not present or null")
+                delete(id.toString())
+                throw StorageBadRequestException("file name is not present or null")
             }
         }
         return id
@@ -68,13 +68,17 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         TODO("Not yet implemented")
     }
 
-    override fun deleteAll() {
+    override fun delete(id: String) {
+        val simulationDir = uploadsDir.resolve(Paths.get(id.toString()).normalize()).toAbsolutePath().toFile()
+        simulationDir.listFiles()?.forEach { file -> file.delete() }
+        simulationDir.delete()
+    }
+
+    override fun listAll(): List<Resource> {
         TODO("Not yet implemented")
     }
 
-    private fun cleanupFailedUpload(simulationDir: Path): Boolean {
-        val dirFile = simulationDir.toFile()
-        dirFile.listFiles()?.forEach { file -> file.delete() }
-        return dirFile.delete()
+    override fun deleteAll() {
+        TODO("Not yet implemented")
     }
 }
