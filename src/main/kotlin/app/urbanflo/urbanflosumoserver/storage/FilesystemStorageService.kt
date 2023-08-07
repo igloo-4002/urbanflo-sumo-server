@@ -9,6 +9,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.UUID
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 @Service
 class FilesystemStorageService @Autowired constructor(properties: StorageProperties) : StorageService {
@@ -24,7 +26,14 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun store(files: Array<MultipartFile>): UUID {
-        TODO("Not yet implemented")
+        var id: UUID
+        var simulationDir: Path
+        do {
+            id = UUID.randomUUID()
+            simulationDir = uploadsDir.resolve(Paths.get(id.toString()).normalize().toAbsolutePath())
+        } while (simulationDir.exists())
+        // TODO: save each file
+        return id
     }
 
     override fun load(id: String): Map<String, Resource> {
