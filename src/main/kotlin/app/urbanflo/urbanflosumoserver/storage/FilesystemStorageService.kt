@@ -1,5 +1,6 @@
 package app.urbanflo.urbanflosumoserver.storage
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
@@ -8,9 +9,12 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.UUID
+import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
-import kotlin.io.path.isDirectory
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class FilesystemStorageService @Autowired constructor(properties: StorageProperties) : StorageService {
@@ -30,9 +34,30 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         var simulationDir: Path
         do {
             id = UUID.randomUUID()
-            simulationDir = uploadsDir.resolve(Paths.get(id.toString()).normalize().toAbsolutePath())
+            simulationDir = uploadsDir.resolve(Paths.get(id.toString()).normalize()).toAbsolutePath()
         } while (simulationDir.exists())
-        // TODO: save each file
+        logger.info {"Saving file at $simulationDir"}
+        simulationDir.createDirectory()
+        // save each file
+        logger
+        files.forEach { file ->
+            val filename = file.originalFilename
+            if (filename != null) {
+                val filePath = simulationDir.resolve(Paths.get(filename).normalize())
+                // security check to prevent path traversal attack
+                if (filePath.parent != simulationDir) {
+                    throw StorageException("Cannot store file outside uploads directory")
+                }
+                val inputStream = file.inputStream
+                try {
+                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING)
+                } catch (e: IOException) {
+                    throw StorageException("Cannot store simulation file", e)
+                }
+            } else {
+                throw StorageException("file name is not present or null")
+            }
+        }
         return id
     }
 

@@ -20,9 +20,10 @@ class SimulationController(private val storageService: StorageService) {
         return Flux.fromIterable(SimulationInstance(cfgPath))
     }
 
-    @PostMapping("/simulation/new")
+    @PostMapping("/simulation")
     @ResponseBody
     fun newSimulation(@RequestBody files: Array<MultipartFile>): NewSimulationResponse {
-        return NewSimulationResponse(UUID.randomUUID().toString())
+        val id = storageService.store(files)
+        return NewSimulationResponse(id.toString())
     }
 }
