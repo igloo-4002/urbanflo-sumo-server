@@ -23,7 +23,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }
     }
 
-    override fun store(file: MultipartFile): UUID {
+    override fun store(files: Array<MultipartFile>): UUID {
         TODO("Not yet implemented")
     }
 
