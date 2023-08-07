@@ -1,5 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
+import app.urbanflo.urbanflosumoserver.SimulationInstance
+import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -64,14 +66,18 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         return id
     }
 
-    override fun load(id: String): Map<String, Resource> {
+    override fun load(id: String): SimulationInstance {
         TODO("Not yet implemented")
     }
 
-    override fun delete(id: String) {
-        val simulationDir = uploadsDir.resolve(Paths.get(id.toString()).normalize()).toAbsolutePath().toFile()
+    override fun delete(id: String): Boolean {
+        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
-        simulationDir.delete()
+        return simulationDir.delete()
+    }
+
+    override fun info(id: String): SimulationInfo {
+        TODO("Not yet implemented")
     }
 
     override fun listAll(): List<Resource> {

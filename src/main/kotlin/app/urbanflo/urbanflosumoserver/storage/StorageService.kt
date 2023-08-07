@@ -1,5 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
+import app.urbanflo.urbanflosumoserver.SimulationInstance
+import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
 import org.springframework.core.io.Resource
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
@@ -7,9 +9,11 @@ import java.util.*
 interface StorageService {
     fun store(files: Array<MultipartFile>): UUID
 
-    fun load(id: String): Map<String, Resource>
+    fun load(id: String): SimulationInstance
 
-    fun delete(id: String)
+    fun delete(id: String): Boolean
+
+    fun info(id: String): SimulationInfo
 
     fun listAll(): List<Resource>
 
