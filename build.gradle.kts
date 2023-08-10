@@ -28,8 +28,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.2")
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
-    implementation("org.eclipse.sumo:libsumo:1.18.0-SNAPSHOT")
-    implementation("org.eclipse.sumo:libtraci:1.18.0-SNAPSHOT")
+    implementation("org.eclipse.sumo:libtraci:1.18.0")
     implementation("io.projectreactor:reactor-core:3.5.4")
 }
 
