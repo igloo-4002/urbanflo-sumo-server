@@ -2,6 +2,7 @@ package app.urbanflo.urbanflosumoserver
 
 import app.urbanflo.urbanflosumoserver.responses.NewSimulationResponse
 import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
+import app.urbanflo.urbanflosumoserver.responses.SumoNetwork
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
 import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageService
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.bind.annotation.CrossOrigin
 import reactor.core.publisher.Flux
@@ -31,10 +31,11 @@ class SimulationController(private val storageService: StorageService) {
     }
 
     @PostMapping("/simulation")
+
     @ResponseBody
-    fun newSimulation(@RequestBody files: Array<MultipartFile>): NewSimulationResponse {
+    fun newSimulation(@RequestBody network: SumoNetwork): NewSimulationResponse {
         try {
-            val id = storageService.store(files)
+            val id = storageService.store(network)
             return NewSimulationResponse(id.toString())
         } catch (e: StorageBadRequestException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)

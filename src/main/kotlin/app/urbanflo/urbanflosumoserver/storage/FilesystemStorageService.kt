@@ -1,17 +1,18 @@
 package app.urbanflo.urbanflosumoserver.storage
 
+import app.urbanflo.urbanflosumoserver.SimulationId
 import app.urbanflo.urbanflosumoserver.SimulationInstance
 import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
+import app.urbanflo.urbanflosumoserver.responses.SumoNetwork
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.util.UUID
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
@@ -20,7 +21,8 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class FilesystemStorageService @Autowired constructor(properties: StorageProperties) : StorageService {
-    private val uploadsDir: Path
+    private lateinit var uploadsDir: Path
+    private val xmlMapper = XmlMapper()
 
     init {
         this.uploadsDir = Paths.get(properties.location)
@@ -31,7 +33,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }
     }
 
-    override fun store(files: Array<MultipartFile>): UUID {
+    override fun store(network: SumoNetwork): SimulationId {
         var id: UUID
         var simulationDir: Path
         do {
@@ -40,34 +42,25 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         } while (simulationDir.exists())
         logger.info {"Saving file at $simulationDir"}
         simulationDir.createDirectory()
-        // save each file
-        logger
-        files.forEach { file ->
-            val filename = file.originalFilename
-            if (filename != null) {
-                val filePath = simulationDir.resolve(Paths.get(filename).normalize())
-                // security check to prevent path traversal attack
-                if (filePath.parent != simulationDir) {
-                    delete(id.toString())
-                    throw StorageBadRequestException("Invalid file name: $filename")
-                }
-                val inputStream = file.inputStream
-                try {
-                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING)
-                } catch (e: IOException) {
-                    delete(id.toString())
-                    throw StorageException("Cannot store simulation file", e)
-                }
-            } else {
-                delete(id.toString())
-                throw StorageBadRequestException("file name is not present or null")
-            }
-        }
+
+        // save network as XML
+        val nodeXml = xmlMapper.writeValueAsString(network.nodes.values.toList())
+        val edgXml = xmlMapper.writeValueAsString(network.edges.values.toList())
+        val nodeFileName = "$id-nod.xml"
+        val edgeFileName = "$id-edg.xml"
+        val nodeFilePath = simulationDir.resolve(nodeFileName).normalize().toAbsolutePath()
+        val edgeFilePath = simulationDir.resolve(edgeFileName).normalize().toAbsolutePath()
+        logger.info { "Saving nod file to $nodeFilePath" }
+        logger.info { "Saving edg file to $edgeFilePath" }
         return id
     }
 
+    override fun store(simulationId: SimulationId, network: SumoNetwork) {
+        TODO("modify existing simulation")
+    }
+
     override fun load(id: String): SimulationInstance {
-        TODO("Not yet implemented")
+        TODO("load simulation")
     }
 
     override fun delete(id: String) {
@@ -89,10 +82,10 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun listAll(): List<Resource> {
-        TODO("Not yet implemented")
+        TODO("list all simulations")
     }
 
     override fun deleteAll() {
-        TODO("Not yet implemented")
+        TODO("delete all simulations")
     }
 }

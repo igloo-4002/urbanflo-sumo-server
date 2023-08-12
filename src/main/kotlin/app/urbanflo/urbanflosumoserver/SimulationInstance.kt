@@ -6,6 +6,8 @@ import java.util.*
 
 typealias SimulationStep = Map<String, VehiclePosition>
 
+typealias SimulationId = UUID
+
 class SimulationInstance(val cfgPath: String = "demo.sumocfg") : Iterable<SimulationStep> {
     val port: Int = getNextAvailablePort()
     val label: String = UUID.randomUUID().toString()
