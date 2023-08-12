@@ -1,6 +1,9 @@
 # sumo demo dir
 #demo
 
+# uploads dir
+uploads/
+
 HELP.md
 .gradle
 build/

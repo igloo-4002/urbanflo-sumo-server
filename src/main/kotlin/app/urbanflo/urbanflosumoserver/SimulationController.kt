@@ -1,13 +1,5 @@
-package app.urbanflo.urbanflosumoserver.controller
+package app.urbanflo.urbanflosumoserver
 
-import app.urbanflo.urbanflosumoserver.SimulationInstance
-import app.urbanflo.urbanflosumoserver.model.InvalidSimulationMessageTypeException
-import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
-import jakarta.annotation.PreDestroy
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.slf4j.LoggerFactory
-import org.springframework.messaging.simp.SimpMessagingTemplate
-import reactor.core.Disposable
 import app.urbanflo.urbanflosumoserver.responses.NewSimulationResponse
 import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
@@ -15,6 +7,7 @@ import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageService
 import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundException
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,51 +17,17 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.bind.annotation.CrossOrigin
 import reactor.core.publisher.Flux
 
-
 @Controller
-class SimulationController(
-    private val simpMessagingTemplate: SimpMessagingTemplate,
-    private val storageService: StorageService
-) {
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(SimulationController::class.java)
-    }
-
-    private var simulationDisposable: Disposable? = null
-
-    @MessageMapping("/simulation-socket") // this is to receive messages
-    fun simulationSocket(status: SimulationMessageType) { // status expected as subscribe or unsubscribe
-        // listen for subscribe message here, then start the simulation
-
-        when (status) {
-            SimulationMessageType.SUBSCRIBE -> {
-                logger.info("subbing to the simulation")
-                // receive the subscribe message here, add start the simulation and keep sending data
-                // stop simulation when you receive unsubscribe
-                val cfgPath = System.getenv("SUMOCFG_PATH") ?: "demo/demo.sumocfg"
-                val flux = Flux.fromIterable(SimulationInstance(cfgPath))
-                flux.subscribe { simulationStep ->
-                    logger.info("sending this to react {}", simulationStep)
-                    simpMessagingTemplate.convertAndSend("/topic/simulation-socket", simulationStep)
-                }
-            }
-
-            SimulationMessageType.UNSUBSCRIBE -> {
-                logger.info("unsubbing from the simulation")
-                simulationDisposable?.dispose()
-                simulationDisposable = null
-            }
-
-            else -> throw InvalidSimulationMessageTypeException(status.name)
-        }
-    }
-
-    @PreDestroy
-    fun cleanup() {
-        simulationDisposable?.dispose()
+class SimulationController(private val storageService: StorageService) {
+    @GetMapping("/start-simulation", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @CrossOrigin(origins = ["http://localhost:5173"])
+    @ResponseBody
+    fun startSimulation(): Flux<SimulationStep> {
+        val cfgPath = System.getenv("SUMOCFG_PATH") ?: "demo/demo.sumocfg"
+        return Flux.fromIterable(SimulationInstance(cfgPath))
     }
 
     @PostMapping("/simulation")
@@ -98,7 +57,7 @@ class SimulationController(
     @ResponseBody
     fun getSimulationInfo(@PathVariable id: String): SimulationInfo {
         try {
-            return storageService.info(id.trim())
+        return storageService.info(id.trim())
         } catch (e: StorageSimulationNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message, e)
         }

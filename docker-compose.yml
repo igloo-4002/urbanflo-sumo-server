@@ -8,4 +8,8 @@ services:
     command: java -jar -Djava.library.path=/opt/sumo/bin /opt/urbanflo-sumo-server/urbanflo-sumo-server.jar
     ports:
       - 8080:8080
+    volumes:
+      - uploads:/opt/urbanflo-sumo-server/uploads
     restart: unless-stopped
+volumes:
+  uploads:
