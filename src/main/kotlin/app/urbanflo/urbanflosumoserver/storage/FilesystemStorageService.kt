@@ -4,6 +4,7 @@ import app.urbanflo.urbanflosumoserver.SimulationId
 import app.urbanflo.urbanflosumoserver.SimulationInstance
 import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
 import app.urbanflo.urbanflosumoserver.responses.SumoNetwork
+import app.urbanflo.urbanflosumoserver.responses.SumoNodes
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,14 +45,23 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         simulationDir.createDirectory()
 
         // save network as XML
-        val nodeXml = xmlMapper.writeValueAsString(network.nodes.values.toList())
-        val edgXml = xmlMapper.writeValueAsString(network.edges.values.toList())
+        val nodeXml = xmlMapper.writeValueAsString(network.nodesXml())
+        val edgXml = xmlMapper.writeValueAsString(network.edgesXml())
         val nodeFileName = "$id-nod.xml"
         val edgeFileName = "$id-edg.xml"
         val nodeFilePath = simulationDir.resolve(nodeFileName).normalize().toAbsolutePath()
         val edgeFilePath = simulationDir.resolve(edgeFileName).normalize().toAbsolutePath()
-        logger.info { "Saving nod file to $nodeFilePath" }
-        logger.info { "Saving edg file to $edgeFilePath" }
+        val nodeFile = nodeFilePath.toFile()
+        val edgeFile = edgeFilePath.toFile()
+        try {
+            logger.info { "Saving nod file to $nodeFilePath" }
+            nodeFile.writeText(nodeXml)
+            logger.info { "Saving edg file to $edgeFilePath" }
+            edgeFile.writeText(edgXml)
+        } catch (e: IOException) {
+            delete(id.toString())
+            throw StorageException("Cannot save files", e)
+        }
         return id
     }
 
