@@ -28,9 +28,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     implementation("io.github.oshai:kotlin-logging-jvm:4.0.0-beta-29")
-    implementation("org.eclipse.sumo:libsumo:1.18.0-SNAPSHOT")
-    implementation("org.eclipse.sumo:libtraci:1.18.0-SNAPSHOT")
+    implementation("org.eclipse.sumo:libsumo:1.18.0")
+    implementation("org.eclipse.sumo:libtraci:1.18.0")
     implementation("io.projectreactor:reactor-core:3.5.4")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("com.google.code.gson:gson:2.10.1")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
