@@ -2,9 +2,10 @@ package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.SimulationId
 import app.urbanflo.urbanflosumoserver.SimulationInstance
+import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
+import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
 import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
 import app.urbanflo.urbanflosumoserver.responses.SumoNetwork
-import app.urbanflo.urbanflosumoserver.responses.SumoNodes
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +15,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.UUID
+import java.util.*
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
@@ -61,6 +62,14 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         } catch (e: IOException) {
             delete(id.toString())
             throw StorageException("Cannot save files", e)
+        }
+
+        // run netconvert
+        try {
+            runNetconvert(id, simulationDir, nodeFileName, edgeFileName)
+        } catch (e: NetconvertException) {
+            delete(id.toString())
+            throw StorageException("Cannot convert edge and node files", e)
         }
         return id
     }
