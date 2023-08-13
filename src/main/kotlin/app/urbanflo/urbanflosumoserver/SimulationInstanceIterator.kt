@@ -16,6 +16,9 @@ class SimulationInstanceIterator
     Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
 
+    @Volatile
+    private var shouldStop = false
+
     init {
         logger.info { "Connecting to SUMO with port ${simulationInstance.port} and label ${simulationInstance.label}" }
         Simulation.start(
@@ -27,14 +30,18 @@ class SimulationInstanceIterator
     }
 
     override fun hasNext(): Boolean {
-        Simulation.switchConnection(simulationInstance.label)
-        return if (Simulation.getMinExpectedNumber() > 0) {
-            true
-        } else {
-            logger.info { "Closing connection with label: ${Simulation.getLabel()}" }
-            Simulation.close()
-            false
+        if (shouldStop) {
+            closeSimulation()
+            return false
         }
+        Simulation.switchConnection(simulationInstance.label)
+
+        val expected = Simulation.getMinExpectedNumber() > 0
+        if (!expected) {
+            closeSimulation()
+        }
+
+        return expected
     }
 
     override fun next(): SimulationStep {
@@ -67,5 +74,15 @@ class SimulationInstanceIterator
             newColor
         }
         return color
+    }
+
+    fun stopSimulation() {
+        logger.info { "stopping the simulation from the simulation instance iterator" }
+        shouldStop = true
+    }
+
+    private fun closeSimulation() {
+        logger.info { "Closing connection with label: ${Simulation.getLabel()}" }
+        Simulation.close()
     }
 }
