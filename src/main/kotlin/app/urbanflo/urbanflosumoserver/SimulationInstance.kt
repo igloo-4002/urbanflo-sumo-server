@@ -1,12 +1,15 @@
 package app.urbanflo.urbanflosumoserver
 
+import app.urbanflo.urbanflosumoserver.model.VehicleData
 import java.net.ServerSocket
 import java.util.*
 
 
-typealias SimulationStep = Map<String, VehiclePosition>
+typealias SimulationStep = Map<String, VehicleData>
 
-class SimulationInstance(val cfgPath: String = "demo.sumocfg") : Iterable<SimulationStep> {
+class SimulationInstance(
+    val cfgPath: String = "demo.sumocfg",
+) : Iterable<SimulationStep> {
     val port: Int = getNextAvailablePort()
     val label: String = UUID.randomUUID().toString()
 

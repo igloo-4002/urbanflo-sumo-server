@@ -30,6 +30,10 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
     implementation("org.eclipse.sumo:libtraci:1.18.0")
     implementation("io.projectreactor:reactor-core:3.5.4")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("com.google.code.gson:gson:2.10.1")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
