@@ -1,8 +1,6 @@
 services:
   sumo-server:
-    # Change `:develop` to `:pr-XX` to test a PR
-    #    image: ghcr.io/igloo-4002/urbanflo-sumo-server:develop
-    # Uncomment the two lines below to build locally
+        image: ghcr.io/igloo-4002/urbanflo-sumo-server:develop
     build:
       context: .
     command: java -jar -Djava.library.path=/opt/sumo/bin /opt/urbanflo-sumo-server/urbanflo-sumo-server.jar
