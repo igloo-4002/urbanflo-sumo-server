@@ -7,7 +7,6 @@ import app.urbanflo.urbanflosumoserver.model.SimulationMessageRequest
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
 import jakarta.annotation.PreDestroy
 import org.springframework.messaging.handler.annotation.MessageMapping
-import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import reactor.core.Disposable
 import app.urbanflo.urbanflosumoserver.responses.NewSimulationResponse
@@ -16,6 +15,7 @@ import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
 import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageService
 import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundException
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,17 +28,13 @@ import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
 
+private val logger = KotlinLogging.logger {}
 
 @Controller
 class SimulationController(
     private val simpMessagingTemplate: SimpMessagingTemplate,
     private val storageService: StorageService
 ) {
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(SimulationController::class.java)
-    }
-
     private var simulationDisposable: Disposable? = null
     private var simulationInstanceIterator: SimulationInstanceIterator? = null
 
@@ -64,7 +60,7 @@ class SimulationController(
                 simulationDisposable = flux.doOnTerminate { simulationIterator.stopSimulation() }
                     .doOnCancel { simulationIterator.stopSimulation() }
                     .doOnError { e ->
-                        logger.error("Error occurred during simulation", e)
+                        logger.error(e) { "Error occurred during simulation" }
                         simpMessagingTemplate.convertAndSend(
                             "/topic/simulation-data",
                             mapOf("error" to "Error occurred during simulation: ${e.message}")
