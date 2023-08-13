@@ -1,5 +1,6 @@
 package app.urbanflo.urbanflosumoserver
 
+import app.urbanflo.urbanflosumoserver.model.SimulationException
 import app.urbanflo.urbanflosumoserver.model.VehicleData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.eclipse.sumo.libtraci.Simulation
@@ -45,25 +46,33 @@ class SimulationInstanceIterator
     }
 
     override fun next(): SimulationStep {
-        Simulation.switchConnection(simulationInstance.label)
-        Simulation.step()
-        val pairs = Vehicle.getIDList().map { vehicleId ->
-            val position = Vehicle.getPosition(vehicleId)
-            val acceleration = Vehicle.getAcceleration(vehicleId)
-            val speed = Vehicle.getSpeed(vehicleId)
-            val color = getVehicleColor(vehicleId)
-            val laneIndex = Vehicle.getLaneIndex(vehicleId)
-            val laneId = Vehicle.getLaneID(vehicleId)
-            vehicleId to VehicleData(
-                vehicleId,
-                Pair(position.x, position.y),
-                color,
-                acceleration,
-                speed,
-                Pair(laneIndex, laneId)
-            )
+        try {
+            Simulation.switchConnection(simulationInstance.label)
+            Simulation.step()
+
+            val pairs = Vehicle.getIDList().map { vehicleId ->
+                val position = Vehicle.getPosition(vehicleId)
+                val acceleration = Vehicle.getAcceleration(vehicleId)
+                val speed = Vehicle.getSpeed(vehicleId)
+                // TODO: sumo has color functionality built in, check how that works
+                val color = getVehicleColor(vehicleId)
+                val laneIndex = Vehicle.getLaneIndex(vehicleId)
+                val laneId = Vehicle.getLaneID(vehicleId)
+                vehicleId to VehicleData(
+                    vehicleId,
+                    Pair(position.x, position.y),
+                    color,
+                    acceleration,
+                    speed,
+                    Pair(laneIndex, laneId)
+                )
+            }
+
+            return pairs.toMap()
+        } catch (e: Exception) {
+            logger.error(e) { "Error in advancing simulation step" }
+            throw SimulationException("Error in advancing simulation step: ${e.message}")
         }
-        return pairs.toMap()
     }
 
     private fun getVehicleColor(vehicleId: String): String {
@@ -77,7 +86,6 @@ class SimulationInstanceIterator
     }
 
     fun stopSimulation() {
-        logger.info { "stopping the simulation from the simulation instance iterator" }
         shouldStop = true
     }
 
