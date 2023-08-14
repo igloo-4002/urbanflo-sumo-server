@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.Header
 import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor
+import org.springframework.messaging.simp.SimpMessageType
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -30,18 +32,18 @@ class SimulationController(
     private val storageService: StorageService,
     private val simpMessagingTemplate: SimpMessagingTemplate
 ) {
-    private var instances: MutableMap<SimulationId, SimulationInstance> = mutableMapOf()
+    private var instances: MutableMap<String, SimulationInstance> = mutableMapOf()
 
     @MessageMapping("/simulation/{id}")
     fun simulationSocket(@DestinationVariable id: SimulationId, request: SimulationMessageRequest, @Header("simpSessionId") sessionId: String) {
         val idTrim = id.trim()
         when (request.status) {
             SimulationMessageType.START -> {
-                logger.info { "Simulation $idTrim started" }
+                logger.info { "Simulation $idTrim with session ID $sessionId started" }
                 try {
-                    val simulationInstance = instances[idTrim] ?: run {
+                    val simulationInstance = instances[sessionId] ?: run {
                         val newSimulation = storageService.load(idTrim, sessionId)
-                        instances[idTrim] = newSimulation
+                        instances[sessionId] = newSimulation
                         newSimulation
                     }
                     val flux = Flux.create<SimulationStep> { sink ->
@@ -72,8 +74,8 @@ class SimulationController(
             }
 
             SimulationMessageType.STOP -> {
-                logger.info { "Simulation $id stopped" }
-                instances.remove(idTrim)
+                logger.info { "Simulation $id with session ID $sessionId stopped" }
+                instances.remove(sessionId)
             }
         }
     }
