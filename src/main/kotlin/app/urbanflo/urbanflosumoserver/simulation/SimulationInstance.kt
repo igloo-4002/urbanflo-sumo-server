@@ -7,6 +7,7 @@ import org.eclipse.sumo.libtraci.Simulation
 import org.eclipse.sumo.libtraci.StringVector
 import org.eclipse.sumo.libtraci.Vehicle
 import reactor.core.Disposable
+import reactor.core.publisher.Flux
 import java.net.ServerSocket
 import java.nio.file.Path
 
@@ -24,7 +25,12 @@ class SimulationInstance(
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
     private val port: Int = getNextAvailablePort()
-    var disposable: Disposable? = null
+    var flux = Flux.create<SimulationStep> { sink ->
+        while (hasNext()) {
+            sink.next(next())
+        }
+        sink.complete()
+    }
     @Volatile
     private var shouldStop = false
 
@@ -44,7 +50,7 @@ class SimulationInstance(
             closeSimulation()
             return false
         }
-//        logger.info { label }
+        logger.info { label }
         Simulation.switchConnection(label)
 
         val expected = Simulation.getMinExpectedNumber() > 0

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
+import reactor.core.Disposable
 import reactor.core.publisher.Flux
 
 private val logger = KotlinLogging.logger {}
@@ -33,6 +34,7 @@ class SimulationController(
     private val simpMessagingTemplate: SimpMessagingTemplate
 ) {
     private var instances: MutableMap<String, SimulationInstance> = mutableMapOf()
+    private var disposables: MutableMap<String, Disposable> = mutableMapOf()
 
     @MessageMapping("/simulation/{id}")
     fun simulationSocket(@DestinationVariable id: SimulationId, request: SimulationMessageRequest, @Header("simpSessionId") sessionId: String) {
@@ -46,13 +48,7 @@ class SimulationController(
                         instances[sessionId] = newSimulation
                         newSimulation
                     }
-                    val flux = Flux.create<SimulationStep> { sink ->
-                        while (simulationInstance.hasNext()) {
-                            sink.next(simulationInstance.next())
-                        }
-                        sink.complete()
-                    }
-                    simulationInstance.disposable = flux.doOnTerminate { simulationInstance.stopSimulation() }
+                    disposables[sessionId] = simulationInstance.flux.doOnTerminate { simulationInstance.stopSimulation() }
                         .doOnCancel { simulationInstance.stopSimulation() }
                         .doOnError { e ->
                             logger.error(e) { "Error occurred during simulation $idTrim" }
@@ -75,6 +71,8 @@ class SimulationController(
 
             SimulationMessageType.STOP -> {
                 logger.info { "Simulation $id with session ID $sessionId stopped" }
+                disposables[sessionId]?.dispose()
+                disposables.remove(sessionId)
                 instances.remove(sessionId)
             }
         }
