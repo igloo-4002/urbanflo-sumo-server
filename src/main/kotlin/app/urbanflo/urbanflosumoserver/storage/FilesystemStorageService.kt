@@ -1,6 +1,6 @@
 package app.urbanflo.urbanflosumoserver.storage
 
-import app.urbanflo.urbanflosumoserver.SimulationInstance
+import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class FilesystemStorageService @Autowired constructor(properties: StorageProperties) : StorageService {
-    private val uploadsDir: Path
+    private lateinit var uploadsDir: Path
 
     init {
         this.uploadsDir = Paths.get(properties.location)

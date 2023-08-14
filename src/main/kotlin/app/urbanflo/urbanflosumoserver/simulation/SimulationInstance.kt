@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver
+package app.urbanflo.urbanflosumoserver.simulation
 
 import app.urbanflo.urbanflosumoserver.model.SimulationException
 import app.urbanflo.urbanflosumoserver.model.VehicleData
@@ -6,27 +6,34 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.eclipse.sumo.libtraci.Simulation
 import org.eclipse.sumo.libtraci.StringVector
 import org.eclipse.sumo.libtraci.Vehicle
+import java.net.ServerSocket
+import java.nio.file.Path
 
-private val logger = KotlinLogging.logger {}
+
+typealias SimulationStep = Map<String, VehicleData>
+typealias SimulationId = String
 
 // taken from traci python code
 private const val DEFAULT_NUM_RETRIES = 60
+private val logger = KotlinLogging.logger {}
 
-class SimulationInstanceIterator
-    (private val simulationInstance: SimulationInstance) :
-    Iterator<SimulationStep> {
+class SimulationInstance(
+    val label: SimulationId,
+    val simulationDir: Path
+) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
-
+    private val port: Int = getNextAvailablePort()
     @Volatile
     private var shouldStop = false
 
+
     init {
-        logger.info { "Connecting to SUMO with port ${simulationInstance.port} and label ${simulationInstance.label}" }
+        logger.info { "Connecting to SUMO with port ${port} and label ${label}" }
         Simulation.start(
-            StringVector(arrayOf("sumo", "-c", simulationInstance.cfgPath)),
-            simulationInstance.port,
+            StringVector(arrayOf("sumo", "-c", simulationDir.resolve("$label.sumocfg").normalize().toAbsolutePath().toString())),
+            port,
             DEFAULT_NUM_RETRIES,
-            simulationInstance.label
+            label
         )
     }
 
@@ -35,7 +42,7 @@ class SimulationInstanceIterator
             closeSimulation()
             return false
         }
-        Simulation.switchConnection(simulationInstance.label)
+        Simulation.switchConnection(label)
 
         val expected = Simulation.getMinExpectedNumber() > 0
         if (!expected) {
@@ -47,7 +54,7 @@ class SimulationInstanceIterator
 
     override fun next(): SimulationStep {
         try {
-            Simulation.switchConnection(simulationInstance.label)
+            Simulation.switchConnection(label)
             Simulation.step()
 
             val pairs = Vehicle.getIDList().map { vehicleId ->
@@ -92,5 +99,15 @@ class SimulationInstanceIterator
     private fun closeSimulation() {
         logger.info { "Closing connection with label: ${Simulation.getLabel()}" }
         Simulation.close()
+    }
+
+    companion object {
+        private fun getNextAvailablePort(): Int {
+            // https://stackoverflow.com/questions/2675362/how-to-find-an-available-port
+            val socket = ServerSocket(0)
+            val socketPort = socket.localPort
+            socket.close()
+            return socketPort
+        }
     }
 }

@@ -1,6 +1,6 @@
 package app.urbanflo.urbanflosumoserver.storage
 
-import app.urbanflo.urbanflosumoserver.SimulationInstance
+import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import org.springframework.core.io.Resource
 import org.springframework.web.multipart.MultipartFile
