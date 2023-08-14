@@ -67,7 +67,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun load(id: String): SimulationInstance {
-        TODO("Not yet implemented")
+        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize())
+        val cfgPath = simulationDir.resolve("$id.sumocfg").normalize().toAbsolutePath()
+        if (simulationDir.exists()) {
+            return SimulationInstance(id, cfgPath)
+        } else {
+            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+        }
     }
 
     override fun delete(id: String) {

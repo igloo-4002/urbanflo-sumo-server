@@ -19,7 +19,7 @@ private val logger = KotlinLogging.logger {}
 
 class SimulationInstance(
     val label: SimulationId,
-    val simulationDir: Path
+    val cfgPath: Path
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
     private val port: Int = getNextAvailablePort()
@@ -30,7 +30,7 @@ class SimulationInstance(
     init {
         logger.info { "Connecting to SUMO with port ${port} and label ${label}" }
         Simulation.start(
-            StringVector(arrayOf("sumo", "-c", simulationDir.resolve("$label.sumocfg").normalize().toAbsolutePath().toString())),
+            StringVector(arrayOf("sumo", "-c", cfgPath.toString())),
             port,
             DEFAULT_NUM_RETRIES,
             label
