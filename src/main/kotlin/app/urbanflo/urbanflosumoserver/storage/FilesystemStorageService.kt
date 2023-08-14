@@ -4,8 +4,8 @@ import app.urbanflo.urbanflosumoserver.SimulationId
 import app.urbanflo.urbanflosumoserver.SimulationInstance
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
-import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
-import app.urbanflo.urbanflosumoserver.responses.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.SimulationInfo
+import app.urbanflo.urbanflosumoserver.model.SumoNetwork
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired

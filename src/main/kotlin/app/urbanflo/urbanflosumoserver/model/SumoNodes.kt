@@ -1,12 +1,12 @@
-package app.urbanflo.urbanflosumoserver.responses
+package app.urbanflo.urbanflosumoserver.model
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
-@JacksonXmlRootElement(localName = "edges")
-data class SumoEdges(
-    @field:JacksonXmlProperty(localName = "edge")
+@JacksonXmlRootElement(localName = "nodes")
+data class SumoNodes(
+    @field:JacksonXmlProperty(localName = "node")
     @field:JacksonXmlElementWrapper(useWrapping = false)
-    val edges: List<SumoEdge>
+    val nodes: List<SumoNode>
 )

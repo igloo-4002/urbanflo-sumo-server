@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver.responses
+package app.urbanflo.urbanflosumoserver.model
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement

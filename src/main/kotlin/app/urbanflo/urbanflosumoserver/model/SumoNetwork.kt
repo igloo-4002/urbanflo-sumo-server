@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver.responses
+package app.urbanflo.urbanflosumoserver.model
 
 data class SumoNetwork(
     val nodes: Map<SumoEntityId, SumoNode>,
