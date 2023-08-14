@@ -14,6 +14,7 @@ import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundExceptio
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.messaging.handler.annotation.DestinationVariable
+import org.springframework.messaging.handler.annotation.Header
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
@@ -32,14 +33,14 @@ class SimulationController(
     private var instances: MutableMap<SimulationId, SimulationInstance> = mutableMapOf()
 
     @MessageMapping("/simulation/{id}")
-    fun simulationSocket(@DestinationVariable id: SimulationId, request: SimulationMessageRequest) {
+    fun simulationSocket(@DestinationVariable id: SimulationId, request: SimulationMessageRequest, @Header("simpSessionId") sessionId: String) {
         val idTrim = id.trim()
         when (request.status) {
             SimulationMessageType.START -> {
                 logger.info { "Simulation $idTrim started" }
                 try {
                     val simulationInstance = instances[idTrim] ?: run {
-                        val newSimulation = storageService.load(idTrim)
+                        val newSimulation = storageService.load(idTrim, sessionId)
                         instances[idTrim] = newSimulation
                         newSimulation
                     }

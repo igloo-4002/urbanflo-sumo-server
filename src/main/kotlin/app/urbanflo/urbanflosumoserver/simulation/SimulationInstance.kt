@@ -44,6 +44,7 @@ class SimulationInstance(
             closeSimulation()
             return false
         }
+        logger.info { label }
         Simulation.switchConnection(label)
 
         val expected = Simulation.getMinExpectedNumber() > 0
