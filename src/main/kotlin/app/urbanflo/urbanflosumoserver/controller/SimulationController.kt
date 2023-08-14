@@ -50,7 +50,7 @@ class SimulationController(
                         .doOnError { e ->
                             logger.error(e) { "Error occurred during simulation $idTrim" }
                             simpMessagingTemplate.convertAndSend(
-                                "/topic/simulation/${idTrim}",
+                                "/topic/simulation/${idTrim}/error",
                                 mapOf("error" to "Error occurred during simulation: ${e.message}")
                             )
                         }
@@ -62,7 +62,7 @@ class SimulationController(
                 } catch (e: StorageSimulationNotFoundException) {
                     logger.error(e) { "Error occurred during simulation $idTrim" }
                     simpMessagingTemplate.convertAndSend(
-                        "/topic/simulation/${idTrim}",
+                        "/topic/simulation/${idTrim}/error",
                         mapOf("error" to "Error occurred during simulation: ${e.message}")
                     )
                 }
