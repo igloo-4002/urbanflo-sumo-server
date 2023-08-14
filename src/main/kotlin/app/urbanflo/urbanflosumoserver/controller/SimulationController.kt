@@ -38,14 +38,18 @@ class SimulationController(
             SimulationMessageType.SUBSCRIBE -> {
                 logger.info { "Simulation $idTrim started" }
                 try {
-                    val simulationInstance = storageService.load(idTrim)
+                    val simulationInstance = instances[idTrim] ?: run {
+                        val newSimulation = storageService.load(idTrim)
+                        instances[idTrim] = newSimulation
+                        newSimulation
+                    }
                     val flux = Flux.create<SimulationStep> { sink ->
                         while (simulationInstance.hasNext()) {
                             sink.next(simulationInstance.next())
                         }
                         sink.complete()
                     }
-                    val disposable = flux.doOnTerminate { simulationInstance.stopSimulation() }
+                    simulationInstance.disposable = flux.doOnTerminate { simulationInstance.stopSimulation() }
                         .doOnCancel { simulationInstance.stopSimulation() }
                         .doOnError { e ->
                             logger.error(e) { "Error occurred during simulation $idTrim" }
@@ -57,8 +61,6 @@ class SimulationController(
                         .subscribe { simulationStep ->
                             simpMessagingTemplate.convertAndSend("/topic/simulation/${idTrim}", simulationStep)
                         }
-                    simulationInstance.disposable = disposable
-                    instances[idTrim] = simulationInstance
                 } catch (e: StorageSimulationNotFoundException) {
                     logger.error(e) { "Error occurred during simulation $idTrim" }
                     simpMessagingTemplate.convertAndSend(
@@ -70,9 +72,7 @@ class SimulationController(
 
             SimulationMessageType.UNSUBSCRIBE -> {
                 logger.info { "Simulation $id stopped" }
-                val instance = instances[idTrim]
-                instance?.disposable?.dispose()
-                instance?.disposable = null
+                instances.remove(idTrim)
             }
         }
     }
