@@ -1,7 +1,7 @@
 package app.urbanflo.urbanflosumoserver.controller
 
-import app.urbanflo.urbanflosumoserver.responses.NewSimulationResponse
-import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
+import app.urbanflo.urbanflosumoserver.model.NewSimulationResponse
+import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
 import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageService

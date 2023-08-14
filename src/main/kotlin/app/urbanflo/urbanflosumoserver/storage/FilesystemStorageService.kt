@@ -1,7 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.SimulationInstance
-import app.urbanflo.urbanflosumoserver.responses.SimulationInfo
+import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
