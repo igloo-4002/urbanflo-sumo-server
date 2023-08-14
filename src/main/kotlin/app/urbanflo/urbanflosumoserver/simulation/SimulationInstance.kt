@@ -6,6 +6,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.eclipse.sumo.libtraci.Simulation
 import org.eclipse.sumo.libtraci.StringVector
 import org.eclipse.sumo.libtraci.Vehicle
+import reactor.core.Disposable
 import java.net.ServerSocket
 import java.nio.file.Path
 
@@ -19,10 +20,11 @@ private val logger = KotlinLogging.logger {}
 
 class SimulationInstance(
     val label: SimulationId,
-    val cfgPath: Path
+    cfgPath: Path
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
     private val port: Int = getNextAvailablePort()
+    var disposable: Disposable? = null
     @Volatile
     private var shouldStop = false
 
