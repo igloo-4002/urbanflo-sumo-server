@@ -35,7 +35,7 @@ class SimulationController(
     fun simulationSocket(@DestinationVariable id: SimulationId, request: SimulationMessageRequest) {
         val idTrim = id.trim()
         when (request.status) {
-            SimulationMessageType.SUBSCRIBE -> {
+            SimulationMessageType.START -> {
                 logger.info { "Simulation $idTrim started" }
                 try {
                     val simulationInstance = instances[idTrim] ?: run {
@@ -70,7 +70,7 @@ class SimulationController(
                 }
             }
 
-            SimulationMessageType.UNSUBSCRIBE -> {
+            SimulationMessageType.STOP -> {
                 logger.info { "Simulation $id stopped" }
                 instances.remove(idTrim)
             }
