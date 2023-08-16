@@ -17,7 +17,7 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         // this path should be in the main socket url
-        registry.addEndpoint("/simulation-socket").setAllowedOrigins("*")
-        registry.addEndpoint("/simulation-socket").setAllowedOrigins("*").withSockJS()
+        registry.addEndpoint("/simulation-socket").setAllowedOriginPatterns("*")
+        registry.addEndpoint("/simulation-socket").setAllowedOriginPatterns("*").withSockJS()
     }
 }

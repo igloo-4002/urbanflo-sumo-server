@@ -1,7 +1,8 @@
 package app.urbanflo.urbanflosumoserver.storage
 
-import app.urbanflo.urbanflosumoserver.SimulationInstance
+import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
+import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -20,7 +21,7 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class FilesystemStorageService @Autowired constructor(properties: StorageProperties) : StorageService {
-    private val uploadsDir: Path
+    private lateinit var uploadsDir: Path
 
     init {
         this.uploadsDir = Paths.get(properties.location)
@@ -66,11 +67,17 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         return id
     }
 
-    override fun load(id: String): SimulationInstance {
-        TODO("Not yet implemented")
+    override fun load(id: SimulationId, label: String): SimulationInstance {
+        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize())
+        val cfgPath = simulationDir.resolve("$id.sumocfg").normalize().toAbsolutePath()
+        if (simulationDir.exists()) {
+            return SimulationInstance(label, cfgPath)
+        } else {
+            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+        }
     }
 
-    override fun delete(id: String) {
+    override fun delete(id: SimulationId) {
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
         if (!simulationDir.delete()) {
@@ -78,7 +85,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }
     }
 
-    override fun info(id: String): SimulationInfo {
+    override fun info(id: SimulationId): SimulationInfo {
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
         if (simulationDir.exists()) {
             // TODO: fetch simulation metadata
