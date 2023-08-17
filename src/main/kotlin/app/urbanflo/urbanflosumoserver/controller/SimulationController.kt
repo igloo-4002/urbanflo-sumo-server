@@ -6,7 +6,6 @@ import app.urbanflo.urbanflosumoserver.model.SimulationMessageRequest
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
-import app.urbanflo.urbanflosumoserver.simulation.SimulationStep
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
 import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageService
@@ -16,15 +15,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.Header
 import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor
-import org.springframework.messaging.simp.SimpMessageType
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.Disposable
-import reactor.core.publisher.Flux
 
 private val logger = KotlinLogging.logger {}
 
@@ -37,7 +33,11 @@ class SimulationController(
     private var disposables: MutableMap<String, Disposable> = mutableMapOf()
 
     @MessageMapping("/simulation/{id}")
-    fun simulationSocket(@DestinationVariable id: SimulationId, request: SimulationMessageRequest, @Header("simpSessionId") sessionId: String) {
+    fun simulationSocket(
+        @DestinationVariable id: SimulationId,
+        request: SimulationMessageRequest,
+        @Header("simpSessionId") sessionId: String
+    ) {
         val idTrim = id.trim()
         when (request.status) {
             SimulationMessageType.START -> {
@@ -48,18 +48,19 @@ class SimulationController(
                         instances[sessionId] = newSimulation
                         newSimulation
                     }
-                    disposables[sessionId] = simulationInstance.flux.doOnTerminate { simulationInstance.stopSimulation() }
-                        .doOnCancel { simulationInstance.stopSimulation() }
-                        .doOnError { e ->
-                            logger.error(e) { "Error occurred during simulation $idTrim" }
-                            simpMessagingTemplate.convertAndSend(
-                                "/topic/simulation/${idTrim}/error",
-                                mapOf("error" to "Error occurred during simulation: ${e.message}")
-                            )
-                        }
-                        .subscribe { simulationStep ->
-                            simpMessagingTemplate.convertAndSend("/topic/simulation/${idTrim}", simulationStep)
-                        }
+                    disposables[sessionId] =
+                        simulationInstance.flux.doOnTerminate { simulationInstance.stopSimulation() }
+                            .doOnCancel { simulationInstance.stopSimulation() }
+                            .doOnError { e ->
+                                logger.error(e) { "Error occurred during simulation $idTrim" }
+                                simpMessagingTemplate.convertAndSend(
+                                    "/topic/simulation/${idTrim}/error",
+                                    mapOf("error" to "Error occurred during simulation: ${e.message}")
+                                )
+                            }
+                            .subscribe { simulationStep ->
+                                simpMessagingTemplate.convertAndSend("/topic/simulation/${idTrim}", simulationStep)
+                            }
                 } catch (e: StorageSimulationNotFoundException) {
                     logger.error(e) { "Error occurred during simulation $idTrim" }
                     simpMessagingTemplate.convertAndSend(
@@ -71,6 +72,7 @@ class SimulationController(
 
             SimulationMessageType.STOP -> {
                 logger.info { "Simulation $id with session ID $sessionId stopped" }
+                instances[sessionId]?.stopSimulation()
                 disposables[sessionId]?.dispose()
                 disposables.remove(sessionId)
                 instances.remove(sessionId)
