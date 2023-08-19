@@ -42,7 +42,6 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             id = UUID.randomUUID().toString()
             simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
         } while (simulationDir.exists())
-        logger.info { "Saving file at $simulationDir" }
         simulationDir.createDirectory()
 
         // save network as XML
@@ -50,22 +49,25 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val nodPath = nod.filePath(id, simulationDir)
         val edg = network.edgesXml()
         val edgPath = edg.filePath(id, simulationDir)
+        val con = network.connectionsXml()
+        val conPath = con.filePath(id, simulationDir)
         try {
-            logger.info { "Saving nod file to $nodPath" }
             nodPath.toFile().writeText(xmlMapper.writeValueAsString(nod))
-            logger.info { "Saving edg file to $edgPath" }
             edgPath.toFile().writeText(xmlMapper.writeValueAsString(edg))
+            conPath.toFile().writeText(xmlMapper.writeValueAsString(con))
         } catch (e: IOException) {
+            logger.error(e) { "Cannot save files" }
             delete(id) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
 
         // run netconvert
         try {
-            runNetconvert(id, simulationDir, nodPath, edgPath)
+            runNetconvert(id, simulationDir, nodPath, edgPath, conPath)
         } catch (e: NetconvertException) {
+            logger.error(e) { "Cannot convert XML files" }
             delete(id)
-            throw StorageException("Cannot convert edge and node files", e)
+            throw StorageException("Cannot convert XML files", e)
         }
         val netPath = simulationDir.resolve("$id.net.xml").normalize().toAbsolutePath()
         assert(netPath.exists())
