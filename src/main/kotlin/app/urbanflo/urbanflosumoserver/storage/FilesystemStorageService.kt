@@ -1,7 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
-import app.urbanflo.urbanflosumoserver.model.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId

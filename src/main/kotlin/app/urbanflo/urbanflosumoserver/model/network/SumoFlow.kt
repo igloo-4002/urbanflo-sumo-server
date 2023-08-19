@@ -1,20 +1,18 @@
-package app.urbanflo.urbanflosumoserver.model
+package app.urbanflo.urbanflosumoserver.model.network
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
-@JacksonXmlRootElement(localName = "edge")
-data class SumoEdge(
+data class SumoFlow(
     @field:JacksonXmlProperty(isAttribute = true)
     val id: SumoEntityId,
     @field:JacksonXmlProperty(isAttribute = true)
-    val from: SumoEntityId,
+    val type: String,
     @field:JacksonXmlProperty(isAttribute = true)
-    val to: SumoEntityId,
+    val route: SumoEntityId,
     @field:JacksonXmlProperty(isAttribute = true)
-    val priority: Int,
+    val begin: Double,
     @field:JacksonXmlProperty(isAttribute = true)
-    val numLanes: Int,
+    val end: Double,
     @field:JacksonXmlProperty(isAttribute = true)
-    val speed: Double
+    val period: Double
 )

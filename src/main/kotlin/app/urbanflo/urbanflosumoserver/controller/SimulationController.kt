@@ -1,6 +1,7 @@
 package app.urbanflo.urbanflosumoserver.controller
 
 import app.urbanflo.urbanflosumoserver.model.*
+import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
