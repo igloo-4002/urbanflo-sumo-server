@@ -2,6 +2,7 @@ package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
@@ -68,12 +69,22 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
         // run netconvert
         try {
-            runNetconvert(id, simulationDir, nodPath, edgPath, conPath)
+            val netPath = runNetconvert(id, simulationDir, nodPath, edgPath, conPath)
+            // create sumocfg
+            val sumocfg = SumoCfg(netPath, rouPath)
+            val sumocfgPath = simulationDir.resolve("$id.sumocfg").normalize().toAbsolutePath()
+            sumocfgPath.toFile().writeText(xmlMapper.writeValueAsString(sumocfg))
         } catch (e: NetconvertException) {
             logger.error(e) { "Cannot convert XML files" }
             delete(id)
             throw StorageException("Cannot convert XML files", e)
+        } catch (e: IOException) {
+            logger.error(e) { "Cannot save files" }
+            delete(id) // perform cleanup
+            throw StorageException("Cannot save files", e)
         }
+
+
         val netPath = simulationDir.resolve("$id.net.xml").normalize().toAbsolutePath()
         assert(netPath.exists())
         return id
