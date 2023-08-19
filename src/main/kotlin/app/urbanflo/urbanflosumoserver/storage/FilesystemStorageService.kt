@@ -7,6 +7,7 @@ import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -27,6 +28,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     private val xmlMapper = XmlMapper()
 
     init {
+        xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
         this.uploadsDir = Paths.get(properties.location)
         try {
             Files.createDirectories(uploadsDir)
@@ -51,10 +53,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val edgPath = edg.filePath(id, simulationDir)
         val con = network.connectionsXml()
         val conPath = con.filePath(id, simulationDir)
+        val rou = network.routesXml()
+        val rouPath = rou.filePath(id, simulationDir)
         try {
             nodPath.toFile().writeText(xmlMapper.writeValueAsString(nod))
             edgPath.toFile().writeText(xmlMapper.writeValueAsString(edg))
             conPath.toFile().writeText(xmlMapper.writeValueAsString(con))
+            rouPath.toFile().writeText(xmlMapper.writeValueAsString(rou))
         } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
             delete(id) // perform cleanup

@@ -11,7 +11,9 @@ data class SumoNetwork(
     fun nodesXml() = SumoNodesXml(this.nodes.values.toList())
     fun edgesXml() = SumoEdgesXml(this.edges.values.toList())
     fun connectionsXml() = SumoConnectionsXml(this.connections.values.toList())
-    fun vTypesXml() = SumoVehicleTypesXml(this.vType.values.toList())
-    fun routesXml() = SumoRoutesXml(this.route.values.toList())
-    fun flowsXml() = SumoFlowsXml(this.flow.values.toList())
+    fun routesXml() = SumoRoutesXml(
+        this.vType.values.toList(),
+        this.route.values.toList(),
+        this.flow.values.toList()
+    )
 }
