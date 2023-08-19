@@ -78,11 +78,17 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         TODO("modify existing simulation")
     }
 
-    override fun load(id: String): SimulationInstance {
-        TODO("load simulation")
+    override fun load(id: SimulationId, label: String): SimulationInstance {
+        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize())
+        val cfgPath = simulationDir.resolve("$id.sumocfg").normalize().toAbsolutePath()
+        if (simulationDir.exists()) {
+            return SimulationInstance(label, cfgPath)
+        } else {
+            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+        }
     }
 
-    override fun delete(id: String) {
+    override fun delete(id: SimulationId) {
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
         if (!simulationDir.delete()) {
@@ -90,7 +96,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }
     }
 
-    override fun info(id: String): SimulationInfo {
+    override fun info(id: SimulationId): SimulationInfo {
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
         if (simulationDir.exists()) {
             // TODO: fetch simulation metadata
