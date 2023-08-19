@@ -26,10 +26,10 @@ docker compose up --force-recreate --build
 ### Docker
 
 ```shell
-docker compose up --force-recreate
+docker compose up -d --force-recreate
 ```
 
-Note: ARM64/M1 users will need to use `docker compose up --force-recreate --build` for now, as the pre-built image is
+Note: ARM64/M1 users will need to use `docker compose up -d --force-recreate --build` for now, as the pre-built image is
 only for x86-64. This is because the ARM version of SUMO package does not include `libtracijni`, requiring a build from
 scratch, and the CI job keeps timing out for ARM.
 
