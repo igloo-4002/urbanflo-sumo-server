@@ -1,11 +1,11 @@
 package app.urbanflo.urbanflosumoserver.storage
 
-import app.urbanflo.urbanflosumoserver.SimulationId
-import app.urbanflo.urbanflosumoserver.SimulationInstance
-import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
-import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.SumoNetwork
+import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
+import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
+import app.urbanflo.urbanflosumoserver.simulation.SimulationId
+import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,7 +42,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             id = UUID.randomUUID()
             simulationDir = uploadsDir.resolve(Paths.get(id.toString()).normalize()).toAbsolutePath()
         } while (simulationDir.exists())
-        logger.info {"Saving file at $simulationDir"}
+        logger.info { "Saving file at $simulationDir" }
         simulationDir.createDirectory()
 
         // save network as XML
@@ -66,12 +66,12 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
         // run netconvert
         try {
-            runNetconvert(id, simulationDir, nodeFileName, edgeFileName)
+            runNetconvert(id.toString(), simulationDir, nodeFileName, edgeFileName)
         } catch (e: NetconvertException) {
             delete(id.toString())
             throw StorageException("Cannot convert edge and node files", e)
         }
-        return id
+        return id.toString()
     }
 
     override fun store(simulationId: SimulationId, network: SumoNetwork) {

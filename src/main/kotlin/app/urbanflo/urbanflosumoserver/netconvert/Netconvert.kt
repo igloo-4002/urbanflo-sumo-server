@@ -1,6 +1,6 @@
 package app.urbanflo.urbanflosumoserver.netconvert
 
-import app.urbanflo.urbanflosumoserver.SimulationId
+import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import java.io.IOException
 import java.nio.file.Path
 
