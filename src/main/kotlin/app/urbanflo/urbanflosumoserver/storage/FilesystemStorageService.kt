@@ -36,42 +36,40 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun store(network: SumoNetwork): SimulationId {
-        var id: UUID
+        var id: SimulationId
         var simulationDir: Path
         do {
-            id = UUID.randomUUID()
-            simulationDir = uploadsDir.resolve(Paths.get(id.toString()).normalize()).toAbsolutePath()
+            id = UUID.randomUUID().toString()
+            simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
         } while (simulationDir.exists())
         logger.info { "Saving file at $simulationDir" }
         simulationDir.createDirectory()
 
         // save network as XML
-        val nodeXml = xmlMapper.writeValueAsString(network.nodesXml())
-        val edgXml = xmlMapper.writeValueAsString(network.edgesXml())
-        val nodeFileName = "$id-nod.xml"
-        val edgeFileName = "$id-edg.xml"
-        val nodeFilePath = simulationDir.resolve(nodeFileName).normalize().toAbsolutePath()
-        val edgeFilePath = simulationDir.resolve(edgeFileName).normalize().toAbsolutePath()
-        val nodeFile = nodeFilePath.toFile()
-        val edgeFile = edgeFilePath.toFile()
+        val nod = network.nodesXml()
+        val nodPath = nod.filePath(id, simulationDir)
+        val edg = network.edgesXml()
+        val edgPath = edg.filePath(id, simulationDir)
         try {
-            logger.info { "Saving nod file to $nodeFilePath" }
-            nodeFile.writeText(nodeXml)
-            logger.info { "Saving edg file to $edgeFilePath" }
-            edgeFile.writeText(edgXml)
+            logger.info { "Saving nod file to $nodPath" }
+            nodPath.toFile().writeText(xmlMapper.writeValueAsString(nod))
+            logger.info { "Saving edg file to $edgPath" }
+            edgPath.toFile().writeText(xmlMapper.writeValueAsString(edg))
         } catch (e: IOException) {
-            delete(id.toString())
+            delete(id) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
 
         // run netconvert
         try {
-            runNetconvert(id.toString(), simulationDir, nodeFileName, edgeFileName)
+            runNetconvert(id, simulationDir, nodPath, edgPath)
         } catch (e: NetconvertException) {
-            delete(id.toString())
+            delete(id)
             throw StorageException("Cannot convert edge and node files", e)
         }
-        return id.toString()
+        val netPath = simulationDir.resolve("$id.net.xml").normalize().toAbsolutePath()
+        assert(netPath.exists())
+        return id
     }
 
     override fun store(simulationId: SimulationId, network: SumoNetwork) {
