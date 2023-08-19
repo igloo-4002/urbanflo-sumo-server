@@ -20,12 +20,17 @@ fun runNetconvert(simulationId: SimulationId, simulationDir: Path, nodPath: Path
         .start()
     val statusCode = process.waitFor()
     if (statusCode != 0) {
-        val output = try {
+        val stdout = try {
             process.inputStream.bufferedReader().readText()
         } catch (e: IOException) {
             ""
         }
-        throw NetconvertException("netconvert exited with status code $statusCode\nOutput:${output}")
+        val stderr = try {
+            process.errorStream.bufferedReader().readText()
+        } catch (e: IOException) {
+            ""
+        }
+        throw NetconvertException("netconvert exited with status code $statusCode\nstdout:\n$stdout\nstderr:\n$stderr")
     } else {
         return netPath
     }
