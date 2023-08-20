@@ -8,6 +8,7 @@ import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
 import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageService
 import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundException
+import com.fasterxml.jackson.core.JsonProcessingException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -162,6 +163,11 @@ class SimulationController(
     @ExceptionHandler(StorageBadRequestException::class)
     fun handleStorageBadRequest(e: StorageBadRequestException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse(e.message ?: "Invalid request"), HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(JsonProcessingException::class)
+    fun handleJsonError(e: JsonProcessingException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse(e.message ?: "Invalid JSON body"), HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(StorageException::class)
