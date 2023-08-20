@@ -7,6 +7,7 @@ import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -61,7 +62,12 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             edgPath.toFile().writeText(xmlMapper.writeValueAsString(edg))
             conPath.toFile().writeText(xmlMapper.writeValueAsString(con))
             rouPath.toFile().writeText(xmlMapper.writeValueAsString(rou))
-        } catch (e: IOException) {
+        } catch(e: JsonProcessingException) {
+            logger.error(e) { "Invalid network data" }
+            delete(id)
+            throw StorageBadRequestException("Invalid network data", e)
+        }
+        catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
             delete(id) // perform cleanup
             throw StorageException("Cannot save files", e)
