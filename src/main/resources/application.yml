@@ -1,5 +1,2 @@
 logging:
   config: classpath:logback.xml
-server:
-  error:
-    include-message: on_param
