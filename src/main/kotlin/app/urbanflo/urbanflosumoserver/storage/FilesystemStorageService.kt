@@ -77,7 +77,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             val netPath = runNetconvert(id, simulationDir, nodPath, edgPath, conPath)
             // create sumocfg
             val sumocfg = SumoCfg(netPath, rouPath)
-            val sumocfgPath = simulationDir.resolve("$id.sumocfg").normalize().toAbsolutePath()
+            val sumocfgPath = sumocfg.filePath(id, simulationDir)
             sumocfgPath.toFile().writeText(xmlMapper.writeValueAsString(sumocfg))
         } catch (e: NetconvertException) {
             logger.error(e) { "Cannot convert XML files" }

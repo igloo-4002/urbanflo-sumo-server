@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver.model.network
+package app.urbanflo.urbanflosumoserver.model
 
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import java.nio.file.Path
