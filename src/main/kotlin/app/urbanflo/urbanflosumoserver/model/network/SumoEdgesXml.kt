@@ -12,6 +12,6 @@ data class SumoEdgesXml(
     @field:JacksonXmlProperty(localName = "edge")
     @field:JacksonXmlElementWrapper(useWrapping = false)
     val edges: List<SumoEdge>
-): SumoXml {
+) : SumoXml {
     override fun fileName(simulationId: SimulationId) = "$simulationId.edg.xml"
 }

@@ -1,4 +1,5 @@
 package app.urbanflo.urbanflosumoserver.model.network
+
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
 data class SumoNode(

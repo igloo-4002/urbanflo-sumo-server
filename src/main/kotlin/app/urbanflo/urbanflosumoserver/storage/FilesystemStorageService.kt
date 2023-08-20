@@ -62,12 +62,11 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             edgPath.toFile().writeText(xmlMapper.writeValueAsString(edg))
             conPath.toFile().writeText(xmlMapper.writeValueAsString(con))
             rouPath.toFile().writeText(xmlMapper.writeValueAsString(rou))
-        } catch(e: JsonProcessingException) {
+        } catch (e: JsonProcessingException) {
             logger.error(e) { "Invalid network data" }
             delete(id)
             throw StorageBadRequestException("Invalid network data", e)
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
             delete(id) // perform cleanup
             throw StorageException("Cannot save files", e)

@@ -10,6 +10,6 @@ data class SumoNodesXml(
     @field:JacksonXmlProperty(localName = "node")
     @field:JacksonXmlElementWrapper(useWrapping = false)
     val nodes: List<SumoNode>
-): SumoXml {
+) : SumoXml {
     override fun fileName(simulationId: SimulationId) = "$simulationId.nod.xml"
 }

@@ -6,13 +6,14 @@ import java.nio.file.Path
 
 fun runNetconvert(simulationId: SimulationId, simulationDir: Path, nodPath: Path, edgPath: Path, conPath: Path): Path {
     val netPath = simulationDir.resolve("$simulationId.net.xml").normalize().toAbsolutePath()
-    val netconvertCmd = "netconvert --node-files=$nodPath --edge-files=$edgPath --connection-files=$conPath --output-file=$netPath"
+    val netconvertCmd =
+        "netconvert --node-files=$nodPath --edge-files=$edgPath --connection-files=$conPath --output-file=$netPath"
     val command = (if (System.getProperty("os.name").lowercase().startsWith("windows")) {
         arrayOf("cmd.exe", "/c", netconvertCmd)
     } else {
         arrayOf("sh", "-c", netconvertCmd)
     })
-   val process = ProcessBuilder()
+    val process = ProcessBuilder()
         .directory(simulationDir.toFile())
         .command(*command)
         .redirectOutput(ProcessBuilder.Redirect.PIPE)

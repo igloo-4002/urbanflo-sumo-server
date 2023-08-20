@@ -1,6 +1,5 @@
 package app.urbanflo.urbanflosumoserver.model.network
 
-import app.urbanflo.urbanflosumoserver.model.network.SumoEntityId
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
 data class SumoConnection(

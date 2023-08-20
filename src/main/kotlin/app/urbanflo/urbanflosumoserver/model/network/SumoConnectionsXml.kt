@@ -10,6 +10,6 @@ data class SumoConnectionsXml(
     @field:JacksonXmlProperty(localName = "connection")
     @field:JacksonXmlElementWrapper(useWrapping = false)
     val connections: List<SumoConnection>
-): SumoXml {
+) : SumoXml {
     override fun fileName(simulationId: SimulationId) = "$simulationId.con.xml"
 }

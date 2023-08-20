@@ -17,6 +17,6 @@ data class SumoRoutesXml(
     @field:JacksonXmlProperty(localName = "flow")
     @field:JacksonXmlElementWrapper(useWrapping = false)
     val flows: List<SumoFlow>
-): SumoXml {
+) : SumoXml {
     override fun fileName(simulationId: SimulationId) = "$simulationId.rou.xml"
 }
