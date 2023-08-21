@@ -64,7 +64,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         return info
     }
 
-    override fun store(simulationId: SimulationId, network: SumoNetwork) {
+    override fun store(simulationId: SimulationId, network: SumoNetwork): SimulationInfo {
         TODO("modify existing simulation")
     }
 
@@ -171,10 +171,6 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             }.sortedByDescending { it.lastModifiedAt }
         )
         return simulationInfos
-    }
-
-    override fun deleteAll() {
-        TODO("delete all simulations")
     }
 
     private fun createDemoSimulationInfo(): SimulationInfo {

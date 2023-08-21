@@ -8,7 +8,7 @@ import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 interface StorageService {
     fun store(network: SumoNetwork): SimulationInfo
 
-    fun store(simulationId: SimulationId, network: SumoNetwork)
+    fun store(simulationId: SimulationId, network: SumoNetwork): SimulationInfo
 
     fun load(id: SimulationId, label: String): SimulationInstance
 
@@ -17,6 +17,4 @@ interface StorageService {
     fun info(id: SimulationId): SimulationInfo
 
     fun listAll(): List<SimulationInfo>
-
-    fun deleteAll()
 }
