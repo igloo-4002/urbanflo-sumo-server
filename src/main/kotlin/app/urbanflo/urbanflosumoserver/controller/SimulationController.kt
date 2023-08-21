@@ -151,8 +151,9 @@ class SimulationController(
     }
 
     @GetMapping("/simulations")
-    fun getAllSimulationInfo() {
-        TODO()
+    @ResponseBody
+    fun getAllSimulationInfo(): List<SimulationInfo> {
+        return storageService.listAll()
     }
 
     @ExceptionHandler(StorageSimulationNotFoundException::class)

@@ -4,7 +4,6 @@ import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
-import org.springframework.core.io.Resource
 
 interface StorageService {
     fun store(network: SumoNetwork): SimulationInfo
@@ -17,7 +16,7 @@ interface StorageService {
 
     fun info(id: SimulationId): SimulationInfo
 
-    fun listAll(): List<Resource>
+    fun listAll(): List<SimulationInfo>
 
     fun deleteAll()
 }

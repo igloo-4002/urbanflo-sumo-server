@@ -16,7 +16,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import java.io.IOException
 import java.nio.file.Files
@@ -27,6 +26,7 @@ import java.time.ZoneOffset
 import java.util.*
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
 
 private val logger = KotlinLogging.logger {}
 
@@ -149,8 +149,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         return when (id) {
             "demo" -> {
                 // for demo id, just make up some timestamps
-                val now = OffsetDateTime.now(ZoneOffset.UTC)
-                SimulationInfo("demo", now, now)
+                createDemoSimulationInfo()
             }
 
             else -> {
@@ -162,11 +161,24 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }
     }
 
-    override fun listAll(): List<Resource> {
-        TODO("list all simulations")
+    override fun listAll(): List<SimulationInfo> {
+        val simulationDirs = uploadsDir.listDirectoryEntries().filter { path -> path.fileName.toString() != "demo" }
+        val simulationInfos = mutableListOf(createDemoSimulationInfo())
+        simulationInfos.addAll(
+            simulationDirs.map<Path, SimulationInfo> { simulation ->
+                val infoFile = simulation.resolve("info.json").normalize().toAbsolutePath().toFile()
+                jsonMapper.readValue(infoFile)
+            }.sortedByDescending { it.lastModifiedAt }
+        )
+        return simulationInfos
     }
 
     override fun deleteAll() {
         TODO("delete all simulations")
+    }
+
+    private fun createDemoSimulationInfo(): SimulationInfo {
+        val now = OffsetDateTime.now(ZoneOffset.UTC)
+        return SimulationInfo("demo", now, now)
     }
 }
