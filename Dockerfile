@@ -23,7 +23,7 @@ FROM eclipse-temurin:17-jammy AS urbanflo-sumo-server
 ARG VERSION="0.0.1-SNAPSHOT"
 ENV SUMO_HOME="/opt/sumo"
 ENV PATH="/opt/sumo/bin:${PATH}"
-RUN apt-get update && apt-get install -y libxerces-c3.2 libproj22 libfox-1.6-0 libx11-6 libxext6 libxft2 libxcursor1 libgl1 libglu1-mesa libjpeg62 libtiff5
+RUN apt-get update && apt-get install -y libxerces-c3.2 libproj22 libfox-1.6-0 libx11-6 libxext6 libxft2 libxcursor1 libgl1 libglu1-mesa libjpeg62 libtiff5 libgdal30
 # copy sumo
 WORKDIR $SUMO_HOME/bin
 COPY --from=sumo-builder /opt/sumo/bin .

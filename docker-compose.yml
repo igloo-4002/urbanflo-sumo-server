@@ -1,6 +1,6 @@
 services:
   sumo-server:
-        image: ghcr.io/igloo-4002/urbanflo-sumo-server:develop
+    image: ghcr.io/igloo-4002/urbanflo-sumo-server:develop
     build:
       context: .
     command: java -jar -Djava.library.path=/opt/sumo/bin /opt/urbanflo-sumo-server/urbanflo-sumo-server.jar
