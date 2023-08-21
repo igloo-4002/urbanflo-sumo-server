@@ -26,6 +26,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.2")
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
     implementation("org.eclipse.sumo:libtraci:1.18.0")
@@ -34,6 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("com.google.code.gson:gson:2.10.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 }
 
 tasks.withType<KotlinCompile> {

@@ -1,14 +1,15 @@
 package app.urbanflo.urbanflosumoserver.storage
 
-import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
+import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
+import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import org.springframework.core.io.Resource
-import org.springframework.web.multipart.MultipartFile
-import java.util.*
 
 interface StorageService {
-    fun store(files: Array<MultipartFile>): UUID
+    fun store(network: SumoNetwork): SimulationId
+
+    fun store(simulationId: SimulationId, network: SumoNetwork)
 
     fun load(id: SimulationId, label: String): SimulationInstance
 

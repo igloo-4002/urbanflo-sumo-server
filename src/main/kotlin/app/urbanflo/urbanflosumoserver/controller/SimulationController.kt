@@ -1,25 +1,28 @@
 package app.urbanflo.urbanflosumoserver.controller
 
-import app.urbanflo.urbanflosumoserver.model.NewSimulationResponse
-import app.urbanflo.urbanflosumoserver.model.SimulationInfo
-import app.urbanflo.urbanflosumoserver.model.SimulationMessageRequest
-import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
+import app.urbanflo.urbanflosumoserver.model.*
+import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
 import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageService
 import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundException
+import com.fasterxml.jackson.core.JsonProcessingException
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.Header
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.server.ResponseStatusException
 import reactor.core.Disposable
 
 private val logger = KotlinLogging.logger {}
@@ -80,41 +83,96 @@ class SimulationController(
         }
     }
 
-    @PostMapping("/simulation")
+//    @GetMapping("/start-simulation", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+//    @CrossOrigin(origins = ["http://localhost:5173"])
+//    @ResponseBody
+//    fun startSimulation(): Flux<SimulationStep> {
+//        val cfgPath = System.getenv("SUMOCFG_PATH") ?: "demo/demo.sumocfg"
+//        return Flux.fromIterable(SimulationInstance(cfgPath))
+//    }
+
+
+    @Operation(summary = "Create a new simulation.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "201", description = "New simulation saved"),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid network data",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "An internal error occurred during saving",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    @PostMapping("/simulation", consumes = ["application/json"], produces = ["application/json"])
+    @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    fun newSimulation(@RequestBody files: Array<MultipartFile>): NewSimulationResponse {
-        try {
-            val id = storageService.store(files)
-            return NewSimulationResponse(id.toString())
-        } catch (e: StorageBadRequestException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
-        } catch (e: StorageException) {
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message, e)
-        }
+    fun newSimulation(@RequestBody network: SumoNetwork): NewSimulationResponse {
+        val id = storageService.store(network)
+        return NewSimulationResponse(id)
     }
 
+    @Operation(summary = "Delete a simulation.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation deleted"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
     @DeleteMapping("/simulation/{id:.+}")
     @ResponseBody
     fun deleteSimulation(@PathVariable id: SimulationId) {
-        try {
-            storageService.delete(id.trim())
-        } catch (e: StorageSimulationNotFoundException) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message, e)
-        }
+        storageService.delete(id.trim())
     }
 
+    @Operation(summary = "Get simulation information.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
     @GetMapping("/simulation/{id:.+}")
     @ResponseBody
     fun getSimulationInfo(@PathVariable id: SimulationId): SimulationInfo {
-        try {
-            return storageService.info(id.trim())
-        } catch (e: StorageSimulationNotFoundException) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message, e)
-        }
+        return storageService.info(id.trim())
     }
 
     @GetMapping("/simulations")
     fun getSimulations() {
         TODO()
     }
+
+    @ExceptionHandler(StorageSimulationNotFoundException::class)
+    fun handleStorageNotFound(e: StorageSimulationNotFoundException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse(e.message ?: "No such simulation"), HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(StorageBadRequestException::class)
+    fun handleStorageBadRequest(e: StorageBadRequestException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse(e.message ?: "Invalid request"), HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(JsonProcessingException::class)
+    fun handleJsonError(e: JsonProcessingException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse(e.message ?: "Invalid JSON body"), HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(StorageException::class)
+    fun handleStorageException(e: StorageException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse("An internal error occurred"), HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
 }

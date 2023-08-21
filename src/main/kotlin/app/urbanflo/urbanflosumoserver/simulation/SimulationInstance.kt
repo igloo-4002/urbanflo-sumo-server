@@ -6,7 +6,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.eclipse.sumo.libtraci.Simulation
 import org.eclipse.sumo.libtraci.StringVector
 import org.eclipse.sumo.libtraci.Vehicle
-import reactor.core.Disposable
 import reactor.core.publisher.Flux
 import java.net.ServerSocket
 import java.nio.file.Path
@@ -31,6 +30,7 @@ class SimulationInstance(
         }
         sink.complete()
     }
+
     @Volatile
     private var shouldStop = false
 
