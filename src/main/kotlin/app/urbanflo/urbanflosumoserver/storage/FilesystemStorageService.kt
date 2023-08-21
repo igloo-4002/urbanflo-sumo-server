@@ -9,16 +9,16 @@ import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import java.io.IOException
-import java.lang.IllegalStateException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -34,12 +34,12 @@ private val logger = KotlinLogging.logger {}
 class FilesystemStorageService @Autowired constructor(properties: StorageProperties) : StorageService {
     private lateinit var uploadsDir: Path
     private val xmlMapper = XmlMapper()
-    private val jsonMapper = JsonMapper()
+    private val jsonMapper = jacksonObjectMapper()
 
     init {
         xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        jsonMapper.registerModule(JavaTimeModule())
+        jsonMapper.registerModules(JavaTimeModule())
         this.uploadsDir = Paths.get(properties.location)
         try {
             Files.createDirectories(uploadsDir)
@@ -146,14 +146,20 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun info(id: SimulationId): SimulationInfo {
-//        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
-//        if (simulationDir.exists()) {
-//            // TODO: fetch simulation metadata
-//            return SimulationInfo(id)
-//        } else {
-//            throw StorageSimulationNotFoundException("No such simulation with ID $id")
-//        }
-        TODO()
+        return when (id) {
+            "demo" -> {
+                // for demo id, just make up some timestamps
+                val now = OffsetDateTime.now(ZoneOffset.UTC)
+                SimulationInfo("demo", now, now)
+            }
+
+            else -> {
+                val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
+                val infoFile = simulationDir.resolve("info.json").normalize().toAbsolutePath().toFile()
+                assert(infoFile.exists())
+                jsonMapper.readValue(infoFile)
+            }
+        }
     }
 
     override fun listAll(): List<Resource> {
