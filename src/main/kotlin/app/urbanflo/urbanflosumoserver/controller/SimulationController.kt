@@ -111,6 +111,7 @@ class SimulationController(
     @PostMapping("/simulation", consumes = ["application/json"], produces = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
+    @CrossOrigin(origins = ["http://localhost:5173/"])
     fun newSimulation(@RequestBody network: SumoNetwork): NewSimulationResponse {
         val id = storageService.store(network)
         return NewSimulationResponse(id)
