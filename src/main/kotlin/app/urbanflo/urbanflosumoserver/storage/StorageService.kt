@@ -7,7 +7,7 @@ import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import org.springframework.core.io.Resource
 
 interface StorageService {
-    fun store(network: SumoNetwork): SimulationId
+    fun store(network: SumoNetwork): SimulationInfo
 
     fun store(simulationId: SimulationId, network: SumoNetwork)
 

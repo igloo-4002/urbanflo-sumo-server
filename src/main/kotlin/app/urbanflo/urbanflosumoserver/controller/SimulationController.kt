@@ -112,9 +112,8 @@ class SimulationController(
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     @CrossOrigin(origins = ["http://localhost:5173/"])
-    fun newSimulation(@RequestBody network: SumoNetwork): NewSimulationResponse {
-        val id = storageService.store(network)
-        return NewSimulationResponse(id)
+    fun newSimulation(@RequestBody network: SumoNetwork): SimulationInfo {
+        return storageService.store(network)
     }
 
     @Operation(summary = "Delete a simulation.")
@@ -152,7 +151,7 @@ class SimulationController(
     }
 
     @GetMapping("/simulations")
-    fun getSimulations() {
+    fun getAllSimulationInfo() {
         TODO()
     }
 
