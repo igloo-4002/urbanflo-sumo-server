@@ -1,2 +1,5 @@
 logging:
   config: classpath:logback.xml
+
+urbanflo:
+  frontend-url: ${URBANFLO_FRONTEND_URL:#{"http://localhost:5173"}}
