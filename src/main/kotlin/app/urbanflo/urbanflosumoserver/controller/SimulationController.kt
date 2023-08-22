@@ -1,6 +1,9 @@
 package app.urbanflo.urbanflosumoserver.controller
 
-import app.urbanflo.urbanflosumoserver.model.*
+import app.urbanflo.urbanflosumoserver.model.ErrorResponse
+import app.urbanflo.urbanflosumoserver.model.SimulationInfo
+import app.urbanflo.urbanflosumoserver.model.SimulationMessageRequest
+import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
@@ -23,6 +26,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import reactor.core.Disposable
 
 private val logger = KotlinLogging.logger {}
@@ -130,7 +134,22 @@ class SimulationController(
     @DeleteMapping("/simulation/{id:.+}")
     @ResponseBody
     fun deleteSimulation(@PathVariable id: SimulationId) {
+        // prevent demo simulation from being modified or deleted
+        if (id.trim() == "demo") {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Demo simulation cannot be modified or deleted via API")
+        }
         storageService.delete(id.trim())
+    }
+
+    @PutMapping("/simulation/{id:.+}")
+    @ResponseBody
+    fun modifySimulation(@PathVariable id: SimulationId, @RequestBody network: SumoNetwork): SimulationInfo {
+        // prevent demo simulation from being modified or deleted
+        if (id.trim() == "demo") {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Demo simulation cannot be modified or deleted via API")
+        } else {
+            return storageService.store(id, network)
+        }
     }
 
     @Operation(summary = "Get simulation information.")
