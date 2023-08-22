@@ -32,3 +32,6 @@ WORKDIR /opt/urbanflo-sumo-server
 COPY demo demo
 # copy server jar
 COPY --from=gradle-builder /opt/urbanflo-sumo-server/build/libs/urbanflo-sumo-server-$VERSION.jar urbanflo-sumo-server.jar
+
+EXPOSE 80
+CMD ["java", "-jar", "-Djava.library.path=/opt/sumo/bin", "-Dspring.profiles.active=prod", "/opt/urbanflo-sumo-server/urbanflo-sumo-server.jar"]
