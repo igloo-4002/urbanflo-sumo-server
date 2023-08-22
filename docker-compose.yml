@@ -6,6 +6,11 @@ services:
     command: java -jar -Djava.library.path=/opt/sumo/bin /opt/urbanflo-sumo-server/urbanflo-sumo-server.jar
     ports:
       - 8080:8080
+      # Uncomment the line below and comment the line above for prod build
+      # - 80:8080
+    # Uncomment the environment below for prod instance
+    # environment:
+    #   URBANFLO_FRONTEND_URL: "https://urbanflo-vite.vercel.app/"
     volumes:
       - uploads:/opt/urbanflo-sumo-server/uploads
     restart: unless-stopped
