@@ -128,10 +128,15 @@ class SimulationController(
                 responseCode = "404",
                 description = "Simulation not found",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Attempt to delete demo simulation",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
-    @DeleteMapping("/simulation/{id:.+}")
+    @DeleteMapping("/simulation/{id:.+}", produces = ["application/json"])
     @ResponseBody
     fun deleteSimulation(@PathVariable id: SimulationId) {
         // prevent demo simulation from being modified or deleted
@@ -141,7 +146,33 @@ class SimulationController(
         storageService.delete(id.trim())
     }
 
-    @PutMapping("/simulation/{id:.+}")
+    @Operation(summary = "Modify a simulation.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation modified"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Attempt to modify demo simulation",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid network data",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "An internal error occurred during saving",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    @PutMapping("/simulation/{id:.+}", consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun modifySimulation(@PathVariable id: SimulationId, @RequestBody network: SumoNetwork): SimulationInfo {
         // prevent demo simulation from being modified or deleted
@@ -163,13 +194,14 @@ class SimulationController(
             )
         ]
     )
-    @GetMapping("/simulation/{id:.+}")
+    @GetMapping("/simulation/{id:.+}", produces = ["application/json"])
     @ResponseBody
     fun getSimulationInfo(@PathVariable id: SimulationId): SimulationInfo {
         return storageService.info(id.trim())
     }
 
-    @GetMapping("/simulations")
+    @Operation(summary = "Get information of all simulations.")
+    @GetMapping("/simulations", produces = ["application/json"])
     @ResponseBody
     fun getAllSimulationInfo(): List<SimulationInfo> {
         return storageService.listAll()
