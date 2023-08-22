@@ -57,7 +57,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         } while (simulationDir.exists())
         simulationDir.createDirectory()
 
-        val now = OffsetDateTime.now(ZoneOffset.UTC)
+        val now = currentTime()
         val info = SimulationInfo(id, now, now)
         writeFiles(info, network, simulationDir)
 
@@ -65,7 +65,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun store(simulationId: SimulationId, network: SumoNetwork): SimulationInfo {
-        TODO("modify existing simulation")
+        val now = currentTime()
+        val info = this.info(simulationId)
+        assert(info.id == simulationId)
+        val newInfo = SimulationInfo(info.id, info.createdAt, now)
+        val simulationDir = uploadsDir.resolve(Paths.get(simulationId).normalize())
+        writeFiles(newInfo, network, simulationDir)
+        return newInfo
     }
 
     private fun writeFiles(simulationInfo: SimulationInfo, network: SumoNetwork, simulationDir: Path) {
@@ -174,7 +180,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     private fun createDemoSimulationInfo(): SimulationInfo {
-        val now = OffsetDateTime.now(ZoneOffset.UTC)
+        val now = currentTime()
         return SimulationInfo("demo", now, now)
     }
+
+    private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
 }
