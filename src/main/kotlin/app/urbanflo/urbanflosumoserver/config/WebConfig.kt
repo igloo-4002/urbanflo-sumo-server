@@ -16,9 +16,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class WebConfig: WebMvcConfigurer {
     @Value("\${urbanflo.frontend-url}")
     private lateinit var frontendUrl: String
+    @Value("\${urbanflo.allow-all-cors-origins}")
+    private var allowAllCorsOrigins: Boolean = false
 
     override fun addCorsMappings(registry: CorsRegistry) {
-        registry.addMapping("/**").allowedOrigins(frontendUrl)
+        if (allowAllCorsOrigins) {
+            registry.addMapping("/**").allowedOriginPatterns("*")
+        } else {
+            registry.addMapping("/**").allowedOrigins(frontendUrl)
+        }
     }
 
     override fun configureMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
