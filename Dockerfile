@@ -29,7 +29,7 @@ WORKDIR $SUMO_HOME/bin
 COPY --from=sumo-builder /opt/sumo/bin .
 WORKDIR /opt/urbanflo-sumo-server
 # copy demo folder
-COPY demo demo
+COPY demo uploads/demo
 # copy server jar
 COPY --from=gradle-builder /opt/urbanflo-sumo-server/build/libs/urbanflo-sumo-server-$VERSION.jar urbanflo-sumo-server.jar
 
