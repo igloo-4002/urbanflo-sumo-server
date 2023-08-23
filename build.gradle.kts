@@ -36,6 +36,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
 }
 
 tasks.withType<KotlinCompile> {
