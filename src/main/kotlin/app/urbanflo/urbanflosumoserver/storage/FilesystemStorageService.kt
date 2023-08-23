@@ -160,6 +160,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
             else -> {
                 val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
+                if (!simulationDir.exists()) {
+                    throw StorageSimulationNotFoundException("No such simulation with ID $id")
+                }
                 val infoFile = simulationDir.resolve("info.json").normalize().toAbsolutePath().toFile()
                 assert(infoFile.exists())
                 jsonMapper.readValue(infoFile)
