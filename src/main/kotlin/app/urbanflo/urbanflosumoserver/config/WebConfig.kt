@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.servlet.config.annotation.CorsRegistry
@@ -32,6 +33,8 @@ class WebConfig: WebMvcConfigurer {
         val objectMapper = jacksonObjectMapper()
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         objectMapper.registerModules(JavaTimeModule())
+        // https://github.com/springdoc/springdoc-openapi/issues/2143
+        converters.add(ByteArrayHttpMessageConverter())
         converters.add(MappingJackson2HttpMessageConverter(objectMapper))
     }
 }
