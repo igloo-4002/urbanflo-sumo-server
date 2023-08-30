@@ -27,7 +27,8 @@ class SimulationInstance(
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
     private val port: Int = getNextAvailablePort()
-    private val frameTime = Duration.ofMillis(1000 / 60)
+    var frameTime = setSimulationSpeed(1)
+        private set
     var flux = Flux.create<SimulationStep> { sink ->
         while (hasNext()) {
             sink.next(next())
@@ -38,9 +39,10 @@ class SimulationInstance(
     @Volatile
     private var shouldStop = false
 
+    fun setSimulationSpeed(speed: Long): Duration = Duration.ofMillis(1000 / (60 * speed))
 
     init {
-        logger.info { "Connecting to SUMO with port ${port} and label ${label}" }
+        logger.info { "Connecting to SUMO with port $port and label $label" }
         Simulation.start(
             StringVector(arrayOf("sumo", "-c", cfgPath.toString())),
             port,
