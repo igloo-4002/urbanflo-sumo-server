@@ -27,8 +27,7 @@ class SimulationInstance(
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
     private val port: Int = getNextAvailablePort()
-    var frameTime = setSimulationSpeed(1)
-        private set
+    private var frameTime = setSimulationSpeed(1)
     var flux = Flux.create<SimulationStep> { sink ->
         while (hasNext()) {
             sink.next(next())
