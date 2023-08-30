@@ -9,6 +9,9 @@ import org.eclipse.sumo.libtraci.Vehicle
 import reactor.core.publisher.Flux
 import java.net.ServerSocket
 import java.nio.file.Path
+import java.time.Duration
+import java.time.Instant
+import kotlin.math.max
 
 
 typealias SimulationStep = Map<String, VehicleData>
@@ -24,6 +27,7 @@ class SimulationInstance(
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
     private val port: Int = getNextAvailablePort()
+    private val frameTime = Duration.ofMillis(1000 / 60)
     var flux = Flux.create<SimulationStep> { sink ->
         while (hasNext()) {
             sink.next(next())
@@ -50,7 +54,6 @@ class SimulationInstance(
             closeSimulation()
             return false
         }
-        logger.info { label }
         Simulation.switchConnection(label)
 
         val expected = Simulation.getMinExpectedNumber() > 0
@@ -63,6 +66,7 @@ class SimulationInstance(
 
     override fun next(): SimulationStep {
         try {
+            val start = Instant.now()
             Simulation.switchConnection(label)
             Simulation.step()
 
@@ -83,7 +87,9 @@ class SimulationInstance(
                     Pair(laneIndex, laneId)
                 )
             }
-
+            val end = Instant.now()
+            val delay = frameTime.toMillis() - Duration.between(start, end).toMillis()
+            Thread.sleep(max(delay, 0))
             return pairs.toMap()
         } catch (e: Exception) {
             logger.error(e) { "Error in advancing simulation step" }
