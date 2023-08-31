@@ -197,6 +197,17 @@ class SimulationController(
         return storageService.listAll()
     }
 
+    @Operation(summary = "Get simulation network in the same format as the uploaded network data.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
     @GetMapping("/simulation/{id:.+}/network", produces = ["application/json"])
     @ResponseBody
     fun exportSimulationNetwork(@PathVariable id: SimulationId): SumoNetwork {
@@ -222,5 +233,4 @@ class SimulationController(
     fun handleStorageException(e: StorageException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse("An internal error occurred"), HttpStatus.INTERNAL_SERVER_ERROR)
     }
-
 }
