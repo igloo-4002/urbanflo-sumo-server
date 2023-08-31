@@ -61,7 +61,12 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
         val now = currentTime()
         val info = SimulationInfo(id, now, now)
-        writeFiles(info, network, simulationDir)
+        try {
+            writeFiles(info, network, simulationDir)
+        } catch (e: Exception) {
+            delete(id) // perform cleanup
+            throw e
+        }
 
         return info
     }
@@ -98,11 +103,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             rouPath.toFile().writeText(xmlMapper.writeValueAsString(rou))
         } catch (e: JsonProcessingException) {
             logger.error(e) { "Invalid network data" }
-            delete(simulationId)
             throw StorageBadRequestException("Invalid network data", e)
         } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
-            delete(simulationId) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
 
@@ -116,11 +119,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             sumocfgPath.toFile().writeText(xmlMapper.writeValueAsString(sumocfg))
         } catch (e: NetconvertException) {
             logger.error(e) { "Cannot convert XML files" }
-            delete(simulationId)
             throw StorageException("Cannot convert XML files", e)
         } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
-            delete(simulationId) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
 
@@ -130,7 +131,6 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             infoPath.toFile().writeText(jsonMapper.writeValueAsString(simulationInfo))
         } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
-            delete(simulationId) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
     }
