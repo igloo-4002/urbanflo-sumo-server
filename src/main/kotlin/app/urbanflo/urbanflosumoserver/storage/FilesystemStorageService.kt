@@ -1,7 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
-import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.network.*
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
@@ -82,13 +82,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
         // save network as XML
         val nod = network.nodesXml()
-        val nodPath = nod.filePath(simulationId, simulationDir)
+        val nodPath = SumoNodesXml.filePath(simulationId, simulationDir)
         val edg = network.edgesXml()
-        val edgPath = edg.filePath(simulationId, simulationDir)
+        val edgPath = SumoEdgesXml.filePath(simulationId, simulationDir)
         val con = network.connectionsXml()
-        val conPath = con.filePath(simulationId, simulationDir)
+        val conPath = SumoConnectionsXml.filePath(simulationId, simulationDir)
         val rou = network.routesXml()
-        val rouPath = rou.filePath(simulationId, simulationDir)
+        val rouPath = SumoRoutesXml.filePath(simulationId, simulationDir)
         try {
             nodPath.toFile().writeText(xmlMapper.writeValueAsString(nod))
             edgPath.toFile().writeText(xmlMapper.writeValueAsString(edg))
@@ -110,7 +110,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             assert(netPath.exists())
             // create sumocfg
             val sumocfg = SumoCfg(netPath, rouPath)
-            val sumocfgPath = sumocfg.filePath(simulationId, simulationDir)
+            val sumocfgPath = SumoCfg.filePath(simulationId, simulationDir)
             sumocfgPath.toFile().writeText(xmlMapper.writeValueAsString(sumocfg))
         } catch (e: NetconvertException) {
             logger.error(e) { "Cannot convert XML files" }
@@ -123,7 +123,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }
 
         // save info file
-        val infoPath = simulationInfo.filePath(simulationId, simulationDir)
+        val infoPath = SimulationInfo.filePath(simulationDir)
         try {
             infoPath.toFile().writeText(jsonMapper.writeValueAsString(simulationInfo))
         } catch (e: IOException) {
@@ -167,6 +167,15 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 assert(infoFile.exists())
                 jsonMapper.readValue(infoFile)
             }
+        }
+    }
+
+    override fun export(simulationId: SimulationId): SumoNetwork {
+        val simulationDir = uploadsDir.resolve(Paths.get(simulationId).normalize())
+        if (simulationDir.exists()) {
+            TODO()
+        } else {
+            throw StorageSimulationNotFoundException("No such simulation with ID $simulationId")
         }
     }
 
