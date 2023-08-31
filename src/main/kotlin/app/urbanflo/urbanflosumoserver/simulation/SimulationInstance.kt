@@ -72,10 +72,10 @@ class SimulationInstance(
             Simulation.step()
 
             val pairs = Vehicle.getIDList().map { vehicleId ->
-                val position = Vehicle.getPosition(vehicleId)
+                val rawPosition = Vehicle.getPosition(vehicleId)
+                val position = Simulation.convertGeo(rawPosition.x, rawPosition.y, false)
                 val acceleration = Vehicle.getAcceleration(vehicleId)
                 val speed = Vehicle.getSpeed(vehicleId)
-                // TODO: sumo has color functionality built in, check how that works
                 val color = getVehicleColor(vehicleId)
                 val laneIndex = Vehicle.getLaneIndex(vehicleId)
                 val laneId = Vehicle.getLaneID(vehicleId)
