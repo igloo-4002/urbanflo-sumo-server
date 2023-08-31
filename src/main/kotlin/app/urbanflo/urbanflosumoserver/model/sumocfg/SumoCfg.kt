@@ -22,6 +22,6 @@ class SumoCfg(
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =
             simulationDir.resolve(fileName(simulationId)).normalize().toAbsolutePath()
 
-        fun fileName(simulationId: SimulationId) = "$simulationId.con.xml"
+        fun fileName(simulationId: SimulationId) = "$simulationId.sumocfg"
     }
 }

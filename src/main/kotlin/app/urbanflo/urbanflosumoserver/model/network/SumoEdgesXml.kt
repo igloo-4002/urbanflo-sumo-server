@@ -12,7 +12,7 @@ typealias SumoEntityId = String
 data class SumoEdgesXml(
     @field:JacksonXmlProperty(localName = "edge")
     @field:JacksonXmlElementWrapper(useWrapping = false)
-    val edges: List<SumoEdge>
+    val edges: List<SumoEdge> = listOf()
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =

@@ -10,7 +10,8 @@ import java.nio.file.Path
 data class SumoNodesXml(
     @field:JacksonXmlProperty(localName = "node")
     @field:JacksonXmlElementWrapper(useWrapping = false)
-    val nodes: List<SumoNode>
+    // assign a default empty list to prevent XML empty tag to be deserialized as null
+    val nodes: List<SumoNode> = listOf()
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =

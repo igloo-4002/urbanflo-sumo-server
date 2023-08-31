@@ -87,15 +87,6 @@ class SimulationController(
         }
     }
 
-//    @GetMapping("/start-simulation", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-//    @CrossOrigin(origins = ["http://localhost:5173"])
-//    @ResponseBody
-//    fun startSimulation(): Flux<SimulationStep> {
-//        val cfgPath = System.getenv("SUMOCFG_PATH") ?: "demo/demo.sumocfg"
-//        return Flux.fromIterable(SimulationInstance(cfgPath))
-//    }
-
-
     @Operation(summary = "Create a new simulation.")
     @ApiResponses(
         value = [
@@ -204,6 +195,12 @@ class SimulationController(
     @ResponseBody
     fun getAllSimulationInfo(): List<SimulationInfo> {
         return storageService.listAll()
+    }
+
+    @GetMapping("/simulation/{id:.+}/network", produces = ["application/json"])
+    @ResponseBody
+    fun exportSimulationNetwork(@PathVariable id: SimulationId): SumoNetwork {
+        return storageService.export(id.trim())
     }
 
     @ExceptionHandler(StorageSimulationNotFoundException::class)

@@ -11,6 +11,15 @@ data class SumoNetwork(
     val route: List<SumoRoute>,
     val flow: List<SumoFlow>
 ) {
+    constructor(nodesXml: SumoNodesXml, edgesXml: SumoEdgesXml, connectionsXml: SumoConnectionsXml, routesXml: SumoRoutesXml) : this(
+        nodesXml.nodes,
+        edgesXml.edges,
+        connectionsXml.connections,
+        routesXml.vehicleTypes,
+        routesXml.routes,
+        routesXml.flows
+    )
+
     fun nodesXml() = SumoNodesXml(this.nodes)
     fun edgesXml() = SumoEdgesXml(this.edges)
     fun connectionsXml() = SumoConnectionsXml(this.connections)

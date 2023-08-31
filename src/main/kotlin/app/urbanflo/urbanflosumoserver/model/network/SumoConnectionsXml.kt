@@ -10,7 +10,7 @@ import java.nio.file.Path
 data class SumoConnectionsXml(
     @field:JacksonXmlProperty(localName = "connection")
     @field:JacksonXmlElementWrapper(useWrapping = false)
-    val connections: List<SumoConnection>
+    val connections: List<SumoConnection> = listOf()
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =

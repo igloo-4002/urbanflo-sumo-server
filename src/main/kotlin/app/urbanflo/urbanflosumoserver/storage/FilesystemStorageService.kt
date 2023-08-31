@@ -13,6 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,6 +39,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
     init {
         xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
+        xmlMapper.registerModule(kotlinModule())
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         jsonMapper.registerModules(JavaTimeModule())
         this.uploadsDir = Paths.get(properties.location)
@@ -173,7 +175,20 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun export(simulationId: SimulationId): SumoNetwork {
         val simulationDir = uploadsDir.resolve(Paths.get(simulationId).normalize())
         if (simulationDir.exists()) {
-            TODO()
+            try {
+                val nodPath = SumoNodesXml.filePath(simulationId, simulationDir)
+                val edgPath = SumoEdgesXml.filePath(simulationId, simulationDir)
+                val conPath = SumoConnectionsXml.filePath(simulationId, simulationDir)
+                val rouPath = SumoRoutesXml.filePath(simulationId, simulationDir)
+                val nod: SumoNodesXml = xmlMapper.readValue(nodPath.toFile())
+                val edg: SumoEdgesXml = xmlMapper.readValue(edgPath.toFile())
+                val con: SumoConnectionsXml = xmlMapper.readValue(conPath.toFile())
+                val rou: SumoRoutesXml = xmlMapper.readValue(rouPath.toFile())
+                return SumoNetwork(nod, edg, con, rou)
+            } catch (e: IOException) {
+                logger.error(e) { "Cannot export network" }
+                throw StorageException("Cannot export network", e)
+            }
         } else {
             throw StorageSimulationNotFoundException("No such simulation with ID $simulationId")
         }
