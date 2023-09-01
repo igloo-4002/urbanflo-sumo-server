@@ -30,7 +30,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.2")
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
     implementation("org.eclipse.sumo:libtraci:1.18.0")
-    implementation("io.projectreactor:reactor-core:3.5.4")
+    implementation("io.projectreactor:reactor-core:3.5.9")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("com.google.code.gson:gson:2.10.1")
