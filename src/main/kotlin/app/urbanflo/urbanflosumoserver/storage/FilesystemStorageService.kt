@@ -1,7 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
-import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.network.*
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
@@ -13,6 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,6 +39,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
     init {
         xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
+        xmlMapper.registerModule(kotlinModule())
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         jsonMapper.registerModules(JavaTimeModule())
         this.uploadsDir = Paths.get(properties.location)
@@ -59,7 +61,12 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
         val now = currentTime()
         val info = SimulationInfo(id, now, now)
-        writeFiles(info, network, simulationDir)
+        try {
+            writeFiles(info, network, simulationDir)
+        } catch (e: Exception) {
+            delete(id) // perform cleanup
+            throw e
+        }
 
         return info
     }
@@ -82,13 +89,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
         // save network as XML
         val nod = network.nodesXml()
-        val nodPath = nod.filePath(simulationId, simulationDir)
+        val nodPath = SumoNodesXml.filePath(simulationId, simulationDir)
         val edg = network.edgesXml()
-        val edgPath = edg.filePath(simulationId, simulationDir)
+        val edgPath = SumoEdgesXml.filePath(simulationId, simulationDir)
         val con = network.connectionsXml()
-        val conPath = con.filePath(simulationId, simulationDir)
+        val conPath = SumoConnectionsXml.filePath(simulationId, simulationDir)
         val rou = network.routesXml()
-        val rouPath = rou.filePath(simulationId, simulationDir)
+        val rouPath = SumoRoutesXml.filePath(simulationId, simulationDir)
         try {
             nodPath.toFile().writeText(xmlMapper.writeValueAsString(nod))
             edgPath.toFile().writeText(xmlMapper.writeValueAsString(edg))
@@ -96,11 +103,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             rouPath.toFile().writeText(xmlMapper.writeValueAsString(rou))
         } catch (e: JsonProcessingException) {
             logger.error(e) { "Invalid network data" }
-            delete(simulationId)
             throw StorageBadRequestException("Invalid network data", e)
         } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
-            delete(simulationId) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
 
@@ -110,25 +115,22 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             assert(netPath.exists())
             // create sumocfg
             val sumocfg = SumoCfg(netPath, rouPath)
-            val sumocfgPath = sumocfg.filePath(simulationId, simulationDir)
+            val sumocfgPath = SumoCfg.filePath(simulationId, simulationDir)
             sumocfgPath.toFile().writeText(xmlMapper.writeValueAsString(sumocfg))
         } catch (e: NetconvertException) {
             logger.error(e) { "Cannot convert XML files" }
-            delete(simulationId)
             throw StorageException("Cannot convert XML files", e)
         } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
-            delete(simulationId) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
 
         // save info file
-        val infoPath = simulationInfo.filePath(simulationId, simulationDir)
+        val infoPath = SimulationInfo.filePath(simulationDir)
         try {
             infoPath.toFile().writeText(jsonMapper.writeValueAsString(simulationInfo))
         } catch (e: IOException) {
             logger.error(e) { "Cannot save files" }
-            delete(simulationId) // perform cleanup
             throw StorageException("Cannot save files", e)
         }
     }
@@ -167,6 +169,28 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 assert(infoFile.exists())
                 jsonMapper.readValue(infoFile)
             }
+        }
+    }
+
+    override fun export(simulationId: SimulationId): SumoNetwork {
+        val simulationDir = uploadsDir.resolve(Paths.get(simulationId).normalize())
+        if (simulationDir.exists()) {
+            try {
+                val nodPath = SumoNodesXml.filePath(simulationId, simulationDir)
+                val edgPath = SumoEdgesXml.filePath(simulationId, simulationDir)
+                val conPath = SumoConnectionsXml.filePath(simulationId, simulationDir)
+                val rouPath = SumoRoutesXml.filePath(simulationId, simulationDir)
+                val nod: SumoNodesXml = xmlMapper.readValue(nodPath.toFile())
+                val edg: SumoEdgesXml = xmlMapper.readValue(edgPath.toFile())
+                val con: SumoConnectionsXml = xmlMapper.readValue(conPath.toFile())
+                val rou: SumoRoutesXml = xmlMapper.readValue(rouPath.toFile())
+                return SumoNetwork(nod, edg, con, rou)
+            } catch (e: IOException) {
+                logger.error(e) { "Cannot export network" }
+                throw StorageException("Cannot export network", e)
+            }
+        } else {
+            throw StorageSimulationNotFoundException("No such simulation with ID $simulationId")
         }
     }
 

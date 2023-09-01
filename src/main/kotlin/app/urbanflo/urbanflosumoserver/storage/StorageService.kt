@@ -16,5 +16,7 @@ interface StorageService {
 
     fun info(id: SimulationId): SimulationInfo
 
+    fun export(simulationId: SimulationId): SumoNetwork
+
     fun listAll(): List<SimulationInfo>
 }
