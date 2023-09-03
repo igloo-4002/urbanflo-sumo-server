@@ -1,7 +1,9 @@
 package app.urbanflo.urbanflosumoserver.model.network
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
+@JsonIgnoreProperties(ignoreUnknown = true) // for demo files
 data class SumoFlow(
     @field:JacksonXmlProperty(isAttribute = true)
     val id: SumoEntityId,

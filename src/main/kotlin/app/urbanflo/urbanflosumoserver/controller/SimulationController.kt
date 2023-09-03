@@ -87,15 +87,6 @@ class SimulationController(
         }
     }
 
-//    @GetMapping("/start-simulation", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-//    @CrossOrigin(origins = ["http://localhost:5173"])
-//    @ResponseBody
-//    fun startSimulation(): Flux<SimulationStep> {
-//        val cfgPath = System.getenv("SUMOCFG_PATH") ?: "demo/demo.sumocfg"
-//        return Flux.fromIterable(SimulationInstance(cfgPath))
-//    }
-
-
     @Operation(summary = "Create a new simulation.")
     @ApiResponses(
         value = [
@@ -206,6 +197,23 @@ class SimulationController(
         return storageService.listAll()
     }
 
+    @Operation(summary = "Get simulation network in the same format as the uploaded network data.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    @GetMapping("/simulation/{id:.+}/network", produces = ["application/json"])
+    @ResponseBody
+    fun exportSimulationNetwork(@PathVariable id: SimulationId): SumoNetwork {
+        return storageService.export(id.trim())
+    }
+
     @ExceptionHandler(StorageSimulationNotFoundException::class)
     fun handleStorageNotFound(e: StorageSimulationNotFoundException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse(e.message ?: "No such simulation"), HttpStatus.NOT_FOUND)
@@ -225,5 +233,4 @@ class SimulationController(
     fun handleStorageException(e: StorageException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse("An internal error occurred"), HttpStatus.INTERNAL_SERVER_ERROR)
     }
-
 }

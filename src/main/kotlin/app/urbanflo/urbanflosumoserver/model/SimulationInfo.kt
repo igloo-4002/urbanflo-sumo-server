@@ -1,12 +1,17 @@
 package app.urbanflo.urbanflosumoserver.model
 
-import app.urbanflo.urbanflosumoserver.simulation.SimulationId
+import java.nio.file.Path
 import java.time.OffsetDateTime
 
 data class SimulationInfo(
     val id: String,
     val createdAt: OffsetDateTime,
     val lastModifiedAt: OffsetDateTime
-): SumoXml {
-    override fun fileName(simulationId: SimulationId) = "info.json"
+) {
+    companion object {
+        fun filePath(simulationDir: Path): Path =
+            simulationDir.resolve(fileName()).normalize().toAbsolutePath()
+
+        fun fileName() = "info.json"
+    }
 }

@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.1.0"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.spring") version "1.8.21"
+    kotlin("jvm") version "1.9.10"
+    kotlin("plugin.spring") version "1.9.10"
 }
 
 group = "app.urbanflo"
@@ -23,14 +23,14 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web:3.1.2")
+    implementation("org.springframework.boot:spring-boot-starter-web:3.1.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.2")
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
     implementation("org.eclipse.sumo:libtraci:1.18.0")
-    implementation("io.projectreactor:reactor-core:3.5.4")
+    implementation("io.projectreactor:reactor-core:3.5.9")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("com.google.code.gson:gson:2.10.1")
