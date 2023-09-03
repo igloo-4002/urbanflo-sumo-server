@@ -16,5 +16,7 @@ data class SumoEdge(
     @field:JacksonXmlProperty(isAttribute = true)
     val speed: Double,
     @field:JacksonXmlProperty(isAttribute = true)
+    val width: Double,
+    @field:JacksonXmlProperty(isAttribute = true)
     val name: String?
 )
