@@ -28,8 +28,6 @@ RUN apt-get update && apt-get install -y libxerces-c3.2 libproj22 libfox-1.6-0 l
 WORKDIR $SUMO_HOME/bin
 COPY --from=sumo-builder /opt/sumo/bin .
 WORKDIR /opt/urbanflo-sumo-server
-# copy demo folder
-COPY demo uploads/demo
 # copy server jar
 COPY --from=gradle-builder /opt/urbanflo-sumo-server/build/libs/urbanflo-sumo-server-$VERSION.jar urbanflo-sumo-server.jar
 
