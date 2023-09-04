@@ -26,7 +26,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import reactor.core.Disposable
 
 private val logger = KotlinLogging.logger {}
@@ -118,21 +117,12 @@ class SimulationController(
                 responseCode = "404",
                 description = "Simulation not found",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Attempt to delete demo simulation",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
     @DeleteMapping("/simulation/{id:.+}", produces = ["application/json"])
     @ResponseBody
     fun deleteSimulation(@PathVariable id: SimulationId) {
-        // prevent demo simulation from being modified or deleted
-        if (id.trim() == "demo") {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Demo simulation cannot be modified or deleted via API")
-        }
         storageService.delete(id.trim())
     }
 
@@ -143,11 +133,6 @@ class SimulationController(
             ApiResponse(
                 responseCode = "404",
                 description = "Simulation not found",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Attempt to modify demo simulation",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             ),
             ApiResponse(
@@ -165,12 +150,7 @@ class SimulationController(
     @PutMapping("/simulation/{id:.+}", consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun modifySimulation(@PathVariable id: SimulationId, @RequestBody network: SumoNetwork): SimulationInfo {
-        // prevent demo simulation from being modified or deleted
-        if (id.trim() == "demo") {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Demo simulation cannot be modified or deleted via API")
-        } else {
-            return storageService.store(id, network)
-        }
+        return storageService.store(id, network)
     }
 
     @Operation(summary = "Get simulation information.")

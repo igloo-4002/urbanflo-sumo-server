@@ -154,22 +154,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun info(id: SimulationId): SimulationInfo {
-        return when (id) {
-            "demo" -> {
-                // for demo id, just make up some timestamps
-                createDemoSimulationInfo()
-            }
-
-            else -> {
-                val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
-                if (!simulationDir.exists()) {
-                    throw StorageSimulationNotFoundException("No such simulation with ID $id")
-                }
-                val infoFile = simulationDir.resolve("info.json").normalize().toAbsolutePath().toFile()
-                assert(infoFile.exists())
-                jsonMapper.readValue(infoFile)
-            }
+        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
+        if (!simulationDir.exists()) {
+            throw StorageSimulationNotFoundException("No such simulation with ID $id")
         }
+        val infoFile = simulationDir.resolve("info.json").normalize().toAbsolutePath().toFile()
+        assert(infoFile.exists())
+        return jsonMapper.readValue(infoFile)
     }
 
     override fun export(simulationId: SimulationId): SumoNetwork {
@@ -195,20 +186,11 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun listAll(): List<SimulationInfo> {
-        val simulationDirs = uploadsDir.listDirectoryEntries().filter { path -> path.fileName.toString() != "demo" }
-        val simulationInfos = mutableListOf(createDemoSimulationInfo())
-        simulationInfos.addAll(
-            simulationDirs.map<Path, SimulationInfo> { simulation ->
+        val simulationDirs = uploadsDir.listDirectoryEntries()
+            return simulationDirs.map<Path, SimulationInfo> { simulation ->
                 val infoFile = simulation.resolve("info.json").normalize().toAbsolutePath().toFile()
                 jsonMapper.readValue(infoFile)
             }.sortedByDescending { it.lastModifiedAt }
-        )
-        return simulationInfos
-    }
-
-    private fun createDemoSimulationInfo(): SimulationInfo {
-        val now = currentTime()
-        return SimulationInfo("demo", now, now)
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
