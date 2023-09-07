@@ -5,6 +5,7 @@ import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageRequest
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
@@ -193,6 +194,12 @@ class SimulationController(
     @ResponseBody
     fun exportSimulationNetwork(@PathVariable id: SimulationId): SumoNetwork {
         return storageService.export(id.trim())
+    }
+
+    @GetMapping("/simulation/{id:.+}/output", produces = ["application/json"])
+    @ResponseBody
+    fun getSimulationOutput(@PathVariable id: SimulationId): SumoSimulationOutput {
+        return storageService.getSimulationOutput(id.trim())
     }
 
     @ExceptionHandler(StorageSimulationNotFoundException::class)
