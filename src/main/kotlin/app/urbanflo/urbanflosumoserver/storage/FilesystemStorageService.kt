@@ -114,7 +114,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             val netPath = runNetconvert(simulationId, simulationDir, nodPath, edgPath, conPath)
             assert(netPath.exists())
             // create sumocfg
-            val sumocfg = SumoCfg(netPath, rouPath)
+            val sumocfg = SumoCfg(simulationId, netPath, rouPath)
             val sumocfgPath = SumoCfg.filePath(simulationId, simulationDir)
             sumocfgPath.toFile().writeText(xmlMapper.writeValueAsString(sumocfg))
         } catch (e: NetconvertException) {

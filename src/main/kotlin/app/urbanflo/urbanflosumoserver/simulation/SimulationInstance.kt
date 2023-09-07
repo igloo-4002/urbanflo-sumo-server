@@ -90,7 +90,7 @@ class SimulationInstance(
             }
             val end = Instant.now()
             val delay = frameTime.toMillis() - Duration.between(start, end).toMillis()
-            Thread.sleep(max(delay, 0))
+//            Thread.sleep(max(delay, 0))
             return pairs.toMap()
         } catch (e: Exception) {
             logger.error(e) { "Error in advancing simulation step" }
