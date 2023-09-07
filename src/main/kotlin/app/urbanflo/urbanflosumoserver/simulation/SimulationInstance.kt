@@ -22,7 +22,8 @@ private const val DEFAULT_NUM_RETRIES = 60
 private val logger = KotlinLogging.logger {}
 
 class SimulationInstance(
-    val label: SimulationId,
+    val simulationId: SimulationId,
+    val label: String,
     cfgPath: Path
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
@@ -90,7 +91,7 @@ class SimulationInstance(
             }
             val end = Instant.now()
             val delay = frameTime.toMillis() - Duration.between(start, end).toMillis()
-//            Thread.sleep(max(delay, 0))
+            Thread.sleep(max(delay, 0))
             return pairs.toMap()
         } catch (e: Exception) {
             logger.error(e) { "Error in advancing simulation step" }
@@ -113,7 +114,7 @@ class SimulationInstance(
     }
 
     private fun closeSimulation() {
-        logger.info { "Closing connection with label: ${Simulation.getLabel()}" }
+        logger.info { "Closing connection with ID $simulationId and label: ${Simulation.getLabel()}" }
         Simulation.close()
     }
 

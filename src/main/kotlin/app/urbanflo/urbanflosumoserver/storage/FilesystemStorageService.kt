@@ -139,7 +139,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize())
         val cfgPath = simulationDir.resolve("$id.sumocfg").normalize().toAbsolutePath()
         if (simulationDir.exists()) {
-            return SimulationInstance(label, cfgPath)
+            return SimulationInstance(id, label, cfgPath)
         } else {
             throw StorageSimulationNotFoundException("No such simulation with ID $id")
         }

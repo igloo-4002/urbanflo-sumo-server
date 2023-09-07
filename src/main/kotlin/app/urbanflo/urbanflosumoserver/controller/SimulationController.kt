@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import jakarta.annotation.PreDestroy
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.DestinationVariable
@@ -212,5 +213,20 @@ class SimulationController(
     @ExceptionHandler(StorageException::class)
     fun handleStorageException(e: StorageException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse("An internal error occurred"), HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    @PreDestroy
+    fun stopAllSimulations() {
+        logger.info { "Stopping all simulations" }
+        instances.values.forEach {instance ->
+            instance.stopSimulation()
+            simpMessagingTemplate.convertAndSend(
+                "/topic/simulation/${instance.simulationId}/error",
+                mapOf("error" to "Server is shutting down")
+            )
+        }
+        disposables.values.forEach {disposable ->
+            disposable.dispose()
+        }
     }
 }
