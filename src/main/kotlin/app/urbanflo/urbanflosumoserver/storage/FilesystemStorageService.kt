@@ -2,8 +2,8 @@ package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.*
+import app.urbanflo.urbanflosumoserver.model.output.SumoNetstateXml
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
-import app.urbanflo.urbanflosumoserver.model.output.SumoTripInfo
 import app.urbanflo.urbanflosumoserver.model.output.SumoTripInfoXml
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
@@ -190,17 +190,19 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
     override fun listAll(): List<SimulationInfo> {
         val simulationDirs = uploadsDir.listDirectoryEntries()
-            return simulationDirs.map<Path, SimulationInfo> { simulation ->
-                val infoFile = simulation.resolve("info.json").normalize().toAbsolutePath().toFile()
-                jsonMapper.readValue(infoFile)
-            }.sortedByDescending { it.lastModifiedAt }
+        return simulationDirs.map<Path, SimulationInfo> { simulation ->
+            val infoFile = simulation.resolve("info.json").normalize().toAbsolutePath().toFile()
+            jsonMapper.readValue(infoFile)
+        }.sortedByDescending { it.lastModifiedAt }
     }
 
     override fun getSimulationOutput(simulationId: SimulationId): SumoSimulationOutput {
-        val tripInfoPath = SumoTripInfo.filePath(simulationId, getSimulationDir(simulationId))
+        val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
+        val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
         return try {
             val tripInfo: SumoTripInfoXml = xmlMapper.readValue(tripInfoPath.toFile())
-            SumoSimulationOutput(tripInfo.tripInfos)
+            val netstate: SumoNetstateXml = xmlMapper.readValue(netstatePath.toFile())
+            SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
         } catch (e: IOException) {
             logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
             throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
@@ -208,8 +210,8 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun deleteSimulationOutput(simulationId: SimulationId) {
-        val tripInfoFile = SumoTripInfo.filePath(simulationId, getSimulationDir(simulationId)).toFile()
-        tripInfoFile.delete()
+        SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
+        SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)

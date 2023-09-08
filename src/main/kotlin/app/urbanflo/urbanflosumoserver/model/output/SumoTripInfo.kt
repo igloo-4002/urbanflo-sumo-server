@@ -1,11 +1,7 @@
 package app.urbanflo.urbanflosumoserver.model.output
 
-import app.urbanflo.urbanflosumoserver.simulation.SimulationId
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import java.nio.file.Path
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class SumoTripInfo(
     @field:JacksonXmlProperty(isAttribute = true)
     val id: String,
@@ -49,11 +45,4 @@ data class SumoTripInfo(
     val speedFactor: Double,
     @field:JacksonXmlProperty(isAttribute = true)
     val vaporized: Boolean?
-) {
-    companion object {
-        fun filePath(simulationId: SimulationId, simulationDir: Path): Path =
-            simulationDir.resolve(fileName(simulationId)).normalize().toAbsolutePath()
-
-        fun fileName(simulationId: SimulationId) = "$simulationId.tripinfo.xml"
-    }
-}
+)
