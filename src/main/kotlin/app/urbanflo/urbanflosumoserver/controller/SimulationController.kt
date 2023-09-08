@@ -196,6 +196,17 @@ class SimulationController(
         return storageService.export(id.trim())
     }
 
+    @Operation(summary = "Get simulation output data.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found and finished"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found, not started or not closed properly",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
     @GetMapping("/simulation/{id:.+}/output", produces = ["application/json"])
     @ResponseBody
     fun getSimulationOutput(@PathVariable id: SimulationId): SumoSimulationOutput {
