@@ -5,6 +5,7 @@ import java.time.OffsetDateTime
 
 data class SimulationInfo(
     val id: String,
+    val documentName: String,
     val createdAt: OffsetDateTime,
     val lastModifiedAt: OffsetDateTime
 ) {

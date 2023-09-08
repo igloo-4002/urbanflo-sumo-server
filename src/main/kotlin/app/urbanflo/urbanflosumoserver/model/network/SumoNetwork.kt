@@ -1,8 +1,10 @@
 package app.urbanflo.urbanflosumoserver.model.network
 
+import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class SumoNetwork(
+    val documentName: String,
     val nodes: List<SumoNode>,
     val edges: List<SumoEdge>,
     val connections: List<SumoConnection>,
@@ -11,7 +13,14 @@ data class SumoNetwork(
     val route: List<SumoRoute>,
     val flow: List<SumoFlow>
 ) {
-    constructor(nodesXml: SumoNodesXml, edgesXml: SumoEdgesXml, connectionsXml: SumoConnectionsXml, routesXml: SumoRoutesXml) : this(
+    constructor(
+        simulationInfo: SimulationInfo,
+        nodesXml: SumoNodesXml,
+        edgesXml: SumoEdgesXml,
+        connectionsXml: SumoConnectionsXml,
+        routesXml: SumoRoutesXml
+    ) : this(
+        simulationInfo.documentName,
         nodesXml.nodes,
         edgesXml.edges,
         connectionsXml.connections,
