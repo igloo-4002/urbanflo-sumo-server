@@ -174,6 +174,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 val edgPath = SumoEdgesXml.filePath(simulationId, simulationDir)
                 val conPath = SumoConnectionsXml.filePath(simulationId, simulationDir)
                 val rouPath = SumoRoutesXml.filePath(simulationId, simulationDir)
+                val infoPath = SimulationInfo.filePath(simulationDir)
                 val nod: SumoNodesXml = xmlMapper.readValue(nodPath.toFile())
                 val edg: SumoEdgesXml = xmlMapper.readValue(edgPath.toFile())
                 val con: SumoConnectionsXml = xmlMapper.readValue(conPath.toFile())
@@ -192,7 +193,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun listAll(): List<SimulationInfo> {
         val simulationDirs = uploadsDir.listDirectoryEntries()
         return simulationDirs.map<Path, SimulationInfo> { simulation ->
-            val infoFile = simulation.resolve("info.json").normalize().toAbsolutePath().toFile()
+            val infoFile = SimulationInfo.filePath(simulation).toFile()
             jsonMapper.readValue(infoFile)
         }.sortedByDescending { it.lastModifiedAt }
     }
