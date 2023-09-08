@@ -60,7 +60,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         simulationDir.createDirectory()
 
         val now = currentTime()
-        val info = SimulationInfo(id, now, now)
+        val info = SimulationInfo(id, network.documentName, now, now)
         try {
             writeFiles(info, network, simulationDir)
         } catch (e: Exception) {
@@ -75,7 +75,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val now = currentTime()
         val info = this.info(simulationId)
         assert(info.id == simulationId)
-        val newInfo = SimulationInfo(info.id, info.createdAt, now)
+        val newInfo = SimulationInfo(info.id, network.documentName, info.createdAt, now)
         val simulationDir = uploadsDir.resolve(Paths.get(simulationId).normalize())
         writeFiles(newInfo, network, simulationDir)
         return newInfo
@@ -158,7 +158,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         if (!simulationDir.exists()) {
             throw StorageSimulationNotFoundException("No such simulation with ID $id")
         }
-        val infoFile = simulationDir.resolve("info.json").normalize().toAbsolutePath().toFile()
+        val infoFile = SimulationInfo.filePath(simulationDir).toFile()
         assert(infoFile.exists())
         return jsonMapper.readValue(infoFile)
     }
@@ -171,11 +171,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 val edgPath = SumoEdgesXml.filePath(simulationId, simulationDir)
                 val conPath = SumoConnectionsXml.filePath(simulationId, simulationDir)
                 val rouPath = SumoRoutesXml.filePath(simulationId, simulationDir)
+                val infoPath = SimulationInfo.filePath(simulationDir)
                 val nod: SumoNodesXml = xmlMapper.readValue(nodPath.toFile())
                 val edg: SumoEdgesXml = xmlMapper.readValue(edgPath.toFile())
                 val con: SumoConnectionsXml = xmlMapper.readValue(conPath.toFile())
                 val rou: SumoRoutesXml = xmlMapper.readValue(rouPath.toFile())
-                return SumoNetwork(nod, edg, con, rou)
+                val info: SimulationInfo = jsonMapper.readValue(infoPath.toFile())
+                return SumoNetwork(info, nod, edg, con, rou)
             } catch (e: IOException) {
                 logger.error(e) { "Cannot export network" }
                 throw StorageException("Cannot export network", e)
