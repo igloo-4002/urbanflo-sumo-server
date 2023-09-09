@@ -2,6 +2,9 @@ package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.*
+import app.urbanflo.urbanflosumoserver.model.output.SumoNetstateXml
+import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
+import app.urbanflo.urbanflosumoserver.model.output.SumoTripInfoXml
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
@@ -75,8 +78,8 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val now = currentTime()
         val info = this.info(simulationId)
         assert(info.id == simulationId)
+        val simulationDir = getSimulationDir(simulationId)
         val newInfo = SimulationInfo(info.id, network.documentName, info.createdAt, now)
-        val simulationDir = uploadsDir.resolve(Paths.get(simulationId).normalize())
         writeFiles(newInfo, network, simulationDir)
         return newInfo
     }
@@ -114,7 +117,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             val netPath = runNetconvert(simulationId, simulationDir, nodPath, edgPath, conPath)
             assert(netPath.exists())
             // create sumocfg
-            val sumocfg = SumoCfg(netPath, rouPath)
+            val sumocfg = SumoCfg(simulationId, netPath, rouPath)
             val sumocfgPath = SumoCfg.filePath(simulationId, simulationDir)
             sumocfgPath.toFile().writeText(xmlMapper.writeValueAsString(sumocfg))
         } catch (e: NetconvertException) {
@@ -139,7 +142,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize())
         val cfgPath = simulationDir.resolve("$id.sumocfg").normalize().toAbsolutePath()
         if (simulationDir.exists()) {
-            return SimulationInstance(label, cfgPath)
+            return SimulationInstance(id, label, cfgPath)
         } else {
             throw StorageSimulationNotFoundException("No such simulation with ID $id")
         }
@@ -164,7 +167,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun export(simulationId: SimulationId): SumoNetwork {
-        val simulationDir = uploadsDir.resolve(Paths.get(simulationId).normalize())
+        val simulationDir = getSimulationDir(simulationId)
         if (simulationDir.exists()) {
             try {
                 val nodPath = SumoNodesXml.filePath(simulationId, simulationDir)
@@ -189,11 +192,31 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
     override fun listAll(): List<SimulationInfo> {
         val simulationDirs = uploadsDir.listDirectoryEntries()
-            return simulationDirs.map<Path, SimulationInfo> { simulation ->
-                val infoFile = simulation.resolve("info.json").normalize().toAbsolutePath().toFile()
-                jsonMapper.readValue(infoFile)
-            }.sortedByDescending { it.lastModifiedAt }
+        return simulationDirs.map<Path, SimulationInfo> { simulation ->
+            val infoFile = SimulationInfo.filePath(simulation).toFile()
+            jsonMapper.readValue(infoFile)
+        }.sortedByDescending { it.lastModifiedAt }
+    }
+
+    override fun getSimulationOutput(simulationId: SimulationId): SumoSimulationOutput {
+        val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
+        val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
+        return try {
+            val tripInfo: SumoTripInfoXml = xmlMapper.readValue(tripInfoPath.toFile())
+            val netstate: SumoNetstateXml = xmlMapper.readValue(netstatePath.toFile())
+            SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
+        } catch (e: IOException) {
+            logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
+            throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
+        }
+    }
+
+    override fun deleteSimulationOutput(simulationId: SimulationId) {
+        SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
+        SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
+
+    private fun getSimulationDir(simulationId: SimulationId) = uploadsDir.resolve(Paths.get(simulationId).normalize())
 }

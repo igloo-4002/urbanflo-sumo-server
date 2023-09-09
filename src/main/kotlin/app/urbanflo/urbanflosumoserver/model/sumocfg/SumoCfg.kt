@@ -6,15 +6,21 @@ import java.nio.file.Path
 
 @JacksonXmlRootElement(localName = "configuration")
 class SumoCfg(
+    simulationId: SimulationId,
     netPath: Path,
     rouPath: Path
 ) {
     val input: SumoCfgInput
+    val output: SumoCfgOutput
 
     init {
         input = SumoCfgInput(
             SumoCfgNetFile(netPath.fileName.toString()),
             SumoCfgRouteFiles(rouPath.fileName.toString())
+        )
+        output = SumoCfgOutput(
+            SumoCfgTripInfoOutput(SumoCfgTripInfoOutput.fileName(simulationId)),
+            SumoCfgNetstateOutput(SumoCfgNetstateOutput.fileName(simulationId))
         )
     }
 

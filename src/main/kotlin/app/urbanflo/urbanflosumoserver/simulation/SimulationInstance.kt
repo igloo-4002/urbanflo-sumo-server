@@ -22,7 +22,8 @@ private const val DEFAULT_NUM_RETRIES = 60
 private val logger = KotlinLogging.logger {}
 
 class SimulationInstance(
-    val label: SimulationId,
+    val simulationId: SimulationId,
+    val label: String,
     cfgPath: Path
 ) : Iterator<SimulationStep> {
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
@@ -113,7 +114,7 @@ class SimulationInstance(
     }
 
     private fun closeSimulation() {
-        logger.info { "Closing connection with label: ${Simulation.getLabel()}" }
+        logger.info { "Closing connection with ID $simulationId and label: ${Simulation.getLabel()}" }
         Simulation.close()
     }
 

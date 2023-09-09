@@ -5,6 +5,7 @@ import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageRequest
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import jakarta.annotation.PreDestroy
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.DestinationVariable
@@ -194,6 +196,23 @@ class SimulationController(
         return storageService.export(id.trim())
     }
 
+    @Operation(summary = "Get simulation output data.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found and finished"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found, not started or not closed properly",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    @GetMapping("/simulation/{id:.+}/output", produces = ["application/json"])
+    @ResponseBody
+    fun getSimulationOutput(@PathVariable id: SimulationId): SumoSimulationOutput {
+        return storageService.getSimulationOutput(id.trim())
+    }
+
     @ExceptionHandler(StorageSimulationNotFoundException::class)
     fun handleStorageNotFound(e: StorageSimulationNotFoundException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse(e.message ?: "No such simulation"), HttpStatus.NOT_FOUND)
@@ -212,5 +231,20 @@ class SimulationController(
     @ExceptionHandler(StorageException::class)
     fun handleStorageException(e: StorageException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse("An internal error occurred"), HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    @PreDestroy
+    fun stopAllSimulations() {
+        logger.info { "Stopping all simulations" }
+        instances.values.forEach {instance ->
+            instance.stopSimulation()
+            simpMessagingTemplate.convertAndSend(
+                "/topic/simulation/${instance.simulationId}/error",
+                mapOf("error" to "Server is shutting down")
+            )
+        }
+        disposables.values.forEach {disposable ->
+            disposable.dispose()
+        }
     }
 }
