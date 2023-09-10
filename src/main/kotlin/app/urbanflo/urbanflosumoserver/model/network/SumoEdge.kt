@@ -24,7 +24,7 @@ data class SumoEdge(
 ) {
     init {
         spreadType?.let {
-            require(it.lowercase() in listOf("right", "center", "roadCenter")) {
+            require(it in listOf("right", "center", "roadCenter")) {
                 "Invalid value for spreadType: $it. Allowed values are 'right', 'center' and 'roadCenter'"
             }
         }
