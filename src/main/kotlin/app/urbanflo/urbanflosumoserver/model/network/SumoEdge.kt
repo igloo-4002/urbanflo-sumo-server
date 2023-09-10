@@ -18,5 +18,15 @@ data class SumoEdge(
     @field:JacksonXmlProperty(isAttribute = true)
     val width: Double,
     @field:JacksonXmlProperty(isAttribute = true)
-    val name: String?
-)
+    val name: String?,
+    @field:JacksonXmlProperty(isAttribute = true)
+    val spreadType: String?,
+) {
+    init {
+        spreadType?.let {
+            require(it.lowercase() in listOf("right", "center", "roadCenter")) {
+                "Invalid value for spreadType: $it. Allowed values are 'right', 'center' and 'roadCenter'"
+            }
+        }
+    }
+}
