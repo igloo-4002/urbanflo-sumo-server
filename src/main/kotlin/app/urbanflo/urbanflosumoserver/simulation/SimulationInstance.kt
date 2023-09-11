@@ -31,7 +31,11 @@ class SimulationInstance(
     private var frameTime = setSimulationSpeed(1)
     var flux = Flux.create<SimulationStep> { sink ->
         while (hasNext()) {
-            sink.next(next())
+            try {
+                sink.next(next())
+            } catch (_: UnknownError) {
+                logger.warn { "Simulation $simulationId with label $label forcibly closed. Ignore if server is shutting down" }
+            }
         }
         sink.complete()
     }
