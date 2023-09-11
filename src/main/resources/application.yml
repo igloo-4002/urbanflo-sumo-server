@@ -1,3 +1,5 @@
+server:
+  shutdown: graceful
 logging:
   config: classpath:logback.xml
 
