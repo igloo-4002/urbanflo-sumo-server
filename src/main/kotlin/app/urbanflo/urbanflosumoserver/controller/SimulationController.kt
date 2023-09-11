@@ -238,7 +238,7 @@ class SimulationController(
         logger.info { "Server is shutting down. Stopping all simulations" }
         instances.values.forEach {instance ->
             instance.stopSimulation()
-            instance.next()
+            instance.hasNext()
         }
     }
 }
