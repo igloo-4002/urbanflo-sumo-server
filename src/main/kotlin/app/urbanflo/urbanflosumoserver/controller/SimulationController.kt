@@ -235,16 +235,10 @@ class SimulationController(
 
     @PreDestroy
     fun stopAllSimulations() {
-        logger.info { "Stopping all simulations" }
+        logger.info { "Server is shutting down. Stopping all simulations" }
         instances.values.forEach {instance ->
             instance.stopSimulation()
-            simpMessagingTemplate.convertAndSend(
-                "/topic/simulation/${instance.simulationId}/error",
-                mapOf("error" to "Server is shutting down")
-            )
-        }
-        disposables.values.forEach {disposable ->
-            disposable.dispose()
+            instance.hasNext()
         }
     }
 }
