@@ -76,11 +76,29 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
     override fun store(simulationId: SimulationId, network: SumoNetwork): SimulationInfo {
         val now = currentTime()
-        val info = this.info(simulationId)
-        assert(info.id == simulationId)
+        val oldInfo = this.info(simulationId)
+        val oldNetwork = this.export(simulationId)
+        assert(oldInfo.id == simulationId)
         val simulationDir = getSimulationDir(simulationId)
-        val newInfo = SimulationInfo(info.id, network.documentName, info.createdAt, now)
-        writeFiles(newInfo, network, simulationDir)
+        val newInfo = SimulationInfo(oldInfo.id, network.documentName, oldInfo.createdAt, now)
+        try {
+            writeFiles(newInfo, network, simulationDir)
+        } catch (e: Exception) {
+            // restore old network data
+            var retryCount = 10
+            while (retryCount > 0) {
+                try {
+                    writeFiles(oldInfo, oldNetwork, simulationDir)
+                    break
+                } catch (re: Exception) {
+                    retryCount--
+                    if (retryCount == 0) {
+                        logger.error(re) { "Cannot restore simulation after invalid modification" }
+                    }
+                }
+            }
+            throw e
+        }
         return newInfo
     }
 
