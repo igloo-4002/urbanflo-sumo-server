@@ -1,6 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
+import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
 import app.urbanflo.urbanflosumoserver.model.network.*
 import app.urbanflo.urbanflosumoserver.model.output.SumoNetstateXml
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
@@ -232,6 +233,10 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun deleteSimulationOutput(simulationId: SimulationId) {
         SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
         SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
+    }
+
+    override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
+        TODO("Not yet implemented")
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)

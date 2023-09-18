@@ -1,6 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
+import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
@@ -24,4 +25,6 @@ interface StorageService {
     fun getSimulationOutput(simulationId: SimulationId): SumoSimulationOutput
 
     fun deleteSimulationOutput(simulationId: SimulationId)
+
+    fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics
 }

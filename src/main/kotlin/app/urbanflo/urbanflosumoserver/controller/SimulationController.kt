@@ -1,11 +1,9 @@
 package app.urbanflo.urbanflosumoserver.controller
 
 import app.urbanflo.urbanflosumoserver.model.ErrorResponse
-import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageRequest
 import app.urbanflo.urbanflosumoserver.model.SimulationMessageType
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
-import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
@@ -107,9 +105,7 @@ class SimulationController(
     @PostMapping("/simulation", consumes = ["application/json"], produces = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    fun newSimulation(@RequestBody network: SumoNetwork): SimulationInfo {
-        return storageService.store(network)
-    }
+    fun newSimulation(@RequestBody network: SumoNetwork) = storageService.store(network)
 
     @Operation(summary = "Delete a simulation.")
     @ApiResponses(
@@ -124,9 +120,7 @@ class SimulationController(
     )
     @DeleteMapping("/simulation/{id:.+}", produces = ["application/json"])
     @ResponseBody
-    fun deleteSimulation(@PathVariable id: SimulationId) {
-        storageService.delete(id.trim())
-    }
+    fun deleteSimulation(@PathVariable id: SimulationId) = storageService.delete(id.trim())
 
     @Operation(summary = "Modify a simulation.")
     @ApiResponses(
@@ -151,9 +145,7 @@ class SimulationController(
     )
     @PutMapping("/simulation/{id:.+}", consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun modifySimulation(@PathVariable id: SimulationId, @RequestBody network: SumoNetwork): SimulationInfo {
-        return storageService.store(id, network)
-    }
+    fun modifySimulation(@PathVariable id: SimulationId, @RequestBody network: SumoNetwork) = storageService.store(id, network)
 
     @Operation(summary = "Get simulation information.")
     @ApiResponses(
@@ -168,16 +160,12 @@ class SimulationController(
     )
     @GetMapping("/simulation/{id:.+}", produces = ["application/json"])
     @ResponseBody
-    fun getSimulationInfo(@PathVariable id: SimulationId): SimulationInfo {
-        return storageService.info(id.trim())
-    }
+    fun getSimulationInfo(@PathVariable id: SimulationId) = storageService.info(id.trim())
 
     @Operation(summary = "Get information of all simulations.")
     @GetMapping("/simulations", produces = ["application/json"])
     @ResponseBody
-    fun getAllSimulationInfo(): List<SimulationInfo> {
-        return storageService.listAll()
-    }
+    fun getAllSimulationInfo() = storageService.listAll()
 
     @Operation(summary = "Get simulation network in the same format as the uploaded network data.")
     @ApiResponses(
@@ -192,9 +180,7 @@ class SimulationController(
     )
     @GetMapping("/simulation/{id:.+}/network", produces = ["application/json"])
     @ResponseBody
-    fun exportSimulationNetwork(@PathVariable id: SimulationId): SumoNetwork {
-        return storageService.export(id.trim())
-    }
+    fun exportSimulationNetwork(@PathVariable id: SimulationId) = storageService.export(id.trim())
 
     @Operation(summary = "Get simulation output data.")
     @ApiResponses(
@@ -209,9 +195,11 @@ class SimulationController(
     )
     @GetMapping("/simulation/{id:.+}/output", produces = ["application/json"])
     @ResponseBody
-    fun getSimulationOutput(@PathVariable id: SimulationId): SumoSimulationOutput {
-        return storageService.getSimulationOutput(id.trim())
-    }
+    fun getSimulationOutput(@PathVariable id: SimulationId) = storageService.getSimulationOutput(id.trim())
+
+    @GetMapping("/simulation/{id:.+}/analytics", produces = ["application/json"])
+    @ResponseBody
+    fun getSimulationAnalytics(@PathVariable id: SimulationId) = storageService.getSimulationAnalytics(id.trim())
 
     @ExceptionHandler(StorageSimulationNotFoundException::class)
     fun handleStorageNotFound(e: StorageSimulationNotFoundException): ResponseEntity<ErrorResponse> {
