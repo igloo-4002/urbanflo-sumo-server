@@ -220,13 +220,23 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun getSimulationOutput(simulationId: SimulationId): SumoSimulationOutput {
         val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
         val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
-        return try {
-            val tripInfo: SumoTripInfoXml = xmlMapper.readValue(tripInfoPath.toFile())
-            val netstate: SumoNetstateXml = xmlMapper.readValue(netstatePath.toFile())
-            SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
-        } catch (e: IOException) {
-            logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
-            throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
+
+        var retryCount = 0
+        while (true) {
+            try {
+                val tripInfo: SumoTripInfoXml = xmlMapper.readValue(tripInfoPath.toFile())
+                val netstate: SumoNetstateXml = xmlMapper.readValue(netstatePath.toFile())
+                return SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
+            } catch (e: IOException) {
+                if (retryCount < 3) {
+                    // Add arbitrary delay to give libtraci time to close the output files
+                    Thread.sleep(1000)
+                    retryCount++
+                } else {
+                    logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
+                    throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
+                }
+            }
         }
     }
 
