@@ -58,25 +58,18 @@ class SimulationController(
                     val newSimulation = storageService.load(idTrim, sessionId)
 
                     newSimulation.flux
-                            .doOnTerminate {
-                                newSimulation.stopSimulation()
-                                simpMessagingTemplate.convertAndSend(
-                                    "/topic/simulation/${idTrim}/error",
-                                    mapOf("error" to "Simulation $idTrim with sesssion ID $sessionId stopped")
-                                )
-                            }.doOnCancel {
-                                newSimulation.stopSimulation()
-                                simpMessagingTemplate.convertAndSend(
-                                    "/topic/simulation/${idTrim}/error",
-                                    mapOf("error" to "Simulation $idTrim with sesssion ID $sessionId stopped")
-                                )
-                            }.doOnError { e ->
-                                logger.error(e) { "Error occurred during simulation $idTrim" }
-                                simpMessagingTemplate.convertAndSend(
-                                    "/topic/simulation/${idTrim}/error",
-                                    mapOf("error" to "Error occurred during simulation: ${e.message}")
-                                )
-                            }
+                        .doOnComplete {
+                            simpMessagingTemplate.convertAndSend(
+                                "/topic/simulation/${idTrim}/error",
+                                mapOf("error" to "Simulation $idTrim with sesssion ID $sessionId stopped")
+                            )
+                        }.doOnError { e ->
+                            logger.error(e) { "Error occurred during simulation $idTrim" }
+                            simpMessagingTemplate.convertAndSend(
+                                "/topic/simulation/${idTrim}/error",
+                                mapOf("error" to "Error occurred during simulation: ${e.message}")
+                            )
+                        }
                     instance = newSimulation
                     disposable = newSimulation.flux.subscribe { simulationStep ->
                         simpMessagingTemplate.convertAndSend("/topic/simulation/${idTrim}", simulationStep)
@@ -92,6 +85,7 @@ class SimulationController(
 
             SimulationMessageType.STOP -> {
                 logger.info { "Simulation $id with session ID $sessionId stopped" }
+                // only allow its own session to terminate on stop signal
                 if (instance?.label == sessionId) {
                     instance?.stopSimulation()
                     disposable?.dispose()
