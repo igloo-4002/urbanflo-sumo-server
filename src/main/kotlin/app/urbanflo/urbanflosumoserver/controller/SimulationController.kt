@@ -197,6 +197,17 @@ class SimulationController(
     @ResponseBody
     fun getSimulationOutput(@PathVariable id: SimulationId) = storageService.getSimulationOutput(id.trim())
 
+    @Operation(summary = "Get simulation analytics.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found and finished"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found, not started or not closed properly",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
     @GetMapping("/simulation/{id:.+}/analytics", produces = ["application/json"])
     @ResponseBody
     fun getSimulationAnalytics(@PathVariable id: SimulationId) = storageService.getSimulationAnalytics(id.trim())
