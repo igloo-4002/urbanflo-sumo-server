@@ -1,7 +1,7 @@
 package app.urbanflo.urbanflosumoserver.storage
 
-import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
+import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.*
 import app.urbanflo.urbanflosumoserver.model.output.SumoNetstateXml
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
@@ -236,7 +236,23 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
-        TODO("Not yet implemented")
+        val output = getSimulationOutput(simulationId)
+        val tripInfo = output.tripInfo
+
+        // Average duration: The average time each vehicle needed to accomplish the route in simulation seconds
+        val averageDuration = tripInfo.map { it.duration }.average()
+
+        // Waiting time: The average time in which vehicles speed was below or equal 0.1 m/s in simulation seconds
+        val averageWaiting = tripInfo.map { it.waitingTime }.average()
+
+        // // Time loss: The time lost due to driving below the ideal speed. (ideal speed includes the individual speedFactor; slowdowns due to intersections etc. will incur timeLoss, scheduled stops do not count) in simulation seconds
+        val averageTimeLoss = tripInfo.map { it.timeLoss }.average()
+
+        // Total number of cars that reached their destination. Can work this out with vaporised variable
+        val totalNumberOfCarsThatCompleted = tripInfo.count() - tripInfo.count { it.vaporized == true }
+
+        return SimulationAnalytics(averageDuration, averageWaiting, averageTimeLoss, totalNumberOfCarsThatCompleted)
+
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
