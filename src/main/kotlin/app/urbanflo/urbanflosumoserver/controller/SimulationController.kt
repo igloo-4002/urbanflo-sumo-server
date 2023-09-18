@@ -37,8 +37,9 @@ class SimulationController(
     private val storageService: StorageService,
     private val simpMessagingTemplate: SimpMessagingTemplate
 ) {
-    private var instances: MutableMap<String, SimulationInstance> = mutableMapOf()
-    private var disposables: MutableMap<String, Disposable> = mutableMapOf()
+    private var instance: SimulationInstance? = null
+    private var disposable: Disposable? = null
+
 
     @MessageMapping("/simulation/{id}")
     fun simulationSocket(
@@ -51,24 +52,35 @@ class SimulationController(
             SimulationMessageType.START -> {
                 logger.info { "Simulation $idTrim with session ID $sessionId started" }
                 try {
-                    val simulationInstance = instances[sessionId] ?: run {
-                        val newSimulation = storageService.load(idTrim, sessionId)
-                        instances[sessionId] = newSimulation
-                        newSimulation
-                    }
-                    disposables[sessionId] =
-                        simulationInstance.flux.doOnTerminate { simulationInstance.stopSimulation() }
-                            .doOnCancel { simulationInstance.stopSimulation() }
-                            .doOnError { e ->
+                    instance?.stopSimulation()
+                    disposable?.dispose()
+
+                    val newSimulation = storageService.load(idTrim, sessionId)
+
+                    newSimulation.flux
+                            .doOnTerminate {
+                                newSimulation.stopSimulation()
+                                simpMessagingTemplate.convertAndSend(
+                                    "/topic/simulation/${idTrim}/error",
+                                    mapOf("error" to "Simulation $idTrim with sesssion ID $sessionId stopped")
+                                )
+                            }.doOnCancel {
+                                newSimulation.stopSimulation()
+                                simpMessagingTemplate.convertAndSend(
+                                    "/topic/simulation/${idTrim}/error",
+                                    mapOf("error" to "Simulation $idTrim with sesssion ID $sessionId stopped")
+                                )
+                            }.doOnError { e ->
                                 logger.error(e) { "Error occurred during simulation $idTrim" }
                                 simpMessagingTemplate.convertAndSend(
                                     "/topic/simulation/${idTrim}/error",
                                     mapOf("error" to "Error occurred during simulation: ${e.message}")
                                 )
                             }
-                            .subscribe { simulationStep ->
-                                simpMessagingTemplate.convertAndSend("/topic/simulation/${idTrim}", simulationStep)
-                            }
+                    instance = newSimulation
+                    disposable = newSimulation.flux.subscribe { simulationStep ->
+                        simpMessagingTemplate.convertAndSend("/topic/simulation/${idTrim}", simulationStep)
+                    }
                 } catch (e: StorageSimulationNotFoundException) {
                     logger.error(e) { "Error occurred during simulation $idTrim" }
                     simpMessagingTemplate.convertAndSend(
@@ -80,10 +92,12 @@ class SimulationController(
 
             SimulationMessageType.STOP -> {
                 logger.info { "Simulation $id with session ID $sessionId stopped" }
-                instances[sessionId]?.stopSimulation()
-                disposables[sessionId]?.dispose()
-                disposables.remove(sessionId)
-                instances.remove(sessionId)
+                if (instance?.label == sessionId) {
+                    instance?.stopSimulation()
+                    disposable?.dispose()
+                    instance = null
+                    disposable = null
+                }
             }
         }
     }
@@ -236,9 +250,7 @@ class SimulationController(
     @PreDestroy
     fun stopAllSimulations() {
         logger.info { "Server is shutting down. Stopping all simulations" }
-        instances.values.forEach {instance ->
-            instance.stopSimulation()
-            instance.hasNext()
-        }
+        instance?.stopSimulation()
+        instance?.hasNext()
     }
 }
