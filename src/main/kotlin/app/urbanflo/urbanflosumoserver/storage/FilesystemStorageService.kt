@@ -248,6 +248,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
         val output = getSimulationOutput(simulationId)
         val tripInfo = output.tripInfo
+        val netState = output.netstate
 
         // Average duration: The average time each vehicle needed to accomplish the route in simulation seconds
         val averageDuration = tripInfo.map { it.duration }.average()
@@ -261,7 +262,15 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         // Total number of cars that reached their destination. Can work this out with vaporised variable
         val totalNumberOfCarsThatCompleted = tripInfo.count() - tripInfo.count { it.vaporized == true }
 
-        return SimulationAnalytics(averageDuration, averageWaiting, averageTimeLoss, totalNumberOfCarsThatCompleted)
+        val simulationLength = netState.lastOrNull()?.time ?: 0.0
+
+        return SimulationAnalytics(
+            averageDuration,
+            averageWaiting,
+            averageTimeLoss,
+            totalNumberOfCarsThatCompleted,
+            simulationLength
+        )
 
     }
 
