@@ -236,9 +236,8 @@ class SimulationController(
     @PreDestroy
     fun stopAllSimulations() {
         logger.info { "Server is shutting down. Stopping all simulations" }
-        instances.values.forEach {instance ->
-            instance.stopSimulation()
-            instance.hasNext()
+        instances.values.forEach { instance ->
+            instance.forceCloseConnectionOnServerShutdown()
         }
     }
 }
