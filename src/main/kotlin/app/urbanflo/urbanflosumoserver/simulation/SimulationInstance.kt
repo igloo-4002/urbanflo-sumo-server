@@ -11,6 +11,7 @@ import java.net.ServerSocket
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
+import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.max
 
 
@@ -30,9 +31,19 @@ class SimulationInstance(
     private val port: Int = getNextAvailablePort()
     private var frameTime = setSimulationSpeed(1)
     var flux = Flux.create<SimulationStep> { sink ->
-        while (hasNext()) {
+        while (true) {
             try {
-                sink.next(next())
+                lock.lock()
+                logger.info { "$label: lock acquired" }
+                if (hasNext()) {
+                    sink.next(next())
+                    logger.info { "$label: releasing lock" }
+                    lock.unlock()
+                } else {
+                    logger.info { "$label: releasing lock" }
+                    lock.unlock()
+                    break
+                }
             } catch (_: UnknownError) {
                 logger.warn { "Simulation $simulationId with label $label forcibly closed. Ignore if server is shutting down" }
             }
@@ -47,12 +58,16 @@ class SimulationInstance(
 
     init {
         logger.info { "Connecting to SUMO with port $port and label $label" }
+        lock.lock()
+        logger.info { "$label: lock acquired" }
         Simulation.start(
             StringVector(arrayOf("sumo", "-c", cfgPath.toString())),
             port,
             DEFAULT_NUM_RETRIES,
             label
         )
+        logger.info { "$label: releasing lock" }
+        lock.unlock()
     }
 
     override fun hasNext(): Boolean {
@@ -123,6 +138,7 @@ class SimulationInstance(
     }
 
     companion object {
+        private val lock = ReentrantLock()
         private fun getNextAvailablePort(): Int {
             // https://stackoverflow.com/questions/2675362/how-to-find-an-available-port
             val socket = ServerSocket(0)
