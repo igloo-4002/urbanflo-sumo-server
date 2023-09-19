@@ -238,10 +238,6 @@ class SimulationController(
         logger.info { "Server is shutting down. Stopping all simulations" }
         instances.values.forEach { instance ->
             instance.forceCloseConnectionOnServerShutdown()
-//            instance.hasNext()
-        }
-        disposables.values.forEach { disposable ->
-            disposable.dispose()
         }
     }
 }
