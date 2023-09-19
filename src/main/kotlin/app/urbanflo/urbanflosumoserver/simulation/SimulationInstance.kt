@@ -68,11 +68,11 @@ class SimulationInstance(
         try {
             lock.lock()
             logger.info { "$label: lock acquired" }
+            Simulation.switchConnection(label)
             if (shouldStop) {
                 closeSimulation()
                 return false
             }
-            Simulation.switchConnection(label)
 
             val expected = Simulation.getMinExpectedNumber() > 0
             if (!expected) {
