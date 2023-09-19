@@ -43,6 +43,8 @@ class SimulationInstance(
 
     @Volatile
     private var shouldStop = false
+    @Volatile
+    private var connectionClosed = false
 
     fun setSimulationSpeed(speed: Long): Duration = Duration.ofMillis(1000 / (60 * speed))
 
@@ -68,6 +70,9 @@ class SimulationInstance(
         try {
             lock.lock()
             logger.info { "$label: lock acquired" }
+            if (connectionClosed) {
+                return false
+            }
             Simulation.switchConnection(label)
             if (shouldStop) {
                 closeSimulation()
@@ -145,9 +150,23 @@ class SimulationInstance(
         shouldStop = true
     }
 
+    fun forceCloseConnectionOnServerShutdown() {
+        try {
+            lock.lock()
+            logger.info { "$label: lock acquired" }
+            Simulation.switchConnection(label)
+            stopSimulation()
+            closeSimulation()
+        } finally {
+            logger.info { "$label: releasing lock" }
+            lock.unlock()
+        }
+    }
+
     private fun closeSimulation() {
         logger.info { "Closing connection with ID $simulationId and label: ${Simulation.getLabel()}" }
         Simulation.close()
+        connectionClosed = true
     }
 
     companion object {
