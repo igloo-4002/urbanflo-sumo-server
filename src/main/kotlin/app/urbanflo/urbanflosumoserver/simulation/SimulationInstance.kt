@@ -52,7 +52,7 @@ class SimulationInstance(
         try {
             logger.info { "Connecting to SUMO with port $port and label $label" }
             lock.lock()
-            logger.info { "$label: lock acquired" }
+            logger.trace { "$label: lock acquired" }
             Simulation.start(
                 StringVector(arrayOf("sumo", "-c", cfgPath.toString())),
                 port,
@@ -61,7 +61,7 @@ class SimulationInstance(
             )
 
         } finally {
-            logger.info { "$label: releasing lock" }
+            logger.trace { "$label: releasing lock" }
             lock.unlock()
         }
     }
@@ -69,7 +69,7 @@ class SimulationInstance(
     override fun hasNext(): Boolean {
         try {
             lock.lock()
-            logger.info { "$label: lock acquired" }
+            logger.trace { "$label: lock acquired" }
             if (connectionClosed) {
                 return false
             }
@@ -89,7 +89,7 @@ class SimulationInstance(
             logger.error(e) { "Error in advancing simulation step" }
             throw SimulationException("Error in advancing simulation step: ${e.message}")
         } finally {
-            logger.info { "$label: releasing lock" }
+            logger.trace { "$label: releasing lock" }
             lock.unlock()
         }
     }
@@ -99,7 +99,7 @@ class SimulationInstance(
         val pairs: Map<String, VehicleData>
         try {
             lock.lock()
-            logger.info { "$label: lock acquired" }
+            logger.trace { "$label: lock acquired" }
 
             Simulation.switchConnection(label)
             Simulation.step()
@@ -125,7 +125,7 @@ class SimulationInstance(
             logger.error(e) { "Error in advancing simulation step" }
             throw SimulationException("Error in advancing simulation step: ${e.message}")
         } finally {
-            logger.info { "$label: releasing lock" }
+            logger.trace { "$label: releasing lock" }
             lock.unlock()
         }
         // we've left the critical section here, so the sleep can be done asynchronously
@@ -153,12 +153,12 @@ class SimulationInstance(
     fun forceCloseConnectionOnServerShutdown() {
         try {
             lock.lock()
-            logger.info { "$label: lock acquired" }
+            logger.trace { "$label: lock acquired" }
             Simulation.switchConnection(label)
             stopSimulation()
             closeSimulation()
         } finally {
-            logger.info { "$label: releasing lock" }
+            logger.trace { "$label: releasing lock" }
             lock.unlock()
         }
     }
