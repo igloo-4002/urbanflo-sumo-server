@@ -12,7 +12,6 @@ import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.math.max
 
 
 typealias SimulationStep = Map<String, VehicleData>
@@ -127,9 +126,11 @@ class SimulationInstance(
         }
         // we've left the critical section here, so the sleep can be done asynchronously
         val end = Instant.now()
-        val delay = max(frameTime.toMillis() - Duration.between(start, end).toMillis(), 0)
-        logger.trace { "$label: sleeping for $delay ms" }
-        Thread.sleep(delay)
+        val delay = frameTime.toMillis() - Duration.between(start, end).toMillis()
+        if (delay > 0) {
+            logger.trace { "$label: sleeping for $delay ms" }
+            Thread.sleep(delay)
+        }
         return pairs
     }
 
