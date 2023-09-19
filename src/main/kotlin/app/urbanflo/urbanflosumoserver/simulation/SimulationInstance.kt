@@ -31,18 +31,15 @@ class SimulationInstance(
     private val port: Int = getNextAvailablePort()
     private var frameTime = setSimulationSpeed(1)
     var flux = Flux.create<SimulationStep> { sink ->
-        try {
-            while (hasNext()) {
-                sink.next(next())
-            }
-        } catch (_: UnknownError) {
-            logger.warn { "Simulation $simulationId with label $label forcibly closed. Ignore if server is shutting down" }
+        while (hasNext()) {
+            sink.next(next())
         }
         sink.complete()
     }
 
     @Volatile
     private var shouldStop = false
+
     @Volatile
     private var connectionClosed = false
 
