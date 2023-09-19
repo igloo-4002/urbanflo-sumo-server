@@ -131,7 +131,7 @@ class SimulationInstance(
         // we've left the critical section here, so the sleep can be done asynchronously
         val end = Instant.now()
         val delay = max(frameTime.toMillis() - Duration.between(start, end).toMillis(), 0)
-        logger.info { "$label: sleeping for $delay ms" }
+        logger.trace { "$label: sleeping for $delay ms" }
         Thread.sleep(delay)
         return pairs
     }
