@@ -1,5 +1,6 @@
 package app.urbanflo.urbanflosumoserver.storage
 
+import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.*
 import app.urbanflo.urbanflosumoserver.model.output.SumoNetstateXml
@@ -219,19 +220,58 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun getSimulationOutput(simulationId: SimulationId): SumoSimulationOutput {
         val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
         val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
-        return try {
-            val tripInfo: SumoTripInfoXml = xmlMapper.readValue(tripInfoPath.toFile())
-            val netstate: SumoNetstateXml = xmlMapper.readValue(netstatePath.toFile())
-            SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
-        } catch (e: IOException) {
-            logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
-            throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
+
+        var retryCount = 0
+        while (true) {
+            try {
+                val tripInfo: SumoTripInfoXml = xmlMapper.readValue(tripInfoPath.toFile())
+                val netstate: SumoNetstateXml = xmlMapper.readValue(netstatePath.toFile())
+                return SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
+            } catch (e: IOException) {
+                if (retryCount < 3) {
+                    // Add arbitrary delay to give libtraci time to close the output files
+                    Thread.sleep(1000)
+                    retryCount++
+                } else {
+                    logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
+                    throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
+                }
+            }
         }
     }
 
     override fun deleteSimulationOutput(simulationId: SimulationId) {
         SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
         SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
+    }
+
+    override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
+        val output = getSimulationOutput(simulationId)
+        val tripInfo = output.tripInfo
+        val netState = output.netstate
+
+        // Average duration: The average time each vehicle needed to accomplish the route in simulation seconds
+        val averageDuration = tripInfo.map { it.duration }.average()
+
+        // Waiting time: The average time in which vehicles speed was below or equal 0.1 m/s in simulation seconds
+        val averageWaiting = tripInfo.map { it.waitingTime }.average()
+
+        // // Time loss: The time lost due to driving below the ideal speed. (ideal speed includes the individual speedFactor; slowdowns due to intersections etc. will incur timeLoss, scheduled stops do not count) in simulation seconds
+        val averageTimeLoss = tripInfo.map { it.timeLoss }.average()
+
+        // Total number of cars that reached their destination. Can work this out with vaporised variable
+        val totalNumberOfCarsThatCompleted = tripInfo.count() - tripInfo.count { it.vaporized == true }
+
+        val simulationLength = netState.lastOrNull()?.time ?: 0.0
+
+        return SimulationAnalytics(
+            averageDuration,
+            averageWaiting,
+            averageTimeLoss,
+            totalNumberOfCarsThatCompleted,
+            simulationLength
+        )
+
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
