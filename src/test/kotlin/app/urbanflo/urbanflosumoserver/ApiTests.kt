@@ -3,6 +3,7 @@ package app.urbanflo.urbanflosumoserver
 import app.urbanflo.urbanflosumoserver.model.ErrorResponse
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
@@ -29,6 +30,7 @@ import java.io.File
 class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     @Value(value = "\${local.server.port}")
     private val port = 0
+
     @Value("\${urbanflo.storage.location:uploads}")
     lateinit var uploadsLocation: String
 
@@ -70,10 +72,18 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
 
         // test simulation info
         val infoRequest: HttpEntity<SimulationInfo> = HttpEntity(httpHeaders)
-        val infoResponse: ResponseEntity<SimulationInfo> = restTemplate.getForEntity("http://localhost:${port}/simulation/${info.id}", infoRequest)
+        val infoResponse: ResponseEntity<SimulationInfo> =
+            restTemplate.getForEntity("http://localhost:${port}/simulation/${info.id}", infoRequest)
         assertEquals(HttpStatus.OK, infoResponse.statusCode)
         assertEquals(info.id, infoResponse.body!!.id)
         assertEquals(info.documentName, infoResponse.body!!.documentName)
+
+        // test simulation network
+        val networkRequest: HttpEntity<SumoNetwork> = HttpEntity(httpHeaders)
+        val networkResponse: ResponseEntity<SumoNetwork> =
+            restTemplate.getForEntity("http://localhost:${port}/simulation/${info.id}/network", networkRequest)
+        assertEquals(HttpStatus.OK, networkResponse.statusCode)
+        assertEquals(network, networkResponse.body!!)
     }
 
     @Test
@@ -101,7 +111,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
             restTemplate.postForEntity("http://localhost:${port}/simulation", initialRequest)
         val id = initialResponse.body!!.id
         val modifyRequest = HttpEntity(fourWayIntersection, httpHeaders)
-        val modifyResponse: ResponseEntity<SimulationInfo> = restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
+        val modifyResponse: ResponseEntity<SimulationInfo> =
+            restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
         assertEquals(HttpStatus.OK, modifyResponse.statusCode)
         assertEquals(id, modifyResponse.body!!.id)
     }
@@ -114,7 +125,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
             restTemplate.postForEntity("http://localhost:${port}/simulation", initialRequest)
         val id = initialResponse.body!!.id
         val modifyRequest = HttpEntity(missingFields, httpHeaders)
-        val modifyResponse: ResponseEntity<ErrorResponse> = restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
+        val modifyResponse: ResponseEntity<ErrorResponse> =
+            restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
         assertEquals(HttpStatus.BAD_REQUEST, modifyResponse.statusCode)
     }
 
@@ -125,7 +137,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
             restTemplate.postForEntity("http://localhost:${port}/simulation", initialRequest)
         val id = initialResponse.body!!.id
         val modifyRequest = HttpEntity(noEdgeNetwork, httpHeaders)
-        val modifyResponse: ResponseEntity<ErrorResponse> = restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
+        val modifyResponse: ResponseEntity<ErrorResponse> =
+            restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, modifyResponse.statusCode)
     }
 
@@ -134,7 +147,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
         val initialRequest = HttpEntity(simpleNetwork, httpHeaders)
         restTemplate.postForEntity<SimulationInfo>("http://localhost:${port}/simulation", initialRequest)
         val modifyRequest = HttpEntity(fourWayIntersection, httpHeaders)
-        val modifyResponse: ResponseEntity<ErrorResponse> = restTemplate.exchange("http://localhost:${port}/simulation/12345", HttpMethod.PUT, modifyRequest)
+        val modifyResponse: ResponseEntity<ErrorResponse> =
+            restTemplate.exchange("http://localhost:${port}/simulation/12345", HttpMethod.PUT, modifyRequest)
         assertEquals(HttpStatus.NOT_FOUND, modifyResponse.statusCode)
     }
 
@@ -144,7 +158,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
         val id = ""
         restTemplate.postForEntity<SimulationInfo>("http://localhost:${port}/simulation", initialRequest)
         val modifyRequest = HttpEntity(fourWayIntersection, httpHeaders)
-        val modifyResponse: ResponseEntity<ErrorResponse> = restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
+        val modifyResponse: ResponseEntity<ErrorResponse> =
+            restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
         // this is a 404 since there are no PUT endpoints in /simulation/
         assertEquals(HttpStatus.NOT_FOUND, modifyResponse.statusCode)
     }
@@ -156,11 +171,13 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
             restTemplate.postForEntity("http://localhost:${port}/simulation", initialRequest)
         val id = initialResponse.body!!.id
         val deleteRequest: HttpEntity<Any> = HttpEntity(httpHeaders)
-        val deleteResponse: ResponseEntity<Any> = restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.DELETE, deleteRequest)
+        val deleteResponse: ResponseEntity<Any> =
+            restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.DELETE, deleteRequest)
         assertEquals(HttpStatus.OK, deleteResponse.statusCode)
 
         // any subsequent deletion should return a 404
-        val deleteResponse2: ResponseEntity<Any> = restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.DELETE, deleteRequest)
+        val deleteResponse2: ResponseEntity<Any> =
+            restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.DELETE, deleteRequest)
         assertEquals(HttpStatus.NOT_FOUND, deleteResponse2.statusCode)
     }
 
@@ -170,7 +187,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
         restTemplate.postForEntity<SimulationInfo>("http://localhost:${port}/simulation", initialRequest)
         val id = ""
         val deleteRequest: HttpEntity<Any> = HttpEntity(httpHeaders)
-        val deleteResponse: ResponseEntity<Any> = restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.DELETE, deleteRequest)
+        val deleteResponse: ResponseEntity<Any> =
+            restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.DELETE, deleteRequest)
         assertEquals(HttpStatus.NOT_FOUND, deleteResponse.statusCode)
     }
 
@@ -178,7 +196,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     fun testInfoNotFound() {
         val id = "12345"
         val request: HttpEntity<Any> = HttpEntity(httpHeaders)
-        val deleteResponse: ResponseEntity<Any> = restTemplate.getForEntity("http://localhost:${port}/simulation/$id", request)
+        val deleteResponse: ResponseEntity<Any> =
+            restTemplate.getForEntity("http://localhost:${port}/simulation/$id", request)
         assertEquals(HttpStatus.NOT_FOUND, deleteResponse.statusCode)
     }
 
@@ -186,8 +205,39 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     fun testInfoEmptyId() {
         val id = ""
         val request: HttpEntity<Any> = HttpEntity(httpHeaders)
-        val deleteResponse: ResponseEntity<Any> = restTemplate.getForEntity("http://localhost:${port}/simulation/$id", request)
+        val deleteResponse: ResponseEntity<Any> =
+            restTemplate.getForEntity("http://localhost:${port}/simulation/$id", request)
         assertEquals(HttpStatus.NOT_FOUND, deleteResponse.statusCode)
+    }
+
+    @Test
+    fun testAllInfo() {
+        val networks = arrayOf(simpleNetwork, fourWayIntersection, noEdgeNetwork)
+        networks.forEach { network ->
+            val request = HttpEntity(network, httpHeaders)
+            restTemplate.postForEntity<Any>("http://localhost:${port}/simulation", request)
+        }
+        val request: HttpEntity<List<SimulationInfo>> = HttpEntity(httpHeaders)
+        val response: ResponseEntity<List<SimulationInfo>> =
+            restTemplate.getForEntity("http://localhost:${port}/simulations", request)
+
+        // I have no idea if jackson is blind or what, but it straight up ignored the type annotation of SimulationInfo
+        // and just parses them as LinkedHashMap.
+        // Oh, and don't get me started on how long I took to figure out instantiating TypeReference in kotlin, because
+        // intellij can't figure out what I wanted to do and the syntax is so obtuse.
+        // More info:
+        // https://www.baeldung.com/jackson-linkedhashmap-cannot-be-cast
+        // https://stackoverflow.com/a/52238965
+        val typeReference = object : TypeReference<List<SimulationInfo>>() {}
+        val documentNames: List<String> =
+            jsonMapper.convertValue(response.body!!, typeReference).map { it.documentName }
+        val simpleNetworkObject: SumoNetwork = jsonMapper.readValue(simpleNetwork)
+        val fourWayIntersectionObject: SumoNetwork = jsonMapper.readValue(fourWayIntersection)
+        val noEdgeNetworkObject: SumoNetwork = jsonMapper.readValue(noEdgeNetwork)
+
+        assertTrue(simpleNetworkObject.documentName in documentNames)
+        assertTrue(fourWayIntersectionObject.documentName in documentNames)
+        assertFalse(noEdgeNetworkObject.documentName in documentNames)
     }
 
 
