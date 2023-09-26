@@ -50,7 +50,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         try {
             Files.createDirectories(uploadsDir)
         } catch (e: IOException) {
-            throw StorageException("Cannot create uploads directory", e)
+            throw IllegalStateException("Cannot create uploads directory", e)
         }
     }
 
@@ -168,8 +168,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun delete(id: SimulationId) {
-
-        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
+        val simulationDir = getSimulationDir(id).toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
         if (!simulationDir.delete()) {
             throw StorageSimulationNotFoundException(id)
@@ -177,12 +176,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun info(id: SimulationId): SimulationInfo {
-        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
-        if (!simulationDir.exists()) {
-            throw StorageSimulationNotFoundException(id)
-        }
+        val simulationDir = getSimulationDir(id)
         val infoFile = SimulationInfo.filePath(simulationDir).toFile()
-        if (!infoFile.exists()) {
+        if (!(simulationDir.exists() && infoFile.exists())) {
             throw StorageSimulationNotFoundException(id)
         }
         return jsonMapper.readValue(infoFile)
@@ -279,5 +275,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
 
-    private fun getSimulationDir(simulationId: SimulationId) = uploadsDir.resolve(Paths.get(simulationId).normalize())
+    private fun getSimulationDir(simulationId: SimulationId) = if (simulationId.isNotEmpty()) { // if simulationId is empty, it returns uploads dir which could be disastrous
+        uploadsDir.resolve(Paths.get(simulationId).normalize())
+    } else {
+        throw StorageBadRequestException("Simulation ID must not be empty")
+    }
 }

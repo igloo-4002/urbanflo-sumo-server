@@ -3,6 +3,7 @@ package app.urbanflo.urbanflosumoserver.simulation
 import app.urbanflo.urbanflosumoserver.model.SimulationException
 import app.urbanflo.urbanflosumoserver.model.VehicleData
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.validation.constraints.NotEmpty
 import org.eclipse.sumo.libtraci.Simulation
 import org.eclipse.sumo.libtraci.StringVector
 import org.eclipse.sumo.libtraci.Vehicle
@@ -15,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 
 typealias SimulationStep = Map<String, VehicleData>
-typealias SimulationId = String
+typealias SimulationId = @NotEmpty String
 
 // taken from traci python code
 private const val DEFAULT_NUM_RETRIES = 60

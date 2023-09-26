@@ -2,6 +2,7 @@ package app.urbanflo.urbanflosumoserver
 
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.storage.FilesystemStorageService
+import app.urbanflo.urbanflosumoserver.storage.StorageBadRequestException
 import app.urbanflo.urbanflosumoserver.storage.StorageException
 import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundException
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -104,18 +104,27 @@ class StorageTests(@Autowired private val storageService: FilesystemStorageServi
         }
     }
 
-    @Disabled("Need to fix bug where empty id deletes the entire uploads dir")
     @Test
     fun testDeleteNotFound() {
         assertThrows<StorageSimulationNotFoundException> {
-            storageService.delete("") // empty strings are never a valid ID
+            storageService.delete("abcd")
         }
     }
 
     @Test
     fun testInfoNotFound() {
         assertThrows<StorageSimulationNotFoundException> {
-            storageService.info("") // empty strings are never a valid ID
+            storageService.info("abcd")
+        }
+    }
+
+    @Test
+    fun testInvalidSimulationId() {
+        assertThrows<StorageBadRequestException> {
+            storageService.delete("")
+        }
+        assertThrows<StorageBadRequestException> {
+            storageService.info("")
         }
     }
 
@@ -127,8 +136,9 @@ class StorageTests(@Autowired private val storageService: FilesystemStorageServi
         val infos = storageService.listAll()
         val documentNames = infos.map { it.documentName }
 
-        assert(simpleNetwork.documentName in documentNames)
-        assert(fourWayIntersection.documentName in documentNames)
+        assertTrue("There should be at least 2 simulations", infos.count() >= 2)
+        assertTrue("simpleNetwork not in list", simpleNetwork.documentName in documentNames)
+        assertTrue("fourWayIntersection nor in list", fourWayIntersection.documentName in documentNames)
         assertFalse("Bad network should not be stored", noEdgeNetwork.documentName in documentNames)
     }
 }
