@@ -163,7 +163,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         if (simulationDir.exists()) {
             return SimulationInstance(id, label, cfgPath)
         } else {
-            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+            throw StorageSimulationNotFoundException(id)
         }
     }
 
@@ -172,18 +172,18 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
         if (!simulationDir.delete()) {
-            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+            throw StorageSimulationNotFoundException(id)
         }
     }
 
     override fun info(id: SimulationId): SimulationInfo {
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
         if (!simulationDir.exists()) {
-            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+            throw StorageSimulationNotFoundException(id)
         }
         val infoFile = SimulationInfo.filePath(simulationDir).toFile()
         if (!infoFile.exists()) {
-            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+            throw StorageSimulationNotFoundException(id)
         }
         return jsonMapper.readValue(infoFile)
     }
@@ -208,7 +208,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 throw StorageException("Cannot export network", e)
             }
         } else {
-            throw StorageSimulationNotFoundException("No such simulation with ID $simulationId")
+            throw StorageSimulationNotFoundException(simulationId)
         }
     }
 
@@ -237,7 +237,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                     retryCount++
                 } else {
                     logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
-                    throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
+                    throw StorageSimulationNotFoundException(simulationId, "Either simulation hasn't started or simulation wasn't closed properly", e)
                 }
             }
         }
