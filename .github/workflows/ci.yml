@@ -23,9 +23,9 @@ jobs:
           cache: gradle
       - name: Install SUMO
         run: |
-          apt-get update && apt-get install -y software-properties-common
-          add-apt-repository ppa:sumo/stable && apt-get update
-          apt-get install -y sumo sumo-tools
+          sudo apt-get update && sudo apt-get install -y software-properties-common
+          sudo add-apt-repository ppa:sumo/stable && sudo apt-get update
+          sudo apt-get install -y sumo sumo-tools
       - name: Build
         run: gradle build
       - name: Save files
