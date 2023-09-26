@@ -5,6 +5,9 @@
 uploads/
 test-uploads/
 
+# crash logs
+hs_err_pid*.log
+
 HELP.md
 .gradle
 build/

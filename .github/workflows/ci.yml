@@ -19,8 +19,13 @@ jobs:
           java-version: "17"
           distribution: temurin
           cache: gradle
+      - name: Install SUMO
+        run: |
+          apt-get update && apt-get install -y software-properties-common
+          add-apt-repository ppa:sumo/stable && apt-get update
+          apt-get install -y sumo sumo-tools
       - name: Build
-        run: gradle build
+        run: gradle -Djava.library.path=/usr/lib/x86_64-linux-gnu build
       - name: Save files
         uses: actions/upload-artifact@v3
         with:
