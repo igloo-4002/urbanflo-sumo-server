@@ -15,5 +15,4 @@ class UrbanfloSumoServerApplicationTests(
     fun contextLoads() {
         assertThat(simulationController).isNotNull
     }
-
 }

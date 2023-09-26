@@ -1,0 +1,268 @@
+{
+  "documentName": "Simple 3-way intersection",
+  "nodes": [
+    {
+      "id": "nl0g7s0eb3",
+      "x": 918,
+      "y": 316,
+      "type": "priority"
+    },
+    {
+      "id": "vs9ykqbfsh",
+      "x": 662,
+      "y": 312,
+      "type": "priority"
+    },
+    {
+      "id": "xt6n61nk8t",
+      "x": 1094,
+      "y": 315,
+      "type": "priority"
+    },
+    {
+      "id": "g8lihvl543",
+      "x": 920,
+      "y": 471,
+      "type": "priority"
+    }
+  ],
+  "edges": [
+    {
+      "id": "nl0g7s0eb3_vs9ykqbfsh",
+      "from": "nl0g7s0eb3",
+      "to": "vs9ykqbfsh",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    },
+    {
+      "id": "nl0g7s0eb3_xt6n61nk8t",
+      "from": "nl0g7s0eb3",
+      "to": "xt6n61nk8t",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    },
+    {
+      "id": "nl0g7s0eb3_g8lihvl543",
+      "from": "nl0g7s0eb3",
+      "to": "g8lihvl543",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "g8lihvl543_nl0g7s0eb3",
+      "from": "g8lihvl543",
+      "to": "nl0g7s0eb3",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "vs9ykqbfsh_nl0g7s0eb3",
+      "from": "vs9ykqbfsh",
+      "to": "nl0g7s0eb3",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    },
+    {
+      "id": "xt6n61nk8t_nl0g7s0eb3",
+      "from": "xt6n61nk8t",
+      "to": "nl0g7s0eb3",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    }
+  ],
+  "connections": [
+    {
+      "from": "g8lihvl543_nl0g7s0eb3",
+      "to": "nl0g7s0eb3_vs9ykqbfsh",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "g8lihvl543_nl0g7s0eb3",
+      "to": "nl0g7s0eb3_xt6n61nk8t",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "nl0g7s0eb3_g8lihvl543",
+      "to": "g8lihvl543_nl0g7s0eb3",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "nl0g7s0eb3_vs9ykqbfsh",
+      "to": "vs9ykqbfsh_nl0g7s0eb3",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "vs9ykqbfsh_nl0g7s0eb3",
+      "to": "nl0g7s0eb3_xt6n61nk8t",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "vs9ykqbfsh_nl0g7s0eb3",
+      "to": "nl0g7s0eb3_g8lihvl543",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "xt6n61nk8t_nl0g7s0eb3",
+      "to": "nl0g7s0eb3_vs9ykqbfsh",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "nl0g7s0eb3_xt6n61nk8t",
+      "to": "xt6n61nk8t_nl0g7s0eb3",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "xt6n61nk8t_nl0g7s0eb3",
+      "to": "nl0g7s0eb3_g8lihvl543",
+      "fromLane": 0,
+      "toLane": 0
+    }
+  ],
+  "vType": [
+    {
+      "id": "car",
+      "accel": 2.6,
+      "decel": 4.5,
+      "sigma": 1,
+      "length": 5,
+      "minGap": 2.5,
+      "maxSpeed": 30
+    }
+  ],
+  "route": [
+    {
+      "id": "g8lihvl543_to_vs9ykqbfsh",
+      "edges": "g8lihvl543_nl0g7s0eb3 nl0g7s0eb3_vs9ykqbfsh"
+    },
+    {
+      "id": "g8lihvl543_to_xt6n61nk8t",
+      "edges": "g8lihvl543_nl0g7s0eb3 nl0g7s0eb3_xt6n61nk8t"
+    },
+    {
+      "id": "nl0g7s0eb3_to_nl0g7s0eb3",
+      "edges": "nl0g7s0eb3_xt6n61nk8t xt6n61nk8t_nl0g7s0eb3"
+    },
+    {
+      "id": "vs9ykqbfsh_to_xt6n61nk8t",
+      "edges": "vs9ykqbfsh_nl0g7s0eb3 nl0g7s0eb3_xt6n61nk8t"
+    },
+    {
+      "id": "vs9ykqbfsh_to_g8lihvl543",
+      "edges": "vs9ykqbfsh_nl0g7s0eb3 nl0g7s0eb3_g8lihvl543"
+    },
+    {
+      "id": "xt6n61nk8t_to_vs9ykqbfsh",
+      "edges": "xt6n61nk8t_nl0g7s0eb3 nl0g7s0eb3_vs9ykqbfsh"
+    },
+    {
+      "id": "xt6n61nk8t_to_g8lihvl543",
+      "edges": "xt6n61nk8t_nl0g7s0eb3 nl0g7s0eb3_g8lihvl543"
+    }
+  ],
+  "flow": [
+    {
+      "id": "flow_g8lihvl543_nl0g7s0eb3nl0g7s0eb3_vs9ykqbfsh",
+      "type": "car",
+      "route": "g8lihvl543_to_vs9ykqbfsh",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_g8lihvl543_nl0g7s0eb3nl0g7s0eb3_xt6n61nk8t",
+      "type": "car",
+      "route": "g8lihvl543_to_xt6n61nk8t",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_nl0g7s0eb3_g8lihvl543g8lihvl543_nl0g7s0eb3",
+      "type": "car",
+      "route": "nl0g7s0eb3_to_nl0g7s0eb3",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_nl0g7s0eb3_vs9ykqbfshvs9ykqbfsh_nl0g7s0eb3",
+      "type": "car",
+      "route": "nl0g7s0eb3_to_nl0g7s0eb3",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_vs9ykqbfsh_nl0g7s0eb3nl0g7s0eb3_xt6n61nk8t",
+      "type": "car",
+      "route": "vs9ykqbfsh_to_xt6n61nk8t",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_vs9ykqbfsh_nl0g7s0eb3nl0g7s0eb3_g8lihvl543",
+      "type": "car",
+      "route": "vs9ykqbfsh_to_g8lihvl543",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_xt6n61nk8t_nl0g7s0eb3nl0g7s0eb3_vs9ykqbfsh",
+      "type": "car",
+      "route": "xt6n61nk8t_to_vs9ykqbfsh",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_nl0g7s0eb3_xt6n61nk8txt6n61nk8t_nl0g7s0eb3",
+      "type": "car",
+      "route": "nl0g7s0eb3_to_nl0g7s0eb3",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_xt6n61nk8t_nl0g7s0eb3nl0g7s0eb3_g8lihvl543",
+      "type": "car",
+      "route": "xt6n61nk8t_to_g8lihvl543",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    }
+  ]
+}

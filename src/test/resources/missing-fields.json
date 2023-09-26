@@ -1,0 +1,97 @@
+{
+  "documentName": "Untitiled Document",
+  "nodes": [
+    {
+      "id": "nl0g7s0eb3",
+      "x": 918,
+      "y": 316,
+      "type": "priority"
+    },
+    {
+      "id": "vs9ykqbfsh",
+      "x": 662,
+      "y": 312,
+      "type": "priority"
+    },
+    {
+      "id": "xt6n61nk8t",
+      "x": 1094,
+      "y": 315,
+      "type": "priority"
+    },
+    {
+      "id": "g8lihvl543",
+      "x": 920,
+      "y": 471,
+      "type": "priority"
+    }
+  ],
+  "edges": [
+    {
+      "id": "nl0g7s0eb3_vs9ykqbfsh",
+      "from": "nl0g7s0eb3",
+      "to": "vs9ykqbfsh",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    },
+    {
+      "id": "nl0g7s0eb3_xt6n61nk8t",
+      "from": "nl0g7s0eb3",
+      "to": "xt6n61nk8t",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    },
+    {
+      "id": "nl0g7s0eb3_g8lihvl543",
+      "from": "nl0g7s0eb3",
+      "to": "g8lihvl543",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "g8lihvl543_nl0g7s0eb3",
+      "from": "g8lihvl543",
+      "to": "nl0g7s0eb3",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "vs9ykqbfsh_nl0g7s0eb3",
+      "from": "vs9ykqbfsh",
+      "to": "nl0g7s0eb3",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    },
+    {
+      "id": "xt6n61nk8t_nl0g7s0eb3",
+      "from": "xt6n61nk8t",
+      "to": "nl0g7s0eb3",
+      "priority": 1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.88888888888889,
+      "name": "New Road"
+    }
+  ]
+}
