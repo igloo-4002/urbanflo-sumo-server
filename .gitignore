@@ -3,6 +3,7 @@
 
 # uploads dir
 uploads/
+test-uploads/
 
 HELP.md
 .gradle

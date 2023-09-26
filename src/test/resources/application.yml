@@ -1,0 +1,10 @@
+server:
+  shutdown: graceful
+logging:
+  config: classpath:logback.xml
+
+urbanflo:
+  frontend-url: ${URBANFLO_FRONTEND_URL:#{"http://localhost:5173"}}
+  allow-all-cors-origins: ${URBANFLO_ALLOW_ALL_CORS_ORIGINS:#{false}}
+  storage:
+    location: test-uploads

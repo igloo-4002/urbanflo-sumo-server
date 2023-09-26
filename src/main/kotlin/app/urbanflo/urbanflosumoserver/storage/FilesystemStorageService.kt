@@ -168,6 +168,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     }
 
     override fun delete(id: SimulationId) {
+
         val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
         if (!simulationDir.delete()) {
@@ -181,7 +182,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             throw StorageSimulationNotFoundException("No such simulation with ID $id")
         }
         val infoFile = SimulationInfo.filePath(simulationDir).toFile()
-        assert(infoFile.exists())
+        if (!infoFile.exists()) {
+            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+        }
         return jsonMapper.readValue(infoFile)
     }
 
