@@ -11,7 +11,7 @@ import java.net.ServerSocket
 import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
-import kotlin.math.max
+import java.util.concurrent.locks.ReentrantLock
 
 
 typealias SimulationStep = Map<String, VehicleData>
@@ -31,11 +31,7 @@ class SimulationInstance(
     private var frameTime = setSimulationSpeed(1)
     var flux = Flux.create<SimulationStep> { sink ->
         while (hasNext()) {
-            try {
-                sink.next(next())
-            } catch (_: UnknownError) {
-                logger.warn { "Simulation $simulationId with label $label forcibly closed. Ignore if server is shutting down" }
-            }
+            sink.next(next())
         }
         sink.complete()
     }
@@ -43,40 +39,68 @@ class SimulationInstance(
     @Volatile
     private var shouldStop = false
 
+    @Volatile
+    private var connectionClosed = false
+
     fun setSimulationSpeed(speed: Long): Duration = Duration.ofMillis(1000 / (60 * speed))
 
     init {
-        logger.info { "Connecting to SUMO with port $port and label $label" }
-        Simulation.start(
-            StringVector(arrayOf("sumo", "-c", cfgPath.toString())),
-            port,
-            DEFAULT_NUM_RETRIES,
-            label
-        )
+        try {
+            logger.info { "Connecting to SUMO with port $port and label $label" }
+            lock.lock()
+            logger.trace { "$label: lock acquired" }
+            Simulation.start(
+                StringVector(arrayOf("sumo", "-c", cfgPath.toString())),
+                port,
+                DEFAULT_NUM_RETRIES,
+                label
+            )
+
+        } finally {
+            logger.trace { "$label: releasing lock" }
+            lock.unlock()
+        }
     }
 
     override fun hasNext(): Boolean {
-        if (shouldStop) {
-            closeSimulation()
-            return false
-        }
-        Simulation.switchConnection(label)
+        try {
+            lock.lock()
+            logger.trace { "$label: lock acquired" }
+            if (connectionClosed) {
+                return false
+            }
+            Simulation.switchConnection(label)
+            if (shouldStop) {
+                closeSimulation()
+                return false
+            }
 
-        val expected = Simulation.getMinExpectedNumber() > 0
-        if (!expected) {
-            closeSimulation()
-        }
+            val expected = Simulation.getMinExpectedNumber() > 0
+            if (!expected) {
+                closeSimulation()
+            }
 
-        return expected
+            return expected
+        } catch (e: Exception) {
+            logger.error(e) { "Error in advancing simulation step" }
+            throw SimulationException("Error in advancing simulation step: ${e.message}")
+        } finally {
+            logger.trace { "$label: releasing lock" }
+            lock.unlock()
+        }
     }
 
     override fun next(): SimulationStep {
+        val start = Instant.now()
+        val pairs: Map<String, VehicleData>
         try {
-            val start = Instant.now()
+            lock.lock()
+            logger.trace { "$label: lock acquired" }
+
             Simulation.switchConnection(label)
             Simulation.step()
 
-            val pairs = Vehicle.getIDList().map { vehicleId ->
+            pairs = Vehicle.getIDList().associateWith { vehicleId ->
                 val rawPosition = Vehicle.getPosition(vehicleId)
                 val position = Simulation.convertGeo(rawPosition.x, rawPosition.y, false)
                 val acceleration = Vehicle.getAcceleration(vehicleId)
@@ -84,7 +108,7 @@ class SimulationInstance(
                 val color = getVehicleColor(vehicleId)
                 val laneIndex = Vehicle.getLaneIndex(vehicleId)
                 val laneId = Vehicle.getLaneID(vehicleId)
-                vehicleId to VehicleData(
+                VehicleData(
                     vehicleId,
                     Pair(position.x, position.y),
                     color,
@@ -93,14 +117,21 @@ class SimulationInstance(
                     Pair(laneIndex, laneId)
                 )
             }
-            val end = Instant.now()
-            val delay = frameTime.toMillis() - Duration.between(start, end).toMillis()
-            Thread.sleep(max(delay, 0))
-            return pairs.toMap()
         } catch (e: Exception) {
             logger.error(e) { "Error in advancing simulation step" }
             throw SimulationException("Error in advancing simulation step: ${e.message}")
+        } finally {
+            logger.trace { "$label: releasing lock" }
+            lock.unlock()
         }
+        // we've left the critical section here, so the sleep can be done asynchronously
+        val end = Instant.now()
+        val delay = frameTime.toMillis() - Duration.between(start, end).toMillis()
+        if (delay > 0) {
+            logger.trace { "$label: sleeping for $delay ms" }
+            Thread.sleep(delay)
+        }
+        return pairs
     }
 
     private fun getVehicleColor(vehicleId: String): String {
@@ -117,12 +148,27 @@ class SimulationInstance(
         shouldStop = true
     }
 
+    fun forceCloseConnectionOnServerShutdown() {
+        try {
+            lock.lock()
+            logger.trace { "$label: lock acquired" }
+            Simulation.switchConnection(label)
+            stopSimulation()
+            closeSimulation()
+        } finally {
+            logger.trace { "$label: releasing lock" }
+            lock.unlock()
+        }
+    }
+
     private fun closeSimulation() {
         logger.info { "Closing connection with ID $simulationId and label: ${Simulation.getLabel()}" }
         Simulation.close()
+        connectionClosed = true
     }
 
     companion object {
+        private val lock = ReentrantLock()
         private fun getNextAvailablePort(): Int {
             // https://stackoverflow.com/questions/2675362/how-to-find-an-available-port
             val socket = ServerSocket(0)
