@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      JAVA_TOOL_OPTIONS: "-Djava.library.path=/usr/lib/x86_64-linux-gnu"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,7 +27,7 @@ jobs:
           add-apt-repository ppa:sumo/stable && apt-get update
           apt-get install -y sumo sumo-tools
       - name: Build
-        run: gradle -Djava.library.path=/usr/lib/x86_64-linux-gnu build
+        run: gradle build
       - name: Save files
         uses: actions/upload-artifact@v3
         with:
@@ -33,5 +35,6 @@ jobs:
           path: |
             build/libs/*.jar
             !build/libs/*-plain.jar
+            build/test-results
             LICENSE
             README.md

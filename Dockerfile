@@ -17,7 +17,7 @@ RUN make -j$(nproc)
 FROM gradle:8-jdk17-jammy AS gradle-builder
 ENV SUMO_HOME="/opt/sumo"
 ENV PATH="/opt/sumo/bin:${PATH}"
-ENV JAVA_TOOL_OPTIONS="-Djava.library.path=${PATH}"
+ENV JAVA_TOOL_OPTIONS="-Djava.library.path=/opt/sumo/bin"
 RUN apt-get update && apt-get install -y libxerces-c3.2 libproj22 libfox-1.6-0 libx11-6 libxext6 libxft2 libxcursor1 libgl1 libglu1-mesa libjpeg62 libtiff5 libgdal30
 # copy sumo
 WORKDIR $SUMO_HOME/bin
