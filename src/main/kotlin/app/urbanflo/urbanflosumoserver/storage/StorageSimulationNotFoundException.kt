@@ -1,6 +1,10 @@
 package app.urbanflo.urbanflosumoserver.storage
 
+import app.urbanflo.urbanflosumoserver.simulation.SimulationId
+
 class StorageSimulationNotFoundException : StorageException {
-    constructor(message: String) : super(message)
-    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(simulationId: SimulationId): super("No such simulation with ID $simulationId")
+    constructor(simulationId: SimulationId, cause: Throwable): super("No such simulation with ID $simulationId", cause)
+    constructor(simulationId: SimulationId, additionalMessage: String): super("No such simulation with ID $simulationId: $additionalMessage")
+    constructor(simulationId: SimulationId, additionalMessage: String, cause: Throwable): super("No such simulation with ID $simulationId: $additionalMessage", cause)
 }

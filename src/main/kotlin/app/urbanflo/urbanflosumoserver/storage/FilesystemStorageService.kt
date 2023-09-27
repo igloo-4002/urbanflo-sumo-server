@@ -50,7 +50,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         try {
             Files.createDirectories(uploadsDir)
         } catch (e: IOException) {
-            throw StorageException("Cannot create uploads directory", e)
+            throw IllegalStateException("Cannot create uploads directory", e)
         }
     }
 
@@ -163,25 +163,24 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         if (simulationDir.exists()) {
             return SimulationInstance(id, label, cfgPath)
         } else {
-            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+            throw StorageSimulationNotFoundException(id)
         }
     }
 
     override fun delete(id: SimulationId) {
-        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath().toFile()
+        val simulationDir = getSimulationDir(id).toFile()
         simulationDir.listFiles()?.forEach { file -> file.delete() }
         if (!simulationDir.delete()) {
-            throw StorageSimulationNotFoundException("No such simulation with ID $id")
+            throw StorageSimulationNotFoundException(id)
         }
     }
 
     override fun info(id: SimulationId): SimulationInfo {
-        val simulationDir = uploadsDir.resolve(Paths.get(id).normalize()).toAbsolutePath()
-        if (!simulationDir.exists()) {
-            throw StorageSimulationNotFoundException("No such simulation with ID $id")
-        }
+        val simulationDir = getSimulationDir(id)
         val infoFile = SimulationInfo.filePath(simulationDir).toFile()
-        assert(infoFile.exists())
+        if (!(simulationDir.exists() && infoFile.exists())) {
+            throw StorageSimulationNotFoundException(id)
+        }
         return jsonMapper.readValue(infoFile)
     }
 
@@ -205,7 +204,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                 throw StorageException("Cannot export network", e)
             }
         } else {
-            throw StorageSimulationNotFoundException("No such simulation with ID $simulationId")
+            throw StorageSimulationNotFoundException(simulationId)
         }
     }
 
@@ -221,6 +220,11 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
         val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
 
+        // Early return for simulations that hasn't started
+        if (!(tripInfoPath.exists() || netstatePath.exists())) {
+            throw StorageSimulationNotFoundException(simulationId, "Simulation hasn't started")
+        }
+
         var retryCount = 0
         while (true) {
             try {
@@ -234,7 +238,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
                     retryCount++
                 } else {
                     logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
-                    throw StorageSimulationNotFoundException("Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly")
+                    throw StorageSimulationNotFoundException(simulationId, "Either simulation hasn't started or simulation wasn't closed properly", e)
                 }
             }
         }
@@ -271,10 +275,13 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             totalNumberOfCarsThatCompleted,
             simulationLength
         )
-
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
 
-    private fun getSimulationDir(simulationId: SimulationId) = uploadsDir.resolve(Paths.get(simulationId).normalize())
+    private fun getSimulationDir(simulationId: SimulationId) = if (simulationId.isNotEmpty()) { // if simulationId is empty, it returns uploads dir which could be disastrous
+        uploadsDir.resolve(Paths.get(simulationId).normalize())
+    } else {
+        throw StorageBadRequestException("Simulation ID must not be empty")
+    }
 }

@@ -1,8 +1,3 @@
-FROM gradle:8-jdk17-jammy AS gradle-builder
-WORKDIR /opt/urbanflo-sumo-server
-COPY . .
-RUN gradle build
-
 # install sumo
 # for whatever reason, the sumo ubuntu package for arm64 doesn't include libtracijni, hence why we need to compile it from scratch
 FROM ubuntu:jammy AS sumo-builder
@@ -18,6 +13,18 @@ RUN mkdir -p build/cmake-build
 WORKDIR $SUMO_HOME/build/cmake-build
 RUN cmake ../..
 RUN make -j$(nproc)
+
+FROM gradle:8-jdk17-jammy AS gradle-builder
+ENV SUMO_HOME="/opt/sumo"
+ENV PATH="/opt/sumo/bin:${PATH}"
+ENV JAVA_TOOL_OPTIONS="-Djava.library.path=/opt/sumo/bin"
+RUN apt-get update && apt-get install -y libxerces-c3.2 libproj22 libfox-1.6-0 libx11-6 libxext6 libxft2 libxcursor1 libgl1 libglu1-mesa libjpeg62 libtiff5 libgdal30
+# copy sumo
+WORKDIR $SUMO_HOME/bin
+COPY --from=sumo-builder /opt/sumo/bin .
+WORKDIR /opt/urbanflo-sumo-server
+COPY . .
+RUN gradle build
 
 FROM eclipse-temurin:17-jammy AS urbanflo-sumo-server
 ARG VERSION="0.0.1-SNAPSHOT"
