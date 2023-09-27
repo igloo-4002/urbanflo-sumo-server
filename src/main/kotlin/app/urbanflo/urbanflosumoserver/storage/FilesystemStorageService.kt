@@ -270,7 +270,6 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             totalNumberOfCarsThatCompleted,
             simulationLength
         )
-
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)

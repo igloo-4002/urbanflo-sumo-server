@@ -15,11 +15,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
-import org.springframework.test.util.AssertionErrors.*
 import java.io.File
 
 @SpringBootTest
@@ -54,8 +54,8 @@ class StorageTests(@Autowired private val storageService: FilesystemStorageServi
     @Test
     fun testStore() {
         val info = storageService.store(simpleNetwork)
-        assertEquals("Document name should be equal", simpleNetwork.documentName, info.documentName)
-        assertEquals("Modification date must be equal", info.createdAt, info.lastModifiedAt)
+        assertEquals(simpleNetwork.documentName, info.documentName)
+        assertEquals(info.createdAt, info.lastModifiedAt)
     }
 
     @Test
@@ -70,16 +70,16 @@ class StorageTests(@Autowired private val storageService: FilesystemStorageServi
         val initialNetwork = simpleNetwork
         val initialInfo = storageService.store(initialNetwork)
         val initialStoredNetwork = storageService.export(initialInfo.id)
-        assertEquals("Document name should be equal", initialNetwork.documentName, initialNetwork.documentName)
-        assertEquals("Input and output network must be the same", initialNetwork, initialStoredNetwork)
+        assertEquals(initialNetwork.documentName, initialNetwork.documentName)
+        assertEquals( initialNetwork, initialStoredNetwork)
 
         val modifiedNetwork = fourWayIntersection
         val modifiedInfo = storageService.store(initialInfo.id, modifiedNetwork)
         val modifiedStoredNetwork = storageService.export(modifiedInfo.id)
-        assertEquals("Simulation ID must be the same", initialInfo.id, modifiedInfo.id)
-        assertEquals("Creation date must be equal", initialInfo.createdAt, modifiedInfo.createdAt)
-        assertNotEquals("Modification date must not be equal", initialInfo.lastModifiedAt, modifiedInfo.lastModifiedAt)
-        assertNotEquals("Network must be different", initialStoredNetwork, modifiedStoredNetwork)
+        assertEquals(initialInfo.id, modifiedInfo.id)
+        assertEquals( initialInfo.createdAt, modifiedInfo.createdAt)
+        assertNotEquals(initialInfo.lastModifiedAt, modifiedInfo.lastModifiedAt)
+        assertNotEquals(initialStoredNetwork, modifiedStoredNetwork)
     }
 
     @Test
@@ -91,8 +91,8 @@ class StorageTests(@Autowired private val storageService: FilesystemStorageServi
             storageService.store(id, noEdgeNetwork)
         }
 
-        assertEquals("Restored network must be equal", simpleNetwork, storageService.export(id))
-        assertNotEquals("Network should NOT be overwritten by bad ones", noEdgeNetwork, storageService.export(id))
+        assertEquals(simpleNetwork, storageService.export(id))
+        assertNotEquals(noEdgeNetwork, storageService.export(id))
     }
 
     @Test
@@ -136,9 +136,9 @@ class StorageTests(@Autowired private val storageService: FilesystemStorageServi
         val infos = storageService.listAll()
         val documentNames = infos.map { it.documentName }
 
-        assertTrue("There should be at least 2 simulations", infos.count() >= 2)
-        assertTrue("simpleNetwork not in list", simpleNetwork.documentName in documentNames)
-        assertTrue("fourWayIntersection nor in list", fourWayIntersection.documentName in documentNames)
-        assertFalse("Bad network should not be stored", noEdgeNetwork.documentName in documentNames)
+        assertTrue(infos.count() >= 2)
+        assertTrue(simpleNetwork.documentName in documentNames)
+        assertTrue(fourWayIntersection.documentName in documentNames)
+        assertFalse(noEdgeNetwork.documentName in documentNames)
     }
 }
