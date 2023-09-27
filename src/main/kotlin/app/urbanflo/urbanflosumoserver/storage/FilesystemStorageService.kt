@@ -220,6 +220,11 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
         val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
 
+        // Early return for simulations that hasn't started
+        if (!(tripInfoPath.exists() || netstatePath.exists())) {
+            throw StorageSimulationNotFoundException(simulationId, "Simulation hasn't started")
+        }
+
         var retryCount = 0
         while (true) {
             try {

@@ -4,6 +4,7 @@ import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.storage.StorageService
+import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundException
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
@@ -85,7 +87,17 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
         assertFalse(simpleSimulation.hasNext())
         assertFalse(fourWaySimulation.hasNext())
+    }
 
+    @Test
+    fun testNoSimulationOutput() {
+        val info = storageService.store(simpleNetwork)
+        assertThrows<StorageSimulationNotFoundException> {
+            storageService.getSimulationOutput(info.id)
+        }
+        assertThrows<StorageSimulationNotFoundException> {
+            storageService.getSimulationAnalytics(info.id)
+        }
     }
 
     @Async
