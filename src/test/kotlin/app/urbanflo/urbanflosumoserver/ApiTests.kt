@@ -87,6 +87,85 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     }
 
     @Test
+    fun testInvalidDocumentName() {
+        val baseNetworkObject = jsonMapper.readValue<SumoNetwork>(simpleNetwork)
+        val documentNames = arrayOf("", " ", "\n", "\r\n", "\u0000", "\t")
+        documentNames.forEach { name ->
+            val networkObject = SumoNetwork(
+                name,
+                baseNetworkObject.nodes,
+                baseNetworkObject.edges,
+                baseNetworkObject.connections,
+                baseNetworkObject.vehicleType,
+                baseNetworkObject.route,
+                baseNetworkObject.flow
+            )
+            val network = jsonMapper.writeValueAsString(networkObject)
+            val request = HttpEntity(network, httpHeaders)
+            val response: ResponseEntity<ErrorResponse> =
+                restTemplate.postForEntity("http://localhost:${port}/simulation", request)
+            assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+            assertTrue("documentName" in response.body!!.errorFields!!.keys)
+        }
+    }
+
+    /**
+     * Test document names that are technically valid (i.e. not blank and is valid JSON string) but may pose problems
+     * in the frontend depending on the platform
+     */
+    @Test
+    fun testProblematicDocumentNames() {
+        val baseNetworkObject = jsonMapper.readValue<SumoNetwork>(simpleNetwork)
+        val documentNames = arrayOf(
+            // non-ascii characters
+            "Безымянный документ",
+            "وثيقة بدون عنوان",
+            "Untitled Document وثيقة بدون عنوان Безымянный докумен",
+            // emojis
+            "\uD83D\uDE02", // 😂
+            "\uD83C\uDDE6\uD83C\uDDFA", // 🇦🇺 -- flag of Australia
+            // names containing forbidden windows filenames
+            // https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
+            "Untitled Document 1\\10",
+            "Untitled Document.",
+            "Untitled Document?",
+            "Untitled Document ",
+            "Untitled Document 2: Electric Boogaloo",
+            "con",
+            "Con",
+            "CON",
+            "A".repeat(1000),
+            // other problematic filesystem document names
+            "Untitled Document 1/10",
+            "Untitled Document\u0000",
+            ".",
+            "..",
+            ".Untitled",
+            // other
+            "\"Untitled Document\"",
+            "\\n",
+            "\\0"
+        )
+        documentNames.forEach { name ->
+            val networkObject = SumoNetwork(
+                name,
+                baseNetworkObject.nodes,
+                baseNetworkObject.edges,
+                baseNetworkObject.connections,
+                baseNetworkObject.vehicleType,
+                baseNetworkObject.route,
+                baseNetworkObject.flow
+            )
+            val network = jsonMapper.writeValueAsString(networkObject)
+            val request = HttpEntity(network, httpHeaders)
+            val response: ResponseEntity<SimulationInfo> =
+                restTemplate.postForEntity("http://localhost:${port}/simulation", request)
+            assertEquals(HttpStatus.CREATED, response.statusCode)
+            assertEquals(name, response.body!!.documentName) // test response decoding
+        }
+    }
+
+    @Test
     fun testMissingFields() {
         val request = HttpEntity(missingFields, httpHeaders)
         val response: ResponseEntity<ErrorResponse> =
@@ -95,12 +174,13 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     }
 
     @Test
-    fun testNetconvertError() {
+    fun testInvalidNetworkError() {
         val request = HttpEntity(noEdgeNetwork, httpHeaders)
         val response: ResponseEntity<ErrorResponse> =
             restTemplate.postForEntity("http://localhost:${port}/simulation", request)
         // at the moment, we can't distinguish between bad networks and other netconvert errors
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertTrue("edges" in response.body!!.errorFields!!.keys)
     }
 
 
@@ -131,7 +211,7 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     }
 
     @Test
-    fun testModifyNetconvertError() {
+    fun testModifyInvalidNetworkError() {
         val initialRequest = HttpEntity(simpleNetwork, httpHeaders)
         val initialResponse: ResponseEntity<SimulationInfo> =
             restTemplate.postForEntity("http://localhost:${port}/simulation", initialRequest)
@@ -139,7 +219,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
         val modifyRequest = HttpEntity(noEdgeNetwork, httpHeaders)
         val modifyResponse: ResponseEntity<ErrorResponse> =
             restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, modifyResponse.statusCode)
+        assertEquals(HttpStatus.BAD_REQUEST, modifyResponse.statusCode)
+        assertTrue("edges" in modifyResponse.body!!.errorFields!!.keys)
     }
 
     @Test

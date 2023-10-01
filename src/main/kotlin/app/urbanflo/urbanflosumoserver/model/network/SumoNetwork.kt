@@ -2,11 +2,17 @@ package app.urbanflo.urbanflosumoserver.model.network
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import com.fasterxml.jackson.annotation.JsonProperty
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
 
 data class SumoNetwork(
+    @field:NotBlank(message = "Document name cannot be blank")
     val documentName: String,
+    @field:NotEmpty(message = "Nodes must not be empty")
     val nodes: List<SumoNode>,
+    @field:NotEmpty(message = "Edges must not be empty")
     val edges: List<SumoEdge>,
+    @field:NotEmpty(message = "Connections must not be empty")
     val connections: List<SumoConnection>,
     @JsonProperty("vType")
     val vehicleType: List<SumoVehicleType>,
