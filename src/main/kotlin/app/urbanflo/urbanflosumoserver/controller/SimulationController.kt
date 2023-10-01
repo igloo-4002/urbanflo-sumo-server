@@ -148,7 +148,7 @@ class SimulationController(
     )
     @PutMapping("/simulation/{id:.+}", consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun modifySimulation(@PathVariable id: SimulationId, @RequestBody network: SumoNetwork) = storageService.store(id, network)
+    fun modifySimulation(@PathVariable id: SimulationId, @Validated @RequestBody network: SumoNetwork) = storageService.store(id, network)
 
     @Operation(summary = "Get simulation information.")
     @ApiResponses(

@@ -87,6 +87,29 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     }
 
     @Test
+    fun testInvalidDocumentName() {
+        val baseNetworkObject = jsonMapper.readValue<SumoNetwork>(simpleNetwork)
+        val documentNames = arrayOf("", " ", "\n", "\r\n", "\u0000")
+        documentNames.forEach { name ->
+            val networkObject = SumoNetwork(
+                name,
+                baseNetworkObject.nodes,
+                baseNetworkObject.edges,
+                baseNetworkObject.connections,
+                baseNetworkObject.vehicleType,
+                baseNetworkObject.route,
+                baseNetworkObject.flow
+            )
+            val network = jsonMapper.writeValueAsString(networkObject)
+            val request = HttpEntity(network, httpHeaders)
+            val response: ResponseEntity<ErrorResponse> =
+                restTemplate.postForEntity("http://localhost:${port}/simulation", request)
+            assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+            assertTrue("documentName" in response.body!!.errorFields!!.keys)
+        }
+    }
+
+    @Test
     fun testMissingFields() {
         val request = HttpEntity(missingFields, httpHeaders)
         val response: ResponseEntity<ErrorResponse> =
@@ -95,12 +118,13 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     }
 
     @Test
-    fun testNetconvertError() {
+    fun testInvalidNetworkError() {
         val request = HttpEntity(noEdgeNetwork, httpHeaders)
         val response: ResponseEntity<ErrorResponse> =
             restTemplate.postForEntity("http://localhost:${port}/simulation", request)
         // at the moment, we can't distinguish between bad networks and other netconvert errors
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertTrue("edges" in response.body!!.errorFields!!.keys)
     }
 
 
@@ -131,7 +155,7 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     }
 
     @Test
-    fun testModifyNetconvertError() {
+    fun testModifyInvalidNetworkError() {
         val initialRequest = HttpEntity(simpleNetwork, httpHeaders)
         val initialResponse: ResponseEntity<SimulationInfo> =
             restTemplate.postForEntity("http://localhost:${port}/simulation", initialRequest)
@@ -139,7 +163,8 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
         val modifyRequest = HttpEntity(noEdgeNetwork, httpHeaders)
         val modifyResponse: ResponseEntity<ErrorResponse> =
             restTemplate.exchange("http://localhost:${port}/simulation/$id", HttpMethod.PUT, modifyRequest)
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, modifyResponse.statusCode)
+        assertEquals(HttpStatus.BAD_REQUEST, modifyResponse.statusCode)
+        assertTrue("edges" in modifyResponse.body!!.errorFields!!.keys)
     }
 
     @Test
