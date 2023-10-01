@@ -25,6 +25,9 @@ import org.springframework.messaging.handler.annotation.Header
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
+import org.springframework.validation.FieldError
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import reactor.core.Disposable
 
@@ -105,7 +108,7 @@ class SimulationController(
     @PostMapping("/simulation", consumes = ["application/json"], produces = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    fun newSimulation(@RequestBody network: SumoNetwork) = storageService.store(network)
+    fun newSimulation(@Validated @RequestBody network: SumoNetwork) = storageService.store(network)
 
     @Operation(summary = "Delete a simulation.")
     @ApiResponses(
@@ -224,12 +227,18 @@ class SimulationController(
 
     @ExceptionHandler(JsonProcessingException::class)
     fun handleJsonError(e: JsonProcessingException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity(ErrorResponse(e.message ?: "Invalid JSON body"), HttpStatus.BAD_REQUEST)
+        return ResponseEntity(ErrorResponse("Invalid JSON body"), HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(StorageException::class)
     fun handleStorageException(e: StorageException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse("An internal error occurred"), HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationErrors(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
+        val fields = e.allErrors.associate{ err -> (err as FieldError).field to err.defaultMessage}.toMap()
+        return ResponseEntity(ErrorResponse("Invalid JSON body", fields), HttpStatus.BAD_REQUEST)
     }
 
     @PreDestroy
