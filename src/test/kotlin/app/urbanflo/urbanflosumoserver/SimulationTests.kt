@@ -41,6 +41,7 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
     val simpleNetwork: SumoNetwork = jsonMapper.readValue(ClassPathResource("simple-network.json").file)
     val fourWayIntersection: SumoNetwork = jsonMapper.readValue(ClassPathResource("4-way-intersection.json").file)
+    val multiLaneNetwork: SumoNetwork = jsonMapper.readValue(ClassPathResource("multilane.json").file)
 
     init {
         xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
@@ -60,7 +61,7 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
     }
 
     @Test
-    fun startSimpleNetworkSimulation() {
+    fun testSimpleNetworkSimulation() {
         val info = storageService.store(simpleNetwork)
         val simulation = storageService.load(info.id, generateSimulationLabel())
         // TODO: learn how to test the flux
@@ -98,6 +99,18 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
         assertThrows<StorageSimulationNotFoundException> {
             storageService.getSimulationAnalytics(info.id)
         }
+    }
+
+    @Test
+    fun testMultiLaneNetwork() {
+        val info = storageService.store(multiLaneNetwork)
+        val simulation = storageService.load(info.id, generateSimulationLabel())
+
+        assertTrue(simulation.hasNext())
+        val future = runSimulation(simulation)
+        val analytics = future.get()
+        logger.info { "Analytics: $analytics" }
+        assertFalse(simulation.hasNext())
     }
 
     @Async
