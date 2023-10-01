@@ -1,0 +1,730 @@
+{
+  "documentName": "Princes Hwy/Wellington Rd",
+  "nodes": [
+    {
+      "id": "bl1a09azif",
+      "x": 890,
+      "y": 404,
+      "type": "traffic_light"
+    },
+    {
+      "id": "gazmcz95zo",
+      "x": 1570.4725639649612,
+      "y": 396.6127227810548,
+      "type": "priority"
+    },
+    {
+      "id": "v66iytt53f",
+      "x": 220.12774290255868,
+      "y": 401.0895947066017,
+      "type": "priority"
+    },
+    {
+      "id": "jqbmns0hpg",
+      "x": 437.6215510966804,
+      "y": -40.21574196912036,
+      "type": "priority"
+    },
+    {
+      "id": "cu1lrd5jwk",
+      "x": 1406.9878399003376,
+      "y": 900.132868489563,
+      "type": "priority"
+    }
+  ],
+  "edges": [
+    {
+      "id": "bl1a09azif_gazmcz95zo",
+      "from": "bl1a09azif",
+      "to": "gazmcz95zo",
+      "priority": -1,
+      "numLanes": 4,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    },
+    {
+      "id": "bl1a09azif_v66iytt53f",
+      "from": "bl1a09azif",
+      "to": "v66iytt53f",
+      "priority": -1,
+      "numLanes": 3,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    },
+    {
+      "id": "bl1a09azif_jqbmns0hpg",
+      "from": "bl1a09azif",
+      "to": "jqbmns0hpg",
+      "priority": -1,
+      "numLanes": 4,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    },
+    {
+      "id": "bl1a09azif_cu1lrd5jwk",
+      "from": "bl1a09azif",
+      "to": "cu1lrd5jwk",
+      "priority": -1,
+      "numLanes": 4,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    },
+    {
+      "id": "v66iytt53f_bl1a09azif",
+      "from": "v66iytt53f",
+      "to": "bl1a09azif",
+      "priority": -1,
+      "numLanes": 5,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    },
+    {
+      "id": "jqbmns0hpg_bl1a09azif",
+      "from": "jqbmns0hpg",
+      "to": "bl1a09azif",
+      "priority": -1,
+      "numLanes": 4,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    },
+    {
+      "id": "gazmcz95zo_bl1a09azif",
+      "from": "gazmcz95zo",
+      "to": "bl1a09azif",
+      "priority": -1,
+      "numLanes": 4,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    },
+    {
+      "id": "cu1lrd5jwk_bl1a09azif",
+      "from": "cu1lrd5jwk",
+      "to": "bl1a09azif",
+      "priority": -1,
+      "numLanes": 4,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 22.22222222222222,
+      "name": "New Road"
+    }
+  ],
+  "connections": [
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 4,
+      "toLane": 3
+    },
+    {
+      "from": "bl1a09azif_v66iytt53f",
+      "to": "v66iytt53f_bl1a09azif",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "bl1a09azif_v66iytt53f",
+      "to": "v66iytt53f_bl1a09azif",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "bl1a09azif_v66iytt53f",
+      "to": "v66iytt53f_bl1a09azif",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "bl1a09azif_v66iytt53f",
+      "to": "v66iytt53f_bl1a09azif",
+      "fromLane": 2,
+      "toLane": 3
+    },
+    {
+      "from": "bl1a09azif_v66iytt53f",
+      "to": "v66iytt53f_bl1a09azif",
+      "fromLane": 2,
+      "toLane": 4
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 4,
+      "toLane": 3
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "v66iytt53f_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 4,
+      "toLane": 3
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 3,
+      "toLane": 2
+    },
+    {
+      "from": "bl1a09azif_jqbmns0hpg",
+      "to": "jqbmns0hpg_bl1a09azif",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "bl1a09azif_jqbmns0hpg",
+      "to": "jqbmns0hpg_bl1a09azif",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "bl1a09azif_jqbmns0hpg",
+      "to": "jqbmns0hpg_bl1a09azif",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "bl1a09azif_jqbmns0hpg",
+      "to": "jqbmns0hpg_bl1a09azif",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "jqbmns0hpg_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "bl1a09azif_gazmcz95zo",
+      "to": "gazmcz95zo_bl1a09azif",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "bl1a09azif_gazmcz95zo",
+      "to": "gazmcz95zo_bl1a09azif",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "bl1a09azif_gazmcz95zo",
+      "to": "gazmcz95zo_bl1a09azif",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "bl1a09azif_gazmcz95zo",
+      "to": "gazmcz95zo_bl1a09azif",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 3,
+      "toLane": 2
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "gazmcz95zo_bl1a09azif",
+      "to": "bl1a09azif_cu1lrd5jwk",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_gazmcz95zo",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_v66iytt53f",
+      "fromLane": 3,
+      "toLane": 2
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "cu1lrd5jwk_bl1a09azif",
+      "to": "bl1a09azif_jqbmns0hpg",
+      "fromLane": 3,
+      "toLane": 3
+    },
+    {
+      "from": "bl1a09azif_cu1lrd5jwk",
+      "to": "cu1lrd5jwk_bl1a09azif",
+      "fromLane": 0,
+      "toLane": 0
+    },
+    {
+      "from": "bl1a09azif_cu1lrd5jwk",
+      "to": "cu1lrd5jwk_bl1a09azif",
+      "fromLane": 1,
+      "toLane": 1
+    },
+    {
+      "from": "bl1a09azif_cu1lrd5jwk",
+      "to": "cu1lrd5jwk_bl1a09azif",
+      "fromLane": 2,
+      "toLane": 2
+    },
+    {
+      "from": "bl1a09azif_cu1lrd5jwk",
+      "to": "cu1lrd5jwk_bl1a09azif",
+      "fromLane": 3,
+      "toLane": 3
+    }
+  ],
+  "vType": [
+    {
+      "id": "car",
+      "accel": 2.6,
+      "decel": 4.5,
+      "sigma": 1,
+      "length": 5,
+      "minGap": 2.5,
+      "maxSpeed": 30
+    }
+  ],
+  "route": [
+    {
+      "id": "v66iytt53f_to_gazmcz95zo",
+      "edges": "v66iytt53f_bl1a09azif bl1a09azif_gazmcz95zo"
+    },
+    {
+      "id": "bl1a09azif_to_bl1a09azif",
+      "edges": "bl1a09azif_cu1lrd5jwk cu1lrd5jwk_bl1a09azif"
+    },
+    {
+      "id": "v66iytt53f_to_jqbmns0hpg",
+      "edges": "v66iytt53f_bl1a09azif bl1a09azif_jqbmns0hpg"
+    },
+    {
+      "id": "v66iytt53f_to_cu1lrd5jwk",
+      "edges": "v66iytt53f_bl1a09azif bl1a09azif_cu1lrd5jwk"
+    },
+    {
+      "id": "jqbmns0hpg_to_gazmcz95zo",
+      "edges": "jqbmns0hpg_bl1a09azif bl1a09azif_gazmcz95zo"
+    },
+    {
+      "id": "jqbmns0hpg_to_v66iytt53f",
+      "edges": "jqbmns0hpg_bl1a09azif bl1a09azif_v66iytt53f"
+    },
+    {
+      "id": "jqbmns0hpg_to_cu1lrd5jwk",
+      "edges": "jqbmns0hpg_bl1a09azif bl1a09azif_cu1lrd5jwk"
+    },
+    {
+      "id": "gazmcz95zo_to_v66iytt53f",
+      "edges": "gazmcz95zo_bl1a09azif bl1a09azif_v66iytt53f"
+    },
+    {
+      "id": "gazmcz95zo_to_jqbmns0hpg",
+      "edges": "gazmcz95zo_bl1a09azif bl1a09azif_jqbmns0hpg"
+    },
+    {
+      "id": "gazmcz95zo_to_cu1lrd5jwk",
+      "edges": "gazmcz95zo_bl1a09azif bl1a09azif_cu1lrd5jwk"
+    },
+    {
+      "id": "cu1lrd5jwk_to_gazmcz95zo",
+      "edges": "cu1lrd5jwk_bl1a09azif bl1a09azif_gazmcz95zo"
+    },
+    {
+      "id": "cu1lrd5jwk_to_v66iytt53f",
+      "edges": "cu1lrd5jwk_bl1a09azif bl1a09azif_v66iytt53f"
+    },
+    {
+      "id": "cu1lrd5jwk_to_jqbmns0hpg",
+      "edges": "cu1lrd5jwk_bl1a09azif bl1a09azif_jqbmns0hpg"
+    }
+  ],
+  "flow": [
+    {
+      "id": "flow_v66iytt53f_bl1a09azifbl1a09azif_gazmcz95zo",
+      "type": "car",
+      "route": "v66iytt53f_to_gazmcz95zo",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_bl1a09azif_v66iytt53fv66iytt53f_bl1a09azif",
+      "type": "car",
+      "route": "bl1a09azif_to_bl1a09azif",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_v66iytt53f_bl1a09azifbl1a09azif_jqbmns0hpg",
+      "type": "car",
+      "route": "v66iytt53f_to_jqbmns0hpg",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_v66iytt53f_bl1a09azifbl1a09azif_cu1lrd5jwk",
+      "type": "car",
+      "route": "v66iytt53f_to_cu1lrd5jwk",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_jqbmns0hpg_bl1a09azifbl1a09azif_gazmcz95zo",
+      "type": "car",
+      "route": "jqbmns0hpg_to_gazmcz95zo",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_jqbmns0hpg_bl1a09azifbl1a09azif_v66iytt53f",
+      "type": "car",
+      "route": "jqbmns0hpg_to_v66iytt53f",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_bl1a09azif_jqbmns0hpgjqbmns0hpg_bl1a09azif",
+      "type": "car",
+      "route": "bl1a09azif_to_bl1a09azif",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_jqbmns0hpg_bl1a09azifbl1a09azif_cu1lrd5jwk",
+      "type": "car",
+      "route": "jqbmns0hpg_to_cu1lrd5jwk",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_bl1a09azif_gazmcz95zogazmcz95zo_bl1a09azif",
+      "type": "car",
+      "route": "bl1a09azif_to_bl1a09azif",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_gazmcz95zo_bl1a09azifbl1a09azif_v66iytt53f",
+      "type": "car",
+      "route": "gazmcz95zo_to_v66iytt53f",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_gazmcz95zo_bl1a09azifbl1a09azif_jqbmns0hpg",
+      "type": "car",
+      "route": "gazmcz95zo_to_jqbmns0hpg",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_gazmcz95zo_bl1a09azifbl1a09azif_cu1lrd5jwk",
+      "type": "car",
+      "route": "gazmcz95zo_to_cu1lrd5jwk",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_cu1lrd5jwk_bl1a09azifbl1a09azif_gazmcz95zo",
+      "type": "car",
+      "route": "cu1lrd5jwk_to_gazmcz95zo",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_cu1lrd5jwk_bl1a09azifbl1a09azif_v66iytt53f",
+      "type": "car",
+      "route": "cu1lrd5jwk_to_v66iytt53f",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_cu1lrd5jwk_bl1a09azifbl1a09azif_jqbmns0hpg",
+      "type": "car",
+      "route": "cu1lrd5jwk_to_jqbmns0hpg",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    },
+    {
+      "id": "flow_bl1a09azif_cu1lrd5jwkcu1lrd5jwk_bl1a09azif",
+      "type": "car",
+      "route": "bl1a09azif_to_bl1a09azif",
+      "begin": 0,
+      "end": 86400,
+      "period": 1
+    }
+  ]
+}
