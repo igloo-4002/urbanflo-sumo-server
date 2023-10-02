@@ -196,9 +196,18 @@ class SimulationController(
             )
         ]
     )
+    @Deprecated("Please use the individual output endpoints, e.g. `/tripinfo-output`")
     @GetMapping("/simulation/{id:.+}/output", produces = ["application/json"])
     @ResponseBody
     fun getSimulationOutput(@PathVariable id: SimulationId) = storageService.getSimulationOutput(id.trim())
+
+    @GetMapping("/simulation/{id:.+}/tripinfo-output", produces = ["application/json"])
+    @ResponseBody
+    fun getTripInfoOutput(@PathVariable id: SimulationId) = storageService.getTripInfoOutput(id.trim())
+
+    @GetMapping("/simulation/{id:.+}/netstate-output", produces = ["application/json"])
+    @ResponseBody
+    fun getNetStateOutput(@PathVariable id: SimulationId) = storageService.getNetStateOutput(id.trim())
 
     @Operation(summary = "Get simulation analytics.")
     @ApiResponses(

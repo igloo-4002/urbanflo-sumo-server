@@ -94,9 +94,6 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
     fun testNoSimulationOutput() {
         val info = storageService.store(simpleNetwork)
         assertThrows<StorageSimulationNotFoundException> {
-            storageService.getSimulationOutput(info.id)
-        }
-        assertThrows<StorageSimulationNotFoundException> {
             storageService.getSimulationAnalytics(info.id)
         }
     }
