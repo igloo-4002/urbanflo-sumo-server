@@ -1,6 +1,6 @@
 package app.urbanflo.urbanflosumoserver.model
 
-import app.urbanflo.urbanflosumoserver.model.output.statistics.SumoPerformanceStatistics
+import app.urbanflo.urbanflosumoserver.model.output.statistics.SumoStatisticsXml
 
 data class SimulationAnalytics(
     val averageDuration: Double,
@@ -8,5 +8,5 @@ data class SimulationAnalytics(
     val averageTimeLoss: Double,
     val totalNumberOfCarsThatCompleted: Int,
     val simulationLength: Double,
-    val performance: SumoPerformanceStatistics
+    val sumoStatistics: SumoStatisticsXml
 )

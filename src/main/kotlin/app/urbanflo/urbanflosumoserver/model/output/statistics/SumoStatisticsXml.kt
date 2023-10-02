@@ -10,7 +10,15 @@ import java.nio.file.Path
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SumoStatisticsXml(
     val performance: SumoPerformanceStatistics,
-    val vehicles: SumoVehiclesStatistics
+    val vehicles: SumoVehiclesStatistics,
+    val teleports: SumoTeleportsStatistics,
+    val safety: SumoSafetyStatistics,
+    val persons: SumoPersonsStatitsics,
+    val personTeleports: SumoPersonTeleports,
+    val vehicleTripStatistics: SumoVehicleTripStatistics,
+    val pedestrianStatistics: SumoPedestrianStatistics,
+    val rideStatistics: SumoRideStatistics,
+    val transportStatistics: SumoTransportStatistics
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =

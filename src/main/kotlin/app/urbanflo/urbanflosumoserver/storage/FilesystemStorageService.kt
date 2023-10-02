@@ -273,7 +273,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             averageTimeLoss,
             totalNumberOfCarsThatCompleted,
             simulationLength,
-            statistics.performance
+            statistics
         )
     }
 

@@ -1,12 +1,10 @@
 package app.urbanflo.urbanflosumoserver.model.output.statistics
 
 import app.urbanflo.urbanflosumoserver.jackson.UnixDoubleTimestampDeserializer
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.time.OffsetDateTime
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class SumoPerformanceStatistics(
     @field:JacksonXmlProperty(isAttribute = true)
     @field:JsonDeserialize(using = UnixDoubleTimestampDeserializer::class)
