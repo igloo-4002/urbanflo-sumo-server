@@ -20,7 +20,9 @@ class SumoCfg(
         )
         output = SumoCfgOutput(
             SumoCfgTripInfoOutput(SumoCfgTripInfoOutput.fileName(simulationId)),
-            SumoCfgNetstateOutput(SumoCfgNetstateOutput.fileName(simulationId))
+            SumoCfgNetstateOutput(SumoCfgNetstateOutput.fileName(simulationId)),
+            SumoCfgSummaryOutput(SumoCfgSummaryOutput.fileName(simulationId)),
+            SumoCfgStatisticOutput(SumoCfgStatisticOutput.fileName(simulationId))
         )
     }
 
