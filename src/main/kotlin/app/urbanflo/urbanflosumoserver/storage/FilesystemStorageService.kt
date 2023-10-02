@@ -3,9 +3,9 @@ package app.urbanflo.urbanflosumoserver.storage
 import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.*
-import app.urbanflo.urbanflosumoserver.model.output.SumoNetstateXml
+import app.urbanflo.urbanflosumoserver.model.output.netstate.SumoNetstateXml
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
-import app.urbanflo.urbanflosumoserver.model.output.SumoTripInfoXml
+import app.urbanflo.urbanflosumoserver.model.output.tripinfo.SumoTripInfoXml
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert

@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver.model.output
+package app.urbanflo.urbanflosumoserver.model.output.summary
 
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties

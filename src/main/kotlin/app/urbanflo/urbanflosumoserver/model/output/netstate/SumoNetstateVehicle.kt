@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver.model.output
+package app.urbanflo.urbanflosumoserver.model.output.netstate
 
 data class SumoNetstateVehicle(
     val id: String,

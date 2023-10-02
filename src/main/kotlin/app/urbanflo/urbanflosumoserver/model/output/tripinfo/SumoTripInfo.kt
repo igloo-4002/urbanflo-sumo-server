@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver.model.output
+package app.urbanflo.urbanflosumoserver.model.output.tripinfo
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 

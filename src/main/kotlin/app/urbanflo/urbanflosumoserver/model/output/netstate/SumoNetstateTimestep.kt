@@ -1,11 +1,11 @@
-package app.urbanflo.urbanflosumoserver.model.output
+package app.urbanflo.urbanflosumoserver.model.output.netstate
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
-data class SumoNetstateEdge(
-    val id: String,
-    @field:JacksonXmlProperty(localName = "lane")
+data class SumoNetstateTimestep(
+    val time: Double,
+    @field:JacksonXmlProperty(localName = "edge")
     @field:JacksonXmlElementWrapper(useWrapping = false)
-    val lanes: List<SumoNetstateLane>
+    val edges: List<SumoNetstateEdge>
 )
