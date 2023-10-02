@@ -5,6 +5,7 @@ import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.*
 import app.urbanflo.urbanflosumoserver.model.output.netstate.SumoNetstateXml
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
+import app.urbanflo.urbanflosumoserver.model.output.statistics.SumoStatisticsXml
 import app.urbanflo.urbanflosumoserver.model.output.tripinfo.SumoTripInfoXml
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
@@ -237,6 +238,11 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         return getOutputFile(simulationId, netstatePath)
     }
 
+    override fun getStatisticOutput(simulationId: SimulationId): SumoStatisticsXml {
+        val statisticsPath = SumoStatisticsXml.filePath(simulationId, getSimulationDir(simulationId))
+        return getOutputFile(simulationId, statisticsPath)
+    }
+
     override fun deleteSimulationOutput(simulationId: SimulationId) {
         SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
         SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
@@ -245,6 +251,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
         val tripInfo = getTripInfoOutput(simulationId).tripInfos
         val netState = getNetStateOutput(simulationId).timesteps
+        val statistics = getStatisticOutput(simulationId)
 
         // Average duration: The average time each vehicle needed to accomplish the route in simulation seconds
         val averageDuration = tripInfo.map { it.duration }.average()
@@ -265,7 +272,8 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             averageWaiting,
             averageTimeLoss,
             totalNumberOfCarsThatCompleted,
-            simulationLength
+            simulationLength,
+            statistics.performance
         )
     }
 

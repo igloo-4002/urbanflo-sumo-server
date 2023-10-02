@@ -1,12 +1,15 @@
-package app.urbanflo.urbanflosumoserver.model.sumocfg
+package app.urbanflo.urbanflosumoserver.model.output.statistics
 
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.nio.file.Path
 
-data class SumoCfgStatisticOutput(
-    @field:JacksonXmlProperty(isAttribute = true)
-    val value: String
+
+@JacksonXmlRootElement(localName = "statistics")
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class SumoStatisticsXml(
+    val performance: SumoPerformanceStatistics
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =
