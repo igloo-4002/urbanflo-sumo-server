@@ -68,8 +68,8 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
         assertTrue(simulation.hasNext())
         val future = runSimulation(simulation)
-        val analytics = jsonMapper.writeValueAsString(future.get())
-        logger.info { "Analytics: $analytics" }
+        val analytics = future.get()
+        logger.info { "Analytics: ${jsonMapper.writeValueAsString(analytics)}" }
         assertFalse(simulation.hasNext())
     }
 
@@ -82,9 +82,9 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
         val simpleFuture = runSimulation(simpleSimulation)
         val fourWayFuture = runSimulation(fourWaySimulation)
-        val simpleAnalytics = jsonMapper.writeValueAsString(simpleFuture.get())
-        val fourWayAnalytics = jsonMapper.writeValueAsString(fourWayFuture.get())
-        logger.info { "Analytics: $simpleAnalytics\n$fourWayAnalytics" }
+        val simpleAnalytics = simpleFuture.get()
+        val fourWayAnalytics = fourWayFuture.get()
+        logger.info { "Analytics: ${jsonMapper.writeValueAsString(simpleAnalytics)}\n${jsonMapper.writeValueAsString(fourWayAnalytics)}" }
 
         assertFalse(simpleSimulation.hasNext())
         assertFalse(fourWaySimulation.hasNext())
@@ -105,8 +105,8 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
         assertTrue(simulation.hasNext())
         val future = runSimulation(simulation)
-        val analytics = jsonMapper.writeValueAsString(future.get())
-        logger.info { "Analytics: $analytics" }
+        val analytics = future.get()
+        logger.info { "Analytics: ${jsonMapper.writeValueAsString(analytics)}" }
         assertFalse(simulation.hasNext())
     }
 

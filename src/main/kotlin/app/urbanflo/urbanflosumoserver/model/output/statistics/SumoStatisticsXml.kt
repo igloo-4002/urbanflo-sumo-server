@@ -9,7 +9,8 @@ import java.nio.file.Path
 @JacksonXmlRootElement(localName = "statistics")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SumoStatisticsXml(
-    val performance: SumoPerformanceStatistics
+    val performance: SumoPerformanceStatistics,
+    val vehicles: SumoVehiclesStatistics
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =

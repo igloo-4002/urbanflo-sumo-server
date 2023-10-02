@@ -10,7 +10,7 @@ import java.time.ZoneOffset
 import kotlin.math.roundToLong
 
 // https://stackoverflow.com/questions/20635698/how-do-i-deserialize-timestamps-that-are-in-seconds-with-jackson
-class UnixTimestampDeserializer : StdDeserializer<OffsetDateTime>(OffsetDateTime::class.java) {
+class UnixDoubleTimestampDeserializer : StdDeserializer<OffsetDateTime>(OffsetDateTime::class.java) {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): OffsetDateTime {
         val number = p?.valueAsString?.toDouble() ?: run { throw JsonParseException("Value is null") }
         val instant = Instant.ofEpochMilli((number * 1000).roundToLong())
