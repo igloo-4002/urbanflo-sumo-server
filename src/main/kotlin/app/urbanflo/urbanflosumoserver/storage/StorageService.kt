@@ -36,5 +36,6 @@ interface StorageService {
 
     fun deleteSimulationOutput(simulationId: SimulationId)
 
+    @Deprecated("Please use getStatisticsOutput() as it's faster and gives more information")
     fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics
 }

@@ -201,13 +201,50 @@ class SimulationController(
     @ResponseBody
     fun getSimulationOutput(@PathVariable id: SimulationId) = storageService.getSimulationOutput(id.trim())
 
-    @GetMapping("/simulation/{id:.+}/tripinfo-output", produces = ["application/json"])
+    @Operation(summary = "Get simulation tripinfo output.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found and finished"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found, not started or not closed properly",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    @GetMapping("/simulation/{id:.+}/output/tripinfo", produces = ["application/json"])
     @ResponseBody
     fun getTripInfoOutput(@PathVariable id: SimulationId) = storageService.getTripInfoOutput(id.trim())
 
-    @GetMapping("/simulation/{id:.+}/netstate-output", produces = ["application/json"])
+    @Operation(summary = "Get simulation netstate output.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found and finished"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found, not started or not closed properly",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    @GetMapping("/simulation/{id:.+}/output/netstate", produces = ["application/json"])
     @ResponseBody
     fun getNetStateOutput(@PathVariable id: SimulationId) = storageService.getNetStateOutput(id.trim())
+
+    @Operation(summary = "Get simulation netstate output.")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Simulation found and finished"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Simulation not found, not started or not closed properly",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    @GetMapping("/simulation/{id:.+}/output/statistics", produces = ["application/json"])
+    @ResponseBody
+    fun getStatisticsOutput(@PathVariable id: SimulationId) = storageService.getStatisticsOutput(id.trim())
 
     @Operation(summary = "Get simulation analytics.")
     @ApiResponses(
@@ -221,6 +258,7 @@ class SimulationController(
         ]
     )
     @GetMapping("/simulation/{id:.+}/analytics", produces = ["application/json"])
+    @Deprecated("Please use /simulation/{id}/output/statistics as it's faster and gives more information")
     @ResponseBody
     fun getSimulationAnalytics(@PathVariable id: SimulationId) = storageService.getSimulationAnalytics(id.trim())
 

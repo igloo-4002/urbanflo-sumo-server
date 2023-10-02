@@ -249,6 +249,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         SumoStatisticsXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
     }
 
+    @Deprecated("Please use getStatisticsOutput() as it's faster and gives more information")
     override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
         val tripInfo = getTripInfoOutput(simulationId).tripInfos
         val netState = getNetStateOutput(simulationId).timesteps
@@ -259,7 +260,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         // Waiting time: The average time in which vehicles speed was below or equal 0.1 m/s in simulation seconds
         val averageWaiting = tripInfo.map { it.waitingTime }.average()
 
-        // // Time loss: The time lost due to driving below the ideal speed. (ideal speed includes the individual speedFactor; slowdowns due to intersections etc. will incur timeLoss, scheduled stops do not count) in simulation seconds
+        // Time loss: The time lost due to driving below the ideal speed. (ideal speed includes the individual speedFactor; slowdowns due to intersections etc. will incur timeLoss, scheduled stops do not count) in simulation seconds
         val averageTimeLoss = tripInfo.map { it.timeLoss }.average()
 
         // Total number of cars that reached their destination. Can work this out with vaporised variable
