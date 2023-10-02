@@ -32,7 +32,7 @@ interface StorageService {
 
     fun getNetStateOutput(simulationId: SimulationId): SumoNetstateXml
 
-    fun getStatisticOutput(simulationId: SimulationId): SumoStatisticsXml
+    fun getStatisticsOutput(simulationId: SimulationId): SumoStatisticsXml
 
     fun deleteSimulationOutput(simulationId: SimulationId)
 

@@ -238,7 +238,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         return getOutputFile(simulationId, netstatePath)
     }
 
-    override fun getStatisticOutput(simulationId: SimulationId): SumoStatisticsXml {
+    override fun getStatisticsOutput(simulationId: SimulationId): SumoStatisticsXml {
         val statisticsPath = SumoStatisticsXml.filePath(simulationId, getSimulationDir(simulationId))
         return getOutputFile(simulationId, statisticsPath)
     }
@@ -246,12 +246,12 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun deleteSimulationOutput(simulationId: SimulationId) {
         SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
         SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
+        SumoStatisticsXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
     }
 
     override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
         val tripInfo = getTripInfoOutput(simulationId).tripInfos
         val netState = getNetStateOutput(simulationId).timesteps
-        val statistics = getStatisticOutput(simulationId)
 
         // Average duration: The average time each vehicle needed to accomplish the route in simulation seconds
         val averageDuration = tripInfo.map { it.duration }.average()
@@ -273,7 +273,6 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             averageTimeLoss,
             totalNumberOfCarsThatCompleted,
             simulationLength,
-            statistics
         )
     }
 

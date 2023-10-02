@@ -1,7 +1,7 @@
 package app.urbanflo.urbanflosumoserver
 
-import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
 import app.urbanflo.urbanflosumoserver.model.network.SumoNetwork
+import app.urbanflo.urbanflosumoserver.model.output.statistics.SumoStatisticsXml
 import app.urbanflo.urbanflosumoserver.simulation.SimulationInstance
 import app.urbanflo.urbanflosumoserver.storage.StorageService
 import app.urbanflo.urbanflosumoserver.storage.StorageSimulationNotFoundException
@@ -13,8 +13,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,11 +29,14 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
 private val logger = KotlinLogging.logger {}
+private const val DOUBLE_CMP_TOLERANCE = 0.1
 
-@SpringBootTest
+        @SpringBootTest
 class SimulationTests(@Autowired private val storageService: StorageService) {
     @Value("\${urbanflo.storage.location:uploads}")
     lateinit var uploadsLocation: String
+
+
 
     private val xmlMapper = XmlMapper()
     private val jsonMapper = jacksonObjectMapper()
@@ -68,9 +70,16 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
         assertTrue(simulation.hasNext())
         val future = runSimulation(simulation)
-        val analytics = future.get()
-        logger.info { "Analytics: ${jsonMapper.writeValueAsString(analytics)}" }
+        val statistics = future.get()
+        logger.info { "Statistics: ${jsonMapper.writeValueAsString(statistics)}" }
         assertFalse(simulation.hasNext())
+
+        // test analytics
+        val analytics = storageService.getSimulationAnalytics(simulation.simulationId)
+        assertEquals(statistics.vehicleTripStatistics.duration, analytics.averageDuration, DOUBLE_CMP_TOLERANCE)
+        assertEquals(statistics.vehicleTripStatistics.waitingTime, analytics.averageWaiting, DOUBLE_CMP_TOLERANCE)
+        assertEquals(statistics.vehicleTripStatistics.timeLoss, analytics.averageTimeLoss, DOUBLE_CMP_TOLERANCE)
+        assertEquals(statistics.vehicleTripStatistics.count, analytics.totalNumberOfCarsThatCompleted)
     }
 
     @Test
@@ -82,9 +91,9 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
         val simpleFuture = runSimulation(simpleSimulation)
         val fourWayFuture = runSimulation(fourWaySimulation)
-        val simpleAnalytics = simpleFuture.get()
-        val fourWayAnalytics = fourWayFuture.get()
-        logger.info { "Analytics: ${jsonMapper.writeValueAsString(simpleAnalytics)}\n${jsonMapper.writeValueAsString(fourWayAnalytics)}" }
+        val simpleStatistics = simpleFuture.get()
+        val fourWayStatistics = fourWayFuture.get()
+        logger.info { "Statistics: ${jsonMapper.writeValueAsString(simpleStatistics)}\n${jsonMapper.writeValueAsString(fourWayStatistics)}" }
 
         assertFalse(simpleSimulation.hasNext())
         assertFalse(fourWaySimulation.hasNext())
@@ -105,13 +114,20 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
 
         assertTrue(simulation.hasNext())
         val future = runSimulation(simulation)
-        val analytics = future.get()
-        logger.info { "Analytics: ${jsonMapper.writeValueAsString(analytics)}" }
+        val statistics = future.get()
+        logger.info { "Statistics: ${jsonMapper.writeValueAsString(statistics)}" }
         assertFalse(simulation.hasNext())
+
+        // test analytics
+        val analytics = storageService.getSimulationAnalytics(simulation.simulationId)
+        assertEquals(statistics.vehicleTripStatistics.duration, analytics.averageDuration, DOUBLE_CMP_TOLERANCE)
+        assertEquals(statistics.vehicleTripStatistics.waitingTime, analytics.averageWaiting, DOUBLE_CMP_TOLERANCE)
+        assertEquals(statistics.vehicleTripStatistics.timeLoss, analytics.averageTimeLoss, DOUBLE_CMP_TOLERANCE)
+        assertEquals(statistics.vehicleTripStatistics.count, analytics.totalNumberOfCarsThatCompleted)
     }
 
     @Async
-    fun runSimulation(simulation: SimulationInstance): Future<SimulationAnalytics> {
+    fun runSimulation(simulation: SimulationInstance): Future<SumoStatisticsXml> {
         var i = 0
         while (true) {
             if (!simulation.hasNext()) { // use the side effect of hasNext() to actually close the connection
@@ -123,8 +139,8 @@ class SimulationTests(@Autowired private val storageService: StorageService) {
             }
             i++
         }
-        val analytics = storageService.getSimulationAnalytics(simulation.simulationId)
-        return CompletableFuture.completedFuture(analytics)
+        val statistics = storageService.getStatisticsOutput(simulation.simulationId)
+        return CompletableFuture.completedFuture(statistics)
     }
 
     private fun generateSimulationLabel() = UUID.randomUUID().toString()
