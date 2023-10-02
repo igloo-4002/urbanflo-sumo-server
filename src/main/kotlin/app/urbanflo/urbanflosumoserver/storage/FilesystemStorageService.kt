@@ -6,6 +6,7 @@ import app.urbanflo.urbanflosumoserver.model.network.*
 import app.urbanflo.urbanflosumoserver.model.output.netstate.SumoNetstateXml
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
 import app.urbanflo.urbanflosumoserver.model.output.statistics.SumoStatisticsXml
+import app.urbanflo.urbanflosumoserver.model.output.summary.SumoSummaryXml
 import app.urbanflo.urbanflosumoserver.model.output.tripinfo.SumoTripInfoXml
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
@@ -236,6 +237,11 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
     override fun getNetStateOutput(simulationId: SimulationId): SumoNetstateXml {
         val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
         return getOutputFile(simulationId, netstatePath)
+    }
+
+    override fun getSummaryOutput(simulationId: SimulationId): SumoSummaryXml {
+        val summaryPath = SumoSummaryXml.filePath(simulationId, getSimulationDir(simulationId))
+        return getOutputFile(simulationId, summaryPath)
     }
 
     override fun getStatisticsOutput(simulationId: SimulationId): SumoStatisticsXml {
