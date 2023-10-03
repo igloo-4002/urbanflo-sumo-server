@@ -1,4 +1,4 @@
-package app.urbanflo.urbanflosumoserver.model.output
+package app.urbanflo.urbanflosumoserver.model.output.netstate
 
 import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -7,17 +7,17 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.nio.file.Path
 
-@JacksonXmlRootElement(localName = "tripinfos")
+@JacksonXmlRootElement(localName = "netstate")
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class SumoTripInfoXml(
-    @field:JacksonXmlProperty(localName = "tripinfo")
+data class SumoNetstateXml(
+    @field:JacksonXmlProperty(localName = "timestep")
     @field:JacksonXmlElementWrapper(useWrapping = false)
-    val tripInfos: List<SumoTripInfo>
+    val timesteps: List<SumoNetstateTimestep>
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =
             simulationDir.resolve(fileName(simulationId)).normalize().toAbsolutePath()
 
-        fun fileName(simulationId: SimulationId) = "$simulationId.tripinfo.xml"
+        fun fileName(simulationId: SimulationId) = "$simulationId.netstate.xml"
     }
 }

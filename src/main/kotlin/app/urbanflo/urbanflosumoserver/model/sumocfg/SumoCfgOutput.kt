@@ -6,5 +6,9 @@ data class SumoCfgOutput(
     @field:JacksonXmlProperty(localName = "tripinfo-output")
     val tripInfoOutput: SumoCfgTripInfoOutput,
     @field:JacksonXmlProperty(localName = "netstate-output")
-    val netstateOutput: SumoCfgNetstateOutput
+    val netstateOutput: SumoCfgNetstateOutput,
+    @field:JacksonXmlProperty(localName = "summary")
+    val summary: SumoCfgSummaryOutput,
+    @field:JacksonXmlProperty(localName = "statistic-output")
+    val statisticOutput: SumoCfgStatisticOutput
 )

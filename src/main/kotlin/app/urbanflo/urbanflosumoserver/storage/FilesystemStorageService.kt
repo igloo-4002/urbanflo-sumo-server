@@ -3,9 +3,11 @@ package app.urbanflo.urbanflosumoserver.storage
 import app.urbanflo.urbanflosumoserver.model.SimulationAnalytics
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import app.urbanflo.urbanflosumoserver.model.network.*
-import app.urbanflo.urbanflosumoserver.model.output.SumoNetstateXml
+import app.urbanflo.urbanflosumoserver.model.output.netstate.SumoNetstateXml
 import app.urbanflo.urbanflosumoserver.model.output.SumoSimulationOutput
-import app.urbanflo.urbanflosumoserver.model.output.SumoTripInfoXml
+import app.urbanflo.urbanflosumoserver.model.output.statistics.SumoStatisticsXml
+import app.urbanflo.urbanflosumoserver.model.output.summary.SumoSummaryXml
+import app.urbanflo.urbanflosumoserver.model.output.tripinfo.SumoTripInfoXml
 import app.urbanflo.urbanflosumoserver.model.sumocfg.SumoCfg
 import app.urbanflo.urbanflosumoserver.netconvert.NetconvertException
 import app.urbanflo.urbanflosumoserver.netconvert.runNetconvert
@@ -216,43 +218,47 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }.sortedByDescending { it.lastModifiedAt }
     }
 
+    @Deprecated("Please use the individual getOutput() functions")
     override fun getSimulationOutput(simulationId: SimulationId): SumoSimulationOutput {
         val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
         val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
 
-        // Early return for simulations that hasn't started
-        if (!(tripInfoPath.exists() || netstatePath.exists())) {
-            throw StorageSimulationNotFoundException(simulationId, "Simulation hasn't started")
-        }
+        val tripInfo: SumoTripInfoXml = getOutputFile(simulationId, tripInfoPath)
+        val netstate: SumoNetstateXml = getOutputFile(simulationId, netstatePath)
 
-        var retryCount = 0
-        while (true) {
-            try {
-                val tripInfo: SumoTripInfoXml = xmlMapper.readValue(tripInfoPath.toFile())
-                val netstate: SumoNetstateXml = xmlMapper.readValue(netstatePath.toFile())
-                return SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
-            } catch (e: IOException) {
-                if (retryCount < 3) {
-                    // Add arbitrary delay to give libtraci time to close the output files
-                    Thread.sleep(1000)
-                    retryCount++
-                } else {
-                    logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
-                    throw StorageSimulationNotFoundException(simulationId, "Either simulation hasn't started or simulation wasn't closed properly", e)
-                }
-            }
-        }
+        return SumoSimulationOutput(tripInfo.tripInfos, netstate.timesteps)
+    }
+
+    override fun getTripInfoOutput(simulationId: SimulationId): SumoTripInfoXml {
+        val tripInfoPath = SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId))
+        return getOutputFile(simulationId, tripInfoPath)
+    }
+
+    override fun getNetStateOutput(simulationId: SimulationId): SumoNetstateXml {
+        val netstatePath = SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId))
+        return getOutputFile(simulationId, netstatePath)
+    }
+
+    override fun getSummaryOutput(simulationId: SimulationId): SumoSummaryXml {
+        val summaryPath = SumoSummaryXml.filePath(simulationId, getSimulationDir(simulationId))
+        return getOutputFile(simulationId, summaryPath)
+    }
+
+    override fun getStatisticsOutput(simulationId: SimulationId): SumoStatisticsXml {
+        val statisticsPath = SumoStatisticsXml.filePath(simulationId, getSimulationDir(simulationId))
+        return getOutputFile(simulationId, statisticsPath)
     }
 
     override fun deleteSimulationOutput(simulationId: SimulationId) {
         SumoTripInfoXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
         SumoNetstateXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
+        SumoStatisticsXml.filePath(simulationId, getSimulationDir(simulationId)).toFile().delete()
     }
 
+    @Deprecated("Please use getStatisticsOutput() as it's faster and gives more information")
     override fun getSimulationAnalytics(simulationId: SimulationId): SimulationAnalytics {
-        val output = getSimulationOutput(simulationId)
-        val tripInfo = output.tripInfo
-        val netState = output.netstate
+        val tripInfo = getTripInfoOutput(simulationId).tripInfos
+        val netState = getNetStateOutput(simulationId).timesteps
 
         // Average duration: The average time each vehicle needed to accomplish the route in simulation seconds
         val averageDuration = tripInfo.map { it.duration }.average()
@@ -260,7 +266,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         // Waiting time: The average time in which vehicles speed was below or equal 0.1 m/s in simulation seconds
         val averageWaiting = tripInfo.map { it.waitingTime }.average()
 
-        // // Time loss: The time lost due to driving below the ideal speed. (ideal speed includes the individual speedFactor; slowdowns due to intersections etc. will incur timeLoss, scheduled stops do not count) in simulation seconds
+        // Time loss: The time lost due to driving below the ideal speed. (ideal speed includes the individual speedFactor; slowdowns due to intersections etc. will incur timeLoss, scheduled stops do not count) in simulation seconds
         val averageTimeLoss = tripInfo.map { it.timeLoss }.average()
 
         // Total number of cars that reached their destination. Can work this out with vaporised variable
@@ -273,11 +279,33 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
             averageWaiting,
             averageTimeLoss,
             totalNumberOfCarsThatCompleted,
-            simulationLength
+            simulationLength,
         )
     }
 
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
+
+    private inline fun <reified T>getOutputFile(simulationId: SimulationId, path: Path): T {
+        if (!path.exists()) {
+            throw StorageSimulationNotFoundException(simulationId, "Simulation hasn't started")
+        }
+
+        var retryCount = 0
+        while (true) {
+            try {
+                return xmlMapper.readValue(path.toFile())
+            } catch (e: IOException) {
+                if (retryCount < 3) {
+                    // Add arbitrary delay to give libtraci time to close the output files
+                    Thread.sleep(1000)
+                    retryCount++
+                } else {
+                    logger.error(e) { "Cannot read simulation output. Either simulation hasn't started or simulation wasn't closed properly" }
+                    throw StorageSimulationNotFoundException(simulationId, "Either simulation hasn't started or simulation wasn't closed properly", e)
+                }
+            }
+        }
+    }
 
     private fun getSimulationDir(simulationId: SimulationId) = if (simulationId.isNotEmpty()) { // if simulationId is empty, it returns uploads dir which could be disastrous
         uploadsDir.resolve(Paths.get(simulationId).normalize())
