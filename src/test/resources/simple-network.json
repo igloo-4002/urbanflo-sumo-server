@@ -1,58 +1,36 @@
 {
-  "documentName": "Simple 3-way intersection",
+  "documentName": "simple-network",
   "nodes": [
     {
-      "id": "nl0g7s0eb3",
-      "x": 918,
-      "y": 316,
+      "id": "h3to4dntqx",
+      "x": 942,
+      "y": 363,
       "type": "priority"
     },
     {
-      "id": "vs9ykqbfsh",
-      "x": 662,
-      "y": 312,
+      "id": "g1j2yhk96k",
+      "x": 570,
+      "y": 360,
       "type": "priority"
     },
     {
-      "id": "xt6n61nk8t",
-      "x": 1094,
-      "y": 315,
+      "id": "j8y6e8wxhr",
+      "x": 1221,
+      "y": 371,
       "type": "priority"
     },
     {
-      "id": "g8lihvl543",
-      "x": 920,
-      "y": 471,
+      "id": "uaek4h9egd",
+      "x": 943,
+      "y": 564,
       "type": "priority"
     }
   ],
   "edges": [
     {
-      "id": "nl0g7s0eb3_vs9ykqbfsh",
-      "from": "nl0g7s0eb3",
-      "to": "vs9ykqbfsh",
-      "priority": 1,
-      "numLanes": 1,
-      "spreadType": "center",
-      "width": 25,
-      "speed": 13.88888888888889,
-      "name": "New Road"
-    },
-    {
-      "id": "nl0g7s0eb3_xt6n61nk8t",
-      "from": "nl0g7s0eb3",
-      "to": "xt6n61nk8t",
-      "priority": 1,
-      "numLanes": 1,
-      "spreadType": "center",
-      "width": 25,
-      "speed": 13.88888888888889,
-      "name": "New Road"
-    },
-    {
-      "id": "nl0g7s0eb3_g8lihvl543",
-      "from": "nl0g7s0eb3",
-      "to": "g8lihvl543",
+      "id": "g1j2yhk96k_h3to4dntqx",
+      "from": "g1j2yhk96k",
+      "to": "h3to4dntqx",
       "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
@@ -61,9 +39,9 @@
       "name": "New Road"
     },
     {
-      "id": "g8lihvl543_nl0g7s0eb3",
-      "from": "g8lihvl543",
-      "to": "nl0g7s0eb3",
+      "id": "h3to4dntqx_g1j2yhk96k",
+      "from": "h3to4dntqx",
+      "to": "g1j2yhk96k",
       "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
@@ -72,80 +50,102 @@
       "name": "New Road"
     },
     {
-      "id": "vs9ykqbfsh_nl0g7s0eb3",
-      "from": "vs9ykqbfsh",
-      "to": "nl0g7s0eb3",
-      "priority": 1,
+      "id": "uaek4h9egd_h3to4dntqx",
+      "from": "uaek4h9egd",
+      "to": "h3to4dntqx",
+      "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
       "width": 25,
-      "speed": 13.88888888888889,
+      "speed": 13.89,
       "name": "New Road"
     },
     {
-      "id": "xt6n61nk8t_nl0g7s0eb3",
-      "from": "xt6n61nk8t",
-      "to": "nl0g7s0eb3",
-      "priority": 1,
+      "id": "h3to4dntqx_uaek4h9egd",
+      "from": "h3to4dntqx",
+      "to": "uaek4h9egd",
+      "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
       "width": 25,
-      "speed": 13.88888888888889,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "j8y6e8wxhr_h3to4dntqx",
+      "from": "j8y6e8wxhr",
+      "to": "h3to4dntqx",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "h3to4dntqx_j8y6e8wxhr",
+      "from": "h3to4dntqx",
+      "to": "j8y6e8wxhr",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
       "name": "New Road"
     }
   ],
   "connections": [
     {
-      "from": "g8lihvl543_nl0g7s0eb3",
-      "to": "nl0g7s0eb3_vs9ykqbfsh",
+      "from": "g1j2yhk96k_h3to4dntqx",
+      "to": "h3to4dntqx_g1j2yhk96k",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "g8lihvl543_nl0g7s0eb3",
-      "to": "nl0g7s0eb3_xt6n61nk8t",
+      "from": "uaek4h9egd_h3to4dntqx",
+      "to": "h3to4dntqx_g1j2yhk96k",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "nl0g7s0eb3_g8lihvl543",
-      "to": "g8lihvl543_nl0g7s0eb3",
+      "from": "g1j2yhk96k_h3to4dntqx",
+      "to": "h3to4dntqx_uaek4h9egd",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "nl0g7s0eb3_vs9ykqbfsh",
-      "to": "vs9ykqbfsh_nl0g7s0eb3",
+      "from": "uaek4h9egd_h3to4dntqx",
+      "to": "h3to4dntqx_uaek4h9egd",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "vs9ykqbfsh_nl0g7s0eb3",
-      "to": "nl0g7s0eb3_xt6n61nk8t",
+      "from": "j8y6e8wxhr_h3to4dntqx",
+      "to": "h3to4dntqx_g1j2yhk96k",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "vs9ykqbfsh_nl0g7s0eb3",
-      "to": "nl0g7s0eb3_g8lihvl543",
+      "from": "j8y6e8wxhr_h3to4dntqx",
+      "to": "h3to4dntqx_uaek4h9egd",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "xt6n61nk8t_nl0g7s0eb3",
-      "to": "nl0g7s0eb3_vs9ykqbfsh",
+      "from": "g1j2yhk96k_h3to4dntqx",
+      "to": "h3to4dntqx_j8y6e8wxhr",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "nl0g7s0eb3_xt6n61nk8t",
-      "to": "xt6n61nk8t_nl0g7s0eb3",
+      "from": "uaek4h9egd_h3to4dntqx",
+      "to": "h3to4dntqx_j8y6e8wxhr",
       "fromLane": 0,
       "toLane": 0
     },
     {
-      "from": "xt6n61nk8t_nl0g7s0eb3",
-      "to": "nl0g7s0eb3_g8lihvl543",
+      "from": "j8y6e8wxhr_h3to4dntqx",
+      "to": "h3to4dntqx_j8y6e8wxhr",
       "fromLane": 0,
       "toLane": 0
     }
@@ -163,106 +163,114 @@
   ],
   "route": [
     {
-      "id": "g8lihvl543_to_vs9ykqbfsh",
-      "edges": "g8lihvl543_nl0g7s0eb3 nl0g7s0eb3_vs9ykqbfsh"
+      "id": "g1j2yhk96k_to_g1j2yhk96k",
+      "edges": "g1j2yhk96k_h3to4dntqx h3to4dntqx_g1j2yhk96k"
     },
     {
-      "id": "g8lihvl543_to_xt6n61nk8t",
-      "edges": "g8lihvl543_nl0g7s0eb3 nl0g7s0eb3_xt6n61nk8t"
+      "id": "uaek4h9egd_to_g1j2yhk96k",
+      "edges": "uaek4h9egd_h3to4dntqx h3to4dntqx_g1j2yhk96k"
     },
     {
-      "id": "nl0g7s0eb3_to_nl0g7s0eb3",
-      "edges": "nl0g7s0eb3_xt6n61nk8t xt6n61nk8t_nl0g7s0eb3"
+      "id": "g1j2yhk96k_to_uaek4h9egd",
+      "edges": "g1j2yhk96k_h3to4dntqx h3to4dntqx_uaek4h9egd"
     },
     {
-      "id": "vs9ykqbfsh_to_xt6n61nk8t",
-      "edges": "vs9ykqbfsh_nl0g7s0eb3 nl0g7s0eb3_xt6n61nk8t"
+      "id": "uaek4h9egd_to_uaek4h9egd",
+      "edges": "uaek4h9egd_h3to4dntqx h3to4dntqx_uaek4h9egd"
     },
     {
-      "id": "vs9ykqbfsh_to_g8lihvl543",
-      "edges": "vs9ykqbfsh_nl0g7s0eb3 nl0g7s0eb3_g8lihvl543"
+      "id": "j8y6e8wxhr_to_g1j2yhk96k",
+      "edges": "j8y6e8wxhr_h3to4dntqx h3to4dntqx_g1j2yhk96k"
     },
     {
-      "id": "xt6n61nk8t_to_vs9ykqbfsh",
-      "edges": "xt6n61nk8t_nl0g7s0eb3 nl0g7s0eb3_vs9ykqbfsh"
+      "id": "j8y6e8wxhr_to_uaek4h9egd",
+      "edges": "j8y6e8wxhr_h3to4dntqx h3to4dntqx_uaek4h9egd"
     },
     {
-      "id": "xt6n61nk8t_to_g8lihvl543",
-      "edges": "xt6n61nk8t_nl0g7s0eb3 nl0g7s0eb3_g8lihvl543"
+      "id": "g1j2yhk96k_to_j8y6e8wxhr",
+      "edges": "g1j2yhk96k_h3to4dntqx h3to4dntqx_j8y6e8wxhr"
+    },
+    {
+      "id": "uaek4h9egd_to_j8y6e8wxhr",
+      "edges": "uaek4h9egd_h3to4dntqx h3to4dntqx_j8y6e8wxhr"
+    },
+    {
+      "id": "j8y6e8wxhr_to_j8y6e8wxhr",
+      "edges": "j8y6e8wxhr_h3to4dntqx h3to4dntqx_j8y6e8wxhr"
     }
   ],
   "flow": [
     {
-      "id": "flow_g8lihvl543_nl0g7s0eb3nl0g7s0eb3_vs9ykqbfsh",
+      "id": "flow_g1j2yhk96k_h3to4dntqxh3to4dntqx_g1j2yhk96k",
       "type": "car",
-      "route": "g8lihvl543_to_vs9ykqbfsh",
+      "route": "g1j2yhk96k_to_g1j2yhk96k",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_g8lihvl543_nl0g7s0eb3nl0g7s0eb3_xt6n61nk8t",
+      "id": "flow_uaek4h9egd_h3to4dntqxh3to4dntqx_g1j2yhk96k",
       "type": "car",
-      "route": "g8lihvl543_to_xt6n61nk8t",
+      "route": "uaek4h9egd_to_g1j2yhk96k",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_nl0g7s0eb3_g8lihvl543g8lihvl543_nl0g7s0eb3",
+      "id": "flow_g1j2yhk96k_h3to4dntqxh3to4dntqx_uaek4h9egd",
       "type": "car",
-      "route": "nl0g7s0eb3_to_nl0g7s0eb3",
+      "route": "g1j2yhk96k_to_uaek4h9egd",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_nl0g7s0eb3_vs9ykqbfshvs9ykqbfsh_nl0g7s0eb3",
+      "id": "flow_uaek4h9egd_h3to4dntqxh3to4dntqx_uaek4h9egd",
       "type": "car",
-      "route": "nl0g7s0eb3_to_nl0g7s0eb3",
+      "route": "uaek4h9egd_to_uaek4h9egd",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_vs9ykqbfsh_nl0g7s0eb3nl0g7s0eb3_xt6n61nk8t",
+      "id": "flow_j8y6e8wxhr_h3to4dntqxh3to4dntqx_g1j2yhk96k",
       "type": "car",
-      "route": "vs9ykqbfsh_to_xt6n61nk8t",
+      "route": "j8y6e8wxhr_to_g1j2yhk96k",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_vs9ykqbfsh_nl0g7s0eb3nl0g7s0eb3_g8lihvl543",
+      "id": "flow_j8y6e8wxhr_h3to4dntqxh3to4dntqx_uaek4h9egd",
       "type": "car",
-      "route": "vs9ykqbfsh_to_g8lihvl543",
+      "route": "j8y6e8wxhr_to_uaek4h9egd",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_xt6n61nk8t_nl0g7s0eb3nl0g7s0eb3_vs9ykqbfsh",
+      "id": "flow_g1j2yhk96k_h3to4dntqxh3to4dntqx_j8y6e8wxhr",
       "type": "car",
-      "route": "xt6n61nk8t_to_vs9ykqbfsh",
+      "route": "g1j2yhk96k_to_j8y6e8wxhr",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_nl0g7s0eb3_xt6n61nk8txt6n61nk8t_nl0g7s0eb3",
+      "id": "flow_uaek4h9egd_h3to4dntqxh3to4dntqx_j8y6e8wxhr",
       "type": "car",
-      "route": "nl0g7s0eb3_to_nl0g7s0eb3",
+      "route": "uaek4h9egd_to_j8y6e8wxhr",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     },
     {
-      "id": "flow_xt6n61nk8t_nl0g7s0eb3nl0g7s0eb3_g8lihvl543",
+      "id": "flow_j8y6e8wxhr_h3to4dntqxh3to4dntqx_j8y6e8wxhr",
       "type": "car",
-      "route": "xt6n61nk8t_to_g8lihvl543",
+      "route": "j8y6e8wxhr_to_j8y6e8wxhr",
       "begin": 0,
       "end": 86400,
-      "period": 1
+      "vehsPerHour": 1000
     }
   ]
 }
