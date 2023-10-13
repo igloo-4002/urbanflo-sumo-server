@@ -2,6 +2,7 @@ package app.urbanflo.urbanflosumoserver.model.network
 
 import app.urbanflo.urbanflosumoserver.model.SimulationInfo
 import com.fasterxml.jackson.annotation.JsonProperty
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 
@@ -11,10 +12,11 @@ data class SumoNetwork(
     @field:NotEmpty(message = "Nodes must not be empty")
     val nodes: List<SumoNode>,
     @field:NotEmpty(message = "Edges must not be empty")
+    @field:Valid
     val edges: List<SumoEdge>,
     @field:NotEmpty(message = "Connections must not be empty")
     val connections: List<SumoConnection>,
-    @JsonProperty("vType")
+    @field:JsonProperty("vType")
     val vehicleType: List<SumoVehicleType>,
     val route: List<SumoRoute>,
     val flow: List<SumoFlow>
