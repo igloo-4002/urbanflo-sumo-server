@@ -1,58 +1,36 @@
 {
-  "documentName": "Untitiled Document",
+  "documentName": "missing-fields",
   "nodes": [
     {
-      "id": "nl0g7s0eb3",
-      "x": 918,
-      "y": 316,
+      "id": "h3to4dntqx",
+      "x": 942,
+      "y": 363,
       "type": "priority"
     },
     {
-      "id": "vs9ykqbfsh",
-      "x": 662,
-      "y": 312,
+      "id": "g1j2yhk96k",
+      "x": 570,
+      "y": 360,
       "type": "priority"
     },
     {
-      "id": "xt6n61nk8t",
-      "x": 1094,
-      "y": 315,
+      "id": "j8y6e8wxhr",
+      "x": 1221,
+      "y": 371,
       "type": "priority"
     },
     {
-      "id": "g8lihvl543",
-      "x": 920,
-      "y": 471,
+      "id": "uaek4h9egd",
+      "x": 943,
+      "y": 564,
       "type": "priority"
     }
   ],
   "edges": [
     {
-      "id": "nl0g7s0eb3_vs9ykqbfsh",
-      "from": "nl0g7s0eb3",
-      "to": "vs9ykqbfsh",
-      "priority": 1,
-      "numLanes": 1,
-      "spreadType": "center",
-      "width": 25,
-      "speed": 13.88888888888889,
-      "name": "New Road"
-    },
-    {
-      "id": "nl0g7s0eb3_xt6n61nk8t",
-      "from": "nl0g7s0eb3",
-      "to": "xt6n61nk8t",
-      "priority": 1,
-      "numLanes": 1,
-      "spreadType": "center",
-      "width": 25,
-      "speed": 13.88888888888889,
-      "name": "New Road"
-    },
-    {
-      "id": "nl0g7s0eb3_g8lihvl543",
-      "from": "nl0g7s0eb3",
-      "to": "g8lihvl543",
+      "id": "g1j2yhk96k_h3to4dntqx",
+      "from": "g1j2yhk96k",
+      "to": "h3to4dntqx",
       "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
@@ -61,9 +39,9 @@
       "name": "New Road"
     },
     {
-      "id": "g8lihvl543_nl0g7s0eb3",
-      "from": "g8lihvl543",
-      "to": "nl0g7s0eb3",
+      "id": "h3to4dntqx_g1j2yhk96k",
+      "from": "h3to4dntqx",
+      "to": "g1j2yhk96k",
       "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
@@ -72,25 +50,47 @@
       "name": "New Road"
     },
     {
-      "id": "vs9ykqbfsh_nl0g7s0eb3",
-      "from": "vs9ykqbfsh",
-      "to": "nl0g7s0eb3",
-      "priority": 1,
+      "id": "uaek4h9egd_h3to4dntqx",
+      "from": "uaek4h9egd",
+      "to": "h3to4dntqx",
+      "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
       "width": 25,
-      "speed": 13.88888888888889,
+      "speed": 13.89,
       "name": "New Road"
     },
     {
-      "id": "xt6n61nk8t_nl0g7s0eb3",
-      "from": "xt6n61nk8t",
-      "to": "nl0g7s0eb3",
-      "priority": 1,
+      "id": "h3to4dntqx_uaek4h9egd",
+      "from": "h3to4dntqx",
+      "to": "uaek4h9egd",
+      "priority": -1,
       "numLanes": 1,
       "spreadType": "center",
       "width": 25,
-      "speed": 13.88888888888889,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "j8y6e8wxhr_h3to4dntqx",
+      "from": "j8y6e8wxhr",
+      "to": "h3to4dntqx",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
+      "name": "New Road"
+    },
+    {
+      "id": "h3to4dntqx_j8y6e8wxhr",
+      "from": "h3to4dntqx",
+      "to": "j8y6e8wxhr",
+      "priority": -1,
+      "numLanes": 1,
+      "spreadType": "center",
+      "width": 25,
+      "speed": 13.89,
       "name": "New Road"
     }
   ]
