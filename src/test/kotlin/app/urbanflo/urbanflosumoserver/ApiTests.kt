@@ -41,6 +41,7 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     val fourWayIntersection = ClassPathResource("4-way-intersection.json").file.readText()
     val noEdgeNetwork = ClassPathResource("no-edges.json").file.readText()
     val missingFields = ClassPathResource("missing-fields.json").file.readText()
+    val invalidEdges = ClassPathResource("invalid-edges.json").file.readText()
 
     init {
         xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
@@ -181,6 +182,17 @@ class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
         // at the moment, we can't distinguish between bad networks and other netconvert errors
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
         assertTrue("edges" in response.body!!.errorFields!!.keys)
+    }
+
+    @Test
+    fun testInvalidEdges() {
+        val request = HttpEntity(invalidEdges, httpHeaders)
+        val response: ResponseEntity<ErrorResponse> =
+            restTemplate.postForEntity("http://localhost:${port}/simulation", request)
+        // at the moment, we can't distinguish between bad networks and other netconvert errors
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+        assertTrue("edges[0].numLanes" in response.body!!.errorFields!!.keys)
+        assertTrue("edges[0].speed" in response.body!!.errorFields!!.keys)
     }
 
 

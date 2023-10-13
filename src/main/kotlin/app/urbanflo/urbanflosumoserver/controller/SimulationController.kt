@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.annotation.PreDestroy
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.DestinationVariable
@@ -26,7 +27,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.validation.FieldError
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import reactor.core.Disposable
@@ -108,7 +108,7 @@ class SimulationController(
     @PostMapping("/simulation", consumes = ["application/json"], produces = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    fun newSimulation(@Validated @RequestBody network: SumoNetwork) = storageService.store(network)
+    fun newSimulation(@Valid @RequestBody network: SumoNetwork) = storageService.store(network)
 
     @Operation(summary = "Delete a simulation.")
     @ApiResponses(
@@ -148,7 +148,8 @@ class SimulationController(
     )
     @PutMapping("/simulation/{id:.+}", consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun modifySimulation(@PathVariable id: SimulationId, @Validated @RequestBody network: SumoNetwork) = storageService.store(id, network)
+    fun modifySimulation(@PathVariable id: SimulationId, @Valid @RequestBody network: SumoNetwork) =
+        storageService.store(id, network)
 
     @Operation(summary = "Get simulation information.")
     @ApiResponses(
@@ -299,7 +300,7 @@ class SimulationController(
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationErrors(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
-        val fields = e.allErrors.associate{ err -> (err as FieldError).field to err.defaultMessage}.toMap()
+        val fields = e.allErrors.associate { err -> (err as FieldError).field to err.defaultMessage }.toMap()
         return ResponseEntity(ErrorResponse("Invalid JSON body", fields), HttpStatus.BAD_REQUEST)
     }
 
