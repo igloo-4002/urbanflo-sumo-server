@@ -12,7 +12,7 @@ import java.nio.file.Path
 data class SumoTripInfoXml(
     @field:JacksonXmlProperty(localName = "tripinfo")
     @field:JacksonXmlElementWrapper(useWrapping = false)
-    val tripInfos: List<SumoTripInfo>
+    val tripInfos: List<SumoTripInfo> = listOf()
 ) {
     companion object {
         fun filePath(simulationId: SimulationId, simulationDir: Path): Path =
