@@ -44,5 +44,5 @@ data class SumoTripInfo(
     @field:JacksonXmlProperty(isAttribute = true)
     val speedFactor: Double,
     @field:JacksonXmlProperty(isAttribute = true)
-    val vaporized: Boolean?
+    val vaporized: String?
 )

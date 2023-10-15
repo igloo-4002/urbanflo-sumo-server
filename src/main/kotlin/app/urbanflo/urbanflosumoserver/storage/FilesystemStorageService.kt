@@ -270,7 +270,7 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         val averageTimeLoss = tripInfo.map { it.timeLoss }.average()
 
         // Total number of cars that reached their destination. Can work this out with vaporised variable
-        val totalNumberOfCarsThatCompleted = tripInfo.count() - tripInfo.count { it.vaporized == true }
+        val totalNumberOfCarsThatCompleted = tripInfo.count() - tripInfo.count { !it.vaporized.isNullOrEmpty() }
 
         val simulationLength = netState.lastOrNull()?.time ?: 0.0
 
