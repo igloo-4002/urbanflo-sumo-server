@@ -12,11 +12,22 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
+/**
+ * Configuration class for Spring MVC.
+ */
 @Configuration
 @EnableWebMvc
 class WebConfig: WebMvcConfigurer {
+    /**
+     * URL of frontend for CORS, as specified in `application.yml`. Defaults fo `http://localhost:5173` if not present,
+     * and is not used if [allowAllCorsOrigins] is set to `true`.
+     */
     @Value("\${urbanflo.frontend-url}")
     private lateinit var frontendUrl: String
+
+    /**
+     * If set to `true`, all endpoints will accept all CORS origins.
+     */
     @Value("\${urbanflo.allow-all-cors-origins}")
     private var allowAllCorsOrigins: Boolean = false
 
