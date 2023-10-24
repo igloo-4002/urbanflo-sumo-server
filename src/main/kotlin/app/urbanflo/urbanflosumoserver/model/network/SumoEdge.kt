@@ -4,6 +4,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
 
+/**
+ * @see [SumoEdgesXml]
+ */
 data class SumoEdge(
     @field:JacksonXmlProperty(isAttribute = true)
     val id: SumoEntityId,

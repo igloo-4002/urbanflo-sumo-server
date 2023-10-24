@@ -2,6 +2,9 @@ package app.urbanflo.urbanflosumoserver.model.network
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
+/**
+ * @see [SumoNodesXml]
+ */
 data class SumoNode(
     @field:JacksonXmlProperty(isAttribute = true)
     val id: SumoEntityId,

@@ -6,6 +6,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.nio.file.Path
 
+/**
+ * Data class representing SUMO's [node description XML.](https://sumo.dlr.de/docs/Networks/PlainXML.html#node_descriptions)
+ */
 @JacksonXmlRootElement(localName = "nodes")
 data class SumoNodesXml(
     @field:JacksonXmlProperty(localName = "node")

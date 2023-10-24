@@ -8,6 +8,9 @@ import java.nio.file.Path
 
 typealias SumoEntityId = String
 
+/**
+ * Data class representing SUMO's [edge description XML.](https://sumo.dlr.de/docs/Networks/PlainXML.html#edge_descriptions)
+ */
 @JacksonXmlRootElement(localName = "edges")
 data class SumoEdgesXml(
     @field:JacksonXmlProperty(localName = "edge")
