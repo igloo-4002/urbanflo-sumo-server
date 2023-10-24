@@ -2,6 +2,9 @@ package app.urbanflo.urbanflosumoserver.model.output.tripinfo
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
+/**
+ * @see [SumoTripInfoXml]
+ */
 data class SumoTripInfo(
     @field:JacksonXmlProperty(isAttribute = true)
     val id: String,

@@ -7,6 +7,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.nio.file.Path
 
+/**
+ * Data class for SUMO [summary output.](https://sumo.dlr.de/docs/Simulation/Output/Summary.html)
+ */
 @JacksonXmlRootElement(localName = "summary")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SumoSummaryXml(
