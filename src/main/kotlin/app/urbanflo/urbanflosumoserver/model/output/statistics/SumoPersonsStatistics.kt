@@ -5,7 +5,11 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 /**
  * @see [SumoStatisticsXml]
  */
-data class SumoTransportStatistics(
+data class SumoPersonsStatistics(
     @field:JacksonXmlProperty(isAttribute = true)
-    val number: Int
+    val loaded: Int,
+    @field:JacksonXmlProperty(isAttribute = true)
+    val running: Int,
+    @field:JacksonXmlProperty(isAttribute = true)
+    val jammed: Int
 )

@@ -2,6 +2,9 @@ package app.urbanflo.urbanflosumoserver.model.output.statistics
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
+/**
+ * @see [SumoStatisticsXml]
+ */
 data class SumoVehicleTripStatistics(
     @field:JacksonXmlProperty(isAttribute = true)
     val count: Int,

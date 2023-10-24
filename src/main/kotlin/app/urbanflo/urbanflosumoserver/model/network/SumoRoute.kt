@@ -1,5 +1,6 @@
 package app.urbanflo.urbanflosumoserver.model.network
 
+import app.urbanflo.urbanflosumoserver.model.SumoEntityId
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
 /**

@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.time.OffsetDateTime
 
+/**
+ * @see [SumoStatisticsXml]
+ */
 data class SumoPerformanceStatistics(
     @field:JacksonXmlProperty(isAttribute = true)
     @field:JsonDeserialize(using = UnixDoubleTimestampDeserializer::class)

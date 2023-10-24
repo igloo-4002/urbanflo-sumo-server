@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.nio.file.Path
 
-
+/**
+ * Data class for SUMO [statistic output.](https://sumo.dlr.de/docs/Simulation/Output/StatisticOutput.html)
+ */
 @JacksonXmlRootElement(localName = "statistics")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SumoStatisticsXml(
@@ -13,7 +15,7 @@ data class SumoStatisticsXml(
     val vehicles: SumoVehiclesStatistics,
     val teleports: SumoTeleportsStatistics,
     val safety: SumoSafetyStatistics,
-    val persons: SumoPersonsStatitsics,
+    val persons: SumoPersonsStatistics,
     val personTeleports: SumoPersonTeleports,
     val vehicleTripStatistics: SumoVehicleTripStatistics,
     val pedestrianStatistics: SumoPedestrianStatistics,
