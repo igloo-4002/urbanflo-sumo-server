@@ -22,6 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 import java.io.File
 
+/**
+ * Tests for storage service.
+ */
 @SpringBootTest
 class StorageTests(@Autowired private val storageService: FilesystemStorageService) {
     @Value("\${urbanflo.storage.location:uploads}")
