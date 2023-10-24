@@ -9,7 +9,11 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import kotlin.math.roundToLong
 
-// https://stackoverflow.com/questions/20635698/how-do-i-deserialize-timestamps-that-are-in-seconds-with-jackson
+/**
+ * Jackson deserialization class to parse Unix timestamp encoded as [Double] to [OffsetDateTime].
+ *
+ * [Source/adapted from](https://stackoverflow.com/a/20638114)
+ */
 class UnixDoubleTimestampDeserializer : StdDeserializer<OffsetDateTime>(OffsetDateTime::class.java) {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): OffsetDateTime {
         val number = p?.valueAsString?.toDouble() ?: run { throw JsonParseException("Value is null") }

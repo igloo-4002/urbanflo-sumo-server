@@ -28,6 +28,9 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
+/**
+ * Tests for simulation instances.
+ */
 private val logger = KotlinLogging.logger {}
 private const val DOUBLE_CMP_TOLERANCE = 0.1
 

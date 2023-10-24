@@ -37,10 +37,24 @@ import kotlin.io.path.listDirectoryEntries
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Storage service, using the file system as storage.
+ */
 @Service
 class FilesystemStorageService @Autowired constructor(properties: StorageProperties) : StorageService {
+    /**
+     * Root directory for all uploads
+     */
     private lateinit var uploadsDir: Path
+
+    /**
+     * Jackson XMl mapper
+     */
     private val xmlMapper = XmlMapper()
+
+    /**
+     * Jackson JSON mapper
+     */
     private val jsonMapper = jacksonObjectMapper()
 
     init {
@@ -105,6 +119,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         return newInfo
     }
 
+    /**
+     * Common function for writing XML files and converting network using `netconvert`
+     */
     private fun writeFiles(simulationInfo: SimulationInfo, network: SumoNetwork, simulationDir: Path) {
         if (!simulationDir.exists()) {
             throw IllegalStateException("simulationDir does not exist")
@@ -283,8 +300,14 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         )
     }
 
+    /**
+     * Returns current time as [OffsetDateTime]
+     */
     private fun currentTime() = OffsetDateTime.now(ZoneOffset.UTC)
 
+    /**
+     * Common function for reading and parsing output XML files
+     */
     private inline fun <reified T>getOutputFile(simulationId: SimulationId, path: Path): T {
         if (!path.exists()) {
             throw StorageSimulationNotFoundException(simulationId, "Simulation hasn't started")
@@ -307,6 +330,9 @@ class FilesystemStorageService @Autowired constructor(properties: StoragePropert
         }
     }
 
+    /**
+     * Get path to simulation directory for the given ID
+     */
     private fun getSimulationDir(simulationId: SimulationId) = if (simulationId.isNotEmpty()) { // if simulationId is empty, it returns uploads dir which could be disastrous
         uploadsDir.resolve(Paths.get(simulationId).normalize())
     } else {

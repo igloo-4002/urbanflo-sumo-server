@@ -22,14 +22,38 @@ typealias SimulationId = @NotEmpty String
 private const val DEFAULT_NUM_RETRIES = 60
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Class for running simulation instances.
+ */
 class SimulationInstance(
+    /**
+     * Simulation ID
+     */
     val simulationId: SimulationId,
+    /**
+     * TraCI label for this simulation. Can be anything unique but is currently the WebSocket session ID
+     */
     val label: String,
     cfgPath: Path
 ) : Iterator<SimulationStep> {
+    /**
+     * Map of vehicle colours by vehicle ID
+     */
     private val vehicleColors: MutableMap<String, String> = mutableMapOf()
+    /**
+     * TraCI port for this simulation's connection
+     */
     private val port: Int = getNextAvailablePort()
+
+    /**
+     * Time frame for each simulation step. Note that this is only a target and it can vary depending on performance and
+     * other factors.
+     */
     private var frameTime = setSimulationSpeed(1)
+
+    /**
+     * [Flux] instance for simulation steps
+     */
     var flux = Flux.create<SimulationStep> { sink ->
         while (hasNext()) {
             sink.next(next())
@@ -37,12 +61,23 @@ class SimulationInstance(
         sink.complete()
     }
 
+    /**
+     * If `true`, the simulation should be closed on next invocation of [hasNext] if it hasn't already closed.
+     */
     @Volatile
     private var shouldStop = false
 
+    /**
+     * If `true`, the simulation has been closed
+     */
     @Volatile
     private var connectionClosed = false
 
+    /**
+     * Calculate the frame time (in ms) for the given simulation speed.
+     *
+     * The framerate at 1x speed is 60fps, so its frame time would be around 16.7ms.
+     */
     fun setSimulationSpeed(speed: Long): Duration = Duration.ofMillis(1000 / (60 * speed))
 
     init {
@@ -135,6 +170,9 @@ class SimulationInstance(
         return pairs
     }
 
+    /**
+     * Returns the vehicle colour (in HTML hex format) for the vehicle ID, or generates one if it's not yet assigned.
+     */
     private fun getVehicleColor(vehicleId: String): String {
         // if let color = vehicleColors[vehicleId] { return color } else { assign random colour to vehicle and return }
         val color = vehicleColors[vehicleId] ?: run {
@@ -145,10 +183,22 @@ class SimulationInstance(
         return color
     }
 
+    /**
+     * Signal the instance that simulation should be stopped.
+     *
+     * Note that this doesn't actually close the connection to TraCI, as this is naturally done on next invocation of
+     * [hasNext] by the WebSocket stream.
+     */
     fun stopSimulation() {
         shouldStop = true
     }
 
+    /**
+     * Forcibly mark simulation to be stopped and close the connection to TraCI.
+     *
+     * Note that this should be only called for server shutdown. Bad things will happen when called in any other
+     * situations.
+     */
     fun forceCloseConnectionOnServerShutdown() {
         try {
             lock.lock()
@@ -162,6 +212,11 @@ class SimulationInstance(
         }
     }
 
+    /**
+     * Close the connection to TraCI.
+     *
+     * Note: there's no lock here as this method is assumed to only be called inside a locked section
+     */
     private fun closeSimulation() {
         logger.info { "Closing connection with ID $simulationId and label: ${Simulation.getLabel()}" }
         Simulation.close()
@@ -169,9 +224,17 @@ class SimulationInstance(
     }
 
     companion object {
+        /**
+         * Thread lock to prevent race conditions
+         */
         private val lock = ReentrantLock()
+
+        /**
+         * returns the next random port that is available for TraCI connection.
+         *
+         * [Source/adapted from](https://stackoverflow.com/a/2675416)
+         */
         private fun getNextAvailablePort(): Int {
-            // https://stackoverflow.com/questions/2675362/how-to-find-an-available-port
             val socket = ServerSocket(0)
             val socketPort = socket.localPort
             socket.close()

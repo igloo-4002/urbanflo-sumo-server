@@ -41,6 +41,9 @@ class SimulationController(
     private var instances: MutableMap<String, SimulationInstance> = mutableMapOf()
     private var disposables: MutableMap<String, Disposable> = mutableMapOf()
 
+    /**
+     * Endpoint for simulation websocket.
+     */
     @MessageMapping("/simulation/{id}")
     fun simulationSocket(
         @DestinationVariable id: SimulationId,
@@ -278,32 +281,55 @@ class SimulationController(
     @ResponseBody
     fun getSimulationAnalytics(@PathVariable id: SimulationId) = storageService.getSimulationAnalytics(id.trim())
 
+    /**
+     * Exception handler for when the simulation cannot be found. Returns a 404 response.
+     */
     @ExceptionHandler(StorageSimulationNotFoundException::class)
     fun handleStorageNotFound(e: StorageSimulationNotFoundException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse(e.message ?: "No such simulation"), HttpStatus.NOT_FOUND)
     }
 
+    /**
+     * Exception handler for any malformed or invalid request. Returns a 400 response.
+     *
+     * @see [handleJsonError]
+     */
     @ExceptionHandler(StorageBadRequestException::class)
     fun handleStorageBadRequest(e: StorageBadRequestException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse(e.message ?: "Invalid request"), HttpStatus.BAD_REQUEST)
     }
 
+    /**
+     * Exception handler for any malformed or invalid JSON body. Returns a 400 response.
+     *
+     * @see [handleStorageBadRequest]
+     */
     @ExceptionHandler(JsonProcessingException::class)
     fun handleJsonError(e: JsonProcessingException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse("Invalid JSON body"), HttpStatus.BAD_REQUEST)
     }
 
+    /**
+     * Exception handler for any storage exceptions not covered by the other handlers. Returns a 500 response.
+     */
     @ExceptionHandler(StorageException::class)
     fun handleStorageException(e: StorageException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse("An internal error occurred"), HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
+    /**
+     * Exception handler for any validation failures. Returns a 400 response with each validation error specified in
+     * [ErrorResponse.errorFields].
+     */
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationErrors(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         val fields = e.allErrors.associate { err -> (err as FieldError).field to err.defaultMessage }.toMap()
         return ResponseEntity(ErrorResponse("Invalid JSON body", fields), HttpStatus.BAD_REQUEST)
     }
 
+    /**
+     * Force stop all simulations before shutting down the server.
+     */
     @PreDestroy
     fun stopAllSimulations() {
         logger.info { "Server is shutting down. Stopping all simulations" }

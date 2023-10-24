@@ -26,6 +26,9 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.http.*
 import java.io.File
 
+/**
+ * Tests for controller APIs.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ApiTests(@Autowired private val restTemplate: TestRestTemplate) {
     @Value(value = "\${local.server.port}")

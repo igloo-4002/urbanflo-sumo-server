@@ -2,6 +2,9 @@ package app.urbanflo.urbanflosumoserver.model.output.summary
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 
+/**
+ * @see [SumoSummaryXml]
+ */
 data class SumoSummaryStep(
     @field:JacksonXmlProperty(isAttribute = true)
     val time: Double,
