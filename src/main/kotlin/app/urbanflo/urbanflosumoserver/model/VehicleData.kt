@@ -1,5 +1,8 @@
 package app.urbanflo.urbanflosumoserver.model
 
+/**
+ * Vehicle data produced by TraCI from each simulation step.
+ */
 data class VehicleData(
     val vehicleId: String,
     val position: Pair<Double, Double>, // [x, y]

@@ -4,6 +4,9 @@ import app.urbanflo.urbanflosumoserver.simulation.SimulationId
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.nio.file.Path
 
+/**
+ * Data class for [SUMO configuration XML.](https://sumo.dlr.de/xsd/sumoConfiguration.xsd)
+ */
 @JacksonXmlRootElement(localName = "configuration")
 class SumoCfg(
     simulationId: SimulationId,
