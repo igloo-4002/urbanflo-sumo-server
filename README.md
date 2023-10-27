@@ -1,5 +1,8 @@
 # urbanflo-sumo-server
 
+![CI Status](https://img.shields.io/github/actions/workflow/status/igloo-4002/urbanflo-sumo-server/ci.yml?style=flat-square)
+![Docker Build Status](https://img.shields.io/github/actions/workflow/status/igloo-4002/urbanflo-sumo-server/docker.yml?style=flat-square&label=docker)
+
 Interacts between [SUMO](https://www.eclipse.org/sumo/) and Urbanflo app.
 
 ## Development
@@ -68,3 +71,10 @@ Alternatively you can skip testing by passing `-x test` to gradle.
 ### Every request from frontend results in a CORS error
 
 You need to configure CORS for your setup. See [environment variables](#environment-variables) for more information.
+
+## Architecture 
+
+See [ARCHITECTURE.md](ARCHITECTURE.md).
+## Licence
+
+Licensed under [MIT License](LICENSE.txt).
