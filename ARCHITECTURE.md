@@ -32,8 +32,8 @@ Contains any code related to [`netconvert`](https://sumo.dlr.de/docs/netconvert.
 
 ### Package `simulation`
 
-Any code for running and managing simulations, such as `SimulationInstance` which contains a running simulation instances
+Any code for running and managing simulations, such as `SimulationInstance` which contains a running simulation instance.
 
 ### Package `storage`
 
-Anything related to storage, such as `FilesystemStorageService` which is our current implementation of the storage service
+Anything related to storage, such as `FilesystemStorageService` which is our current implementation of the storage service.

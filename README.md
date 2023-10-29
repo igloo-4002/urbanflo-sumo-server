@@ -2,6 +2,7 @@
 
 ![CI Status](https://img.shields.io/github/actions/workflow/status/igloo-4002/urbanflo-sumo-server/ci.yml?style=flat-square)
 ![Docker Build Status](https://img.shields.io/github/actions/workflow/status/igloo-4002/urbanflo-sumo-server/docker.yml?style=flat-square&label=docker)
+![Licence badge](https://img.shields.io/github/license/igloo-4002/urbanflo-sumo-server?style=flat-square)
 
 Interacts between [SUMO](https://www.eclipse.org/sumo/) and Urbanflo app.
 
@@ -54,6 +55,8 @@ You'll need `libtracijni` to be in the Java library path, or you'll get `Unsatis
 ### Spring profiles
 
 There are 2 configuration profiles, the default one and `prod`. The only difference is `prod` launches the server at port 80 while the default one uses port 8080.
+
+You can select `prod` profile by passing `-Dspring.profiles.active=prod` to `java` command.
 
 ### Environment variables
 
