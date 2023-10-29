@@ -75,6 +75,7 @@ You need to configure CORS for your setup. See [environment variables](#environm
 ## Architecture 
 
 See [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Licence
 
 Licensed under [MIT License](LICENSE.txt).
