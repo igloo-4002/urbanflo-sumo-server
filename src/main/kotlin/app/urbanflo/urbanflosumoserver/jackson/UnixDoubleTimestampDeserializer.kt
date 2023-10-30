@@ -1,9 +1,9 @@
 package app.urbanflo.urbanflosumoserver.jackson
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import com.google.gson.JsonParseException
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
