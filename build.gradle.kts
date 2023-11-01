@@ -28,7 +28,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.4")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.5")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("org.eclipse.sumo:libtraci:1.18.0")
     implementation("io.projectreactor:reactor-core:3.5.9")
